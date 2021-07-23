@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>CLI_View_of_Infinite_Engine_library</RootNamespace>
+  </PropertyGroup>
+
+</Project>

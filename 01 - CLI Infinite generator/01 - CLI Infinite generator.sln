@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31515.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infinite Engine", "Infinite Engine\Infinite Engine.csproj", "{2B28513E-7974-4C7C-A17A-5F6117C62F46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI View of Infinite Engine library", "CLI View of Infinite Engine library\CLI View of Infinite Engine library.csproj", "{D7ACC55D-B73C-468F-8F03-F935C7C97DED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2B28513E-7974-4C7C-A17A-5F6117C62F46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B28513E-7974-4C7C-A17A-5F6117C62F46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B28513E-7974-4C7C-A17A-5F6117C62F46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B28513E-7974-4C7C-A17A-5F6117C62F46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7ACC55D-B73C-468F-8F03-F935C7C97DED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7ACC55D-B73C-468F-8F03-F935C7C97DED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7ACC55D-B73C-468F-8F03-F935C7C97DED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7ACC55D-B73C-468F-8F03-F935C7C97DED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {72500DB0-700C-4F5C-808A-1A20316FD9D8}
+	EndGlobalSection
+EndGlobal
