@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Infinite_Engine</RootNamespace>
+    <RootNamespace>InfiniteEngine</RootNamespace>
   </PropertyGroup>
 
 </Project>
