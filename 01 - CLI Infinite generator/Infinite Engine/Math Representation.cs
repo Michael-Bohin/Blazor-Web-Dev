@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace InfiniteEngine {
 
-    /*     Intention: 
+    /*     Intention:
      *     Comments should contain clear explanation of each step of the solution to children
      * therefore, there will always be StepsCount - 1 comments, unless there is a bug or 
      * excercise creator is probably lazy and not responsible.
@@ -11,6 +11,27 @@ namespace InfiniteEngine {
      * isolate the change visually and discard not changed part of the expression. 
      *     For web and unity views, it will be important to develop interactive and visual 
      * explanations.
+     */
+
+    /*     Division having dual definition explanation: 
+     *     Division and Fraction as part of math is the same thing and so if it only 
+     * depended on math only one class would be required. However in the field of mathematics use
+     * of Fractions is so central, that specific definitions set, invented by humans, has evolved
+     * that means humans use two names for division Divison and Fraction. Division in Czech
+     * textbooks has two different operators: '/' and ':'. '/' means Fraction and ':' means Divi-
+     * sion. Both of them are the same arithmetic operation. 
+     * 
+     *     I will define both classes in math representation too. My point is to improve peoples'
+     * user experience learning math. This comes at the cost of writing repetitive code: arithemtic
+     * operation division will have two different classes that are describing it Fraction and Division.
+     * 
+     *     Question/Observation: Wouldn't it be easier for kids to understand the concept if the naming 
+     * duality would be removed?
+     */
+
+    /* To do list: 
+     * 1. Rethink how to approach creating deepcopy of Variable class
+     * 2. Double check that Fraction's redirect to left right operand doesn't cause corner case bugs. 
      */
     public abstract class Excercise { 
         public Expression Problem { get => steps[0]; }
@@ -73,22 +94,6 @@ namespace InfiniteEngine {
         protected override string SignRepresentation => "-";
     }
 
-    /*     Yes, Division and Fraction as part of math is the same thing and so if it only 
-     * depended on math only one class would be required. 
-     * 
-     *     However in the field of mathematics use of Fractions is so central, that specific 
-     * definitions set, invented by humans, has evolved that means humans use two names for division
-     * Divison and Fraction. Division in Czech textbooks has two different operators: '/' and ':'. 
-     * '/' means Fraction and ':' means Division. Both of them are the same arithmetic operation. 
-     * 
-     *     I will define both classes in math representation too. My point is to improve peoples'
-     * user experience learning math. This comes at the cost of writing repetitive code: arithemtic
-     * operation division will have two different classes that are describing it Fraction and Division.
-     * 
-     *     Question/Observation: Wouldn't it be easier for kids to understand the concept if the naming 
-     * duality would be removed? 
-     */
-
     public class Fraction : BinaryExpression {
         public Expression numerator;
         public Expression denominator;
@@ -137,7 +142,6 @@ namespace InfiniteEngine {
 
         public override string ToString() => $"{constant}{variableName}";
 
-        // I dislike the current implementation of DeepCopy, I will think through options and rewrite it. 
         public override Variable DeepCopy() {
             // using Microsoft's docs recomended approach:
             // https://docs.microsoft.com/en-us/dotnet/api/system.string.copy?view=net-5.0
