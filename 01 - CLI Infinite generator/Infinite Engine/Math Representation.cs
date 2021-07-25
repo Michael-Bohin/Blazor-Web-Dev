@@ -51,6 +51,28 @@ namespace InfiniteEngine {
         public Expression leftOperand;
         public Expression rightOperand;
         protected abstract string SignRepresentation { get; }
+
+        public BinaryExpression() { }
+
+        public BinaryExpression(int a, int b) {
+            leftOperand = new Integer(a);
+            rightOperand = new Integer(b);
+        }
+
+        public BinaryExpression(double a, double b) {
+            leftOperand = new RealNumber(a);
+            rightOperand = new RealNumber(b);
+        }
+
+        /*public BinaryExpression(Value a, Value b) {
+            leftOperand = a;
+            rightOperand = b;
+        }*/
+
+        public BinaryExpression(Expression a, Expression b) {
+            leftOperand = a;
+            rightOperand = b;
+        }
         public override string ToString() {
             string result;
             if(this is Fraction f) 
@@ -87,18 +109,32 @@ namespace InfiniteEngine {
     }
 
     public class Addition : BinaryExpression {
+        public Addition(int a, int b) : base(a, b) { }
+        public Addition(double a, double b) : base(a, b) { }
+        public Addition(Expression a, Expression b) : base(a, b) { }
+
         protected override string SignRepresentation => "+";
     }
 
     public class Subtraction : BinaryExpression {
+        public Subtraction(int a, int b): base(a, b) { }
+        public Subtraction(double a, double b) : base(a, b) { }
+        public Subtraction(Expression a, Expression b) : base(a, b) { }
+
         protected override string SignRepresentation => "-";
     }
 
     public class Multiplication : BinaryExpression {
+        public Multiplication(int a, int b) : base(a, b) { }
+        public Multiplication(double a, double b) : base(a, b) { }
+        public Multiplication(Expression a, Expression b) : base(a, b) { }
         protected override string SignRepresentation => "*";
     }
 
     public class Division : BinaryExpression {
+        public Division(int a, int b) : base(a, b) { }
+        public Division(double a, double b) : base(a, b) { }
+        public Division(Expression a, Expression b) : base(a, b) { }
         protected override string SignRepresentation => ":";
     }
 
@@ -108,10 +144,36 @@ namespace InfiniteEngine {
         public new Expression rightOperand { get => numerator; } // c s tim naming rule violation => vskutku predtim to byl field ale na redirect na citatele a jemnovatele potrebuju property...
         public new Expression leftOperand { get => denominator; }
 
+        public Fraction(int a, int b) {
+            numerator = new Integer(a);
+            denominator = new Integer(b);
+        }
+
+        public Fraction(double a, double b) {
+            numerator = new RealNumber(a);
+            denominator = new RealNumber(b);
+        }
+        public Fraction(Expression a, Expression b) {
+            numerator = a;
+            denominator = b;
+        }
+
         protected override string SignRepresentation => "/";
     }
 
     public class Minus : UnaryExpression {
+
+        public Minus(int i) {
+            operand = new Integer(i);
+        }
+
+        public Minus(double d) {
+            operand = new RealNumber(d);
+        }
+
+        public Minus(Expression e) {
+            operand = e;
+        }
         protected override string SignRepresentation => "-";
     }
 
@@ -144,8 +206,18 @@ namespace InfiniteEngine {
         public readonly Constant constant;
 
         public Variable(Constant c, string s) {
-            variableName = s;
             constant = c;
+            variableName = s;
+        }
+
+        public Variable(int i, string s) {
+            constant = new Integer(i);
+            variableName = s;
+        }
+
+        public Variable(double r, string s) {
+            constant = new RealNumber(r);
+            variableName = s;
         }
 
         public override string ToString() => $"{constant}{variableName}";

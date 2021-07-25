@@ -24,11 +24,11 @@ using Xunit;
  *      9. Variable  
  */
 
-namespace xUnitTests {
+//namespace xUnitTests {
     public class Expression_DeepCopy_xUnitTests {
         [Fact]
         public void Test1() {
 
         }
     }
-}
+//}
