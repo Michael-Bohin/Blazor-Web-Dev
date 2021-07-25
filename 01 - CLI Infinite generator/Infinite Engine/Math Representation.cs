@@ -47,12 +47,20 @@ namespace InfiniteEngine {
         public override abstract string ToString(); // override object.ToString so that compiler forces own implementation 
         public abstract Expression DeepCopy();
     }
-    public class Person { }
     public abstract class BinaryExpression : Expression {
         public Expression leftOperand;
         public Expression rightOperand;
         protected abstract string SignRepresentation { get; }
-        public override string ToString() => $"{leftOperand}{SignRepresentation}{rightOperand}";
+        public override string ToString() {
+            string result;
+            if(this is Fraction f) 
+                return $"({f.numerator})/({ f.denominator})";
+            
+            result = $"{leftOperand}{SignRepresentation}{rightOperand}";
+            if (this is Addition || this is Subtraction)
+                result = "(" + result + ")"; // assert infix notation doesnt change due to priority of operators
+            return result;
+        }
         public override BinaryExpression DeepCopy() {
             BinaryExpression other = (BinaryExpression)this.MemberwiseClone();
             other.leftOperand = leftOperand.DeepCopy();
@@ -63,7 +71,7 @@ namespace InfiniteEngine {
     public abstract class UnaryExpression : Expression {
         public Expression operand;
         protected abstract string SignRepresentation { get; }
-        public override string ToString() => $"{SignRepresentation}{operand}";
+        public override string ToString() => $"({SignRepresentation}{operand})";
 
         public override UnaryExpression DeepCopy() {
             UnaryExpression other = (UnaryExpression)this.MemberwiseClone();
@@ -87,11 +95,11 @@ namespace InfiniteEngine {
     }
 
     public class Multiplication : BinaryExpression {
-        protected override string SignRepresentation => "-";
+        protected override string SignRepresentation => "*";
     }
 
     public class Division : BinaryExpression {
-        protected override string SignRepresentation => "-";
+        protected override string SignRepresentation => ":";
     }
 
     public class Fraction : BinaryExpression {
