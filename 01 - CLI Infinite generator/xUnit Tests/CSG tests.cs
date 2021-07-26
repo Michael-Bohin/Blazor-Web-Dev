@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-//namespace xUnitTests {
+namespace xUnitTests {
     public class CombinatoricStructureGenerator_xUnitTests {
         [Fact]
         public void Test1() {
 
         }
     }
-//}
+}

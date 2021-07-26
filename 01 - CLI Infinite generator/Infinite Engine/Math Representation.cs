@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 namespace InfiniteEngine {
-
     /*     Intention:
      *     Comments should contain clear explanation of each step of the solution to children
      * therefore, there will always be StepsCount - 1 comments, unless there is a bug or 
@@ -33,14 +32,12 @@ namespace InfiniteEngine {
      * 1. Rethink how to approach creating deepcopy of Variable class
      * 2. Double check that Fraction's redirect to left right operand doesn't cause corner case bugs. 
      */
-    public abstract class Excercise { 
+    public abstract class Excercise {
+        public List<Expression> steps;
+        public List<string> comments;
         public Expression Problem { get => steps[0]; }
         public int StepsCount { get => steps.Count; }
         public Expression Result { get => steps[^1]; }
-
-        public List<Expression> steps;
-
-        public List<string> comments;
     }
 
     public abstract class Expression {
@@ -52,8 +49,6 @@ namespace InfiniteEngine {
         public Expression rightOperand;
         protected abstract string SignRepresentation { get; }
 
-        public BinaryExpression() { }
-
         public BinaryExpression(int a, int b) {
             leftOperand = new Integer(a);
             rightOperand = new Integer(b);
@@ -64,24 +59,14 @@ namespace InfiniteEngine {
             rightOperand = new RealNumber(b);
         }
 
-        /*public BinaryExpression(Value a, Value b) {
-            leftOperand = a;
-            rightOperand = b;
-        }*/
-
         public BinaryExpression(Expression a, Expression b) {
             leftOperand = a;
             rightOperand = b;
         }
         public override string ToString() {
-            string result;
-            if(this is Fraction f) 
-                return $"({f.numerator})/({ f.denominator})";
-            
-            result = $"{leftOperand}{SignRepresentation}{rightOperand}";
-            if (this is Addition || this is Subtraction)
-                result = "(" + result + ")"; // assert infix notation doesnt change due to priority of operators
-            return result;
+            if (this is Addition || this is Subtraction) // assert infix notation doesnt change due to priority of operators
+                return $"({leftOperand}{SignRepresentation}{rightOperand})";
+            return $"{leftOperand}{SignRepresentation}{rightOperand}";
         }
         public override BinaryExpression DeepCopy() {
             BinaryExpression other = (BinaryExpression)this.MemberwiseClone();
@@ -112,16 +97,36 @@ namespace InfiniteEngine {
         public Addition(int a, int b) : base(a, b) { }
         public Addition(double a, double b) : base(a, b) { }
         public Addition(Expression a, Expression b) : base(a, b) { }
-
         protected override string SignRepresentation => "+";
+
+        public Expression LeftSummand { // levy scitanec
+            get => leftOperand;
+            set => leftOperand = value;
+        }
+
+        public Expression RightSummand {
+            get => rightOperand;
+            set => rightOperand = value;
+        }
+        // not yet defined Sum : soucet
     }
 
     public class Subtraction : BinaryExpression {
         public Subtraction(int a, int b): base(a, b) { }
         public Subtraction(double a, double b) : base(a, b) { }
         public Subtraction(Expression a, Expression b) : base(a, b) { }
-
         protected override string SignRepresentation => "-";
+
+        public Expression Minuend { // mensenec
+            get => leftOperand;
+            set => leftOperand = value;
+        }
+
+        public Expression Subtrahend { // mensitel 
+            get => rightOperand;
+            set => rightOperand = value;
+        }
+        // not yet defined Difference : rozdil
     }
 
     public class Multiplication : BinaryExpression {
@@ -129,6 +134,17 @@ namespace InfiniteEngine {
         public Multiplication(double a, double b) : base(a, b) { }
         public Multiplication(Expression a, Expression b) : base(a, b) { }
         protected override string SignRepresentation => "*";
+
+        public Expression LeftFactor { // levy cinitel
+            get => leftOperand;
+            set => leftOperand = value;
+        }
+
+        public Expression RightFactor {
+            get => rightOperand;
+            set => rightOperand = value;
+        }
+        // not yet defined Product : soucin
     }
 
     public class Division : BinaryExpression {
@@ -136,68 +152,62 @@ namespace InfiniteEngine {
         public Division(double a, double b) : base(a, b) { }
         public Division(Expression a, Expression b) : base(a, b) { }
         protected override string SignRepresentation => ":";
+
+        public Expression Dividend { // delenec
+            get => leftOperand;
+            set => leftOperand = value;
+        }
+
+        public Expression Divisor { // delitel
+            get => rightOperand;
+            set => rightOperand = value;
+        }
+        // not yet defined Quotient : podil
     }
 
     public class Fraction : BinaryExpression {
-        public Expression numerator;
-        public Expression denominator;
-        public new Expression rightOperand { get => numerator; } // c s tim naming rule violation => vskutku predtim to byl field ale na redirect na citatele a jemnovatele potrebuju property...
-        public new Expression leftOperand { get => denominator; }
-
-        public Fraction(int a, int b) {
-            numerator = new Integer(a);
-            denominator = new Integer(b);
-        }
-
-        public Fraction(double a, double b) {
-            numerator = new RealNumber(a);
-            denominator = new RealNumber(b);
-        }
-        public Fraction(Expression a, Expression b) {
-            numerator = a;
-            denominator = b;
-        }
-
+        public Fraction(int a, int b) : base(a, b) { }
+        public Fraction(double a, double b) : base(a, b) { }
+        public Fraction(Expression a, Expression b) : base(a, b) { }
         protected override string SignRepresentation => "/";
+        public override string ToString() => $"({Numerator})/({Denominator})";
+
+        public Expression Numerator { // citatel
+            get => leftOperand;
+            set => leftOperand = value;
+        }
+
+        public Expression Denominator { // jmenovatel
+            get => rightOperand;
+            set => rightOperand = value;  
+        } 
+        // not yet defined Quotient : podil
     }
 
     public class Minus : UnaryExpression {
-
-        public Minus(int i) {
-            operand = new Integer(i);
-        }
-
-        public Minus(double d) {
-            operand = new RealNumber(d);
-        }
-
-        public Minus(Expression e) {
-            operand = e;
-        }
+        public Minus(int i) { operand = new Integer(i); }
+        public Minus(double d) { operand = new RealNumber(d); }
+        public Minus(Expression e) { operand = e; }
         protected override string SignRepresentation => "-";
     }
 
     public class Integer : Constant {
         public new readonly int number;
-
         public Integer(int i) {
             number = i;
         }
 
         public override string ToString() => number.ToString();
-        
         public override Integer DeepCopy() => (Integer) this.MemberwiseClone();
     }
 
     public class RealNumber : Constant {
         public new readonly double number;
-
         public RealNumber(double d) {
             number = d;
         }
 
         public override string ToString() => number.ToString();
-
         public override RealNumber DeepCopy() => (RealNumber)this.MemberwiseClone();
     }
 
@@ -209,19 +219,16 @@ namespace InfiniteEngine {
             constant = c;
             variableName = s;
         }
-
         public Variable(int i, string s) {
             constant = new Integer(i);
             variableName = s;
         }
-
         public Variable(double r, string s) {
             constant = new RealNumber(r);
             variableName = s;
         }
 
         public override string ToString() => $"{constant}{variableName}";
-
         public override Variable DeepCopy() {
             // using Microsoft's docs recomended approach:
             // https://docs.microsoft.com/en-us/dotnet/api/system.string.copy?view=net-5.0
@@ -233,6 +240,8 @@ namespace InfiniteEngine {
                 RealNumber otherConstant = new(r.number);
                 return new Variable(otherConstant, otherName);
             }
+            // Waiting exception in case someone in future adds constants child and doesnt update code here
+            // I will want to change the architecture in such a way that this is not nesseccary. 
             throw new Exception("DeepCopy method of Variable class encountered unknown Constant's child.");
         }
     }
