@@ -30,20 +30,14 @@ namespace InfiniteEngine {
 
     /* To do list: 
      * 1. Rethink how to approach creating deepcopy of Variable class
-     * 2. Double check that Fraction's redirect to left right operand doesn't cause corner case bugs. 
+     * 2. Double check that Fraction's redirect to left right operand doesn't cause corner case bugs.
      */
-    public abstract class Excercise {
-        public List<Expression> steps;
-        public List<string> comments;
-        public Expression Problem { get => steps[0]; }
-        public int StepsCount { get => steps.Count; }
-        public Expression Result { get => steps[^1]; }
-    }
-
     public abstract class Expression {
         public override abstract string ToString(); // override object.ToString so that compiler forces own implementation 
+        public abstract string ToHTML();            // using predefined css tricks for fractions
         public abstract Expression DeepCopy();
     }
+
     public abstract class BinaryExpression : Expression {
         public Expression leftOperand;
         public Expression rightOperand;
@@ -59,6 +53,8 @@ namespace InfiniteEngine {
             rightOperand = new RealNumber(b);
         }
 
+        public BinaryExpression(double a, Expression b):this(new RealNumber(a), b) { }
+
         public BinaryExpression(Expression a, Expression b) {
             leftOperand = a;
             rightOperand = b;
@@ -68,17 +64,22 @@ namespace InfiniteEngine {
                 return $"({leftOperand}{SignRepresentation}{rightOperand})";
             return $"{leftOperand}{SignRepresentation}{rightOperand}";
         }
-        public override BinaryExpression DeepCopy() {
+
+        public override string ToHTML() => $"{leftOperand} {SignRepresentation} {rightOperand}";
+
+     /*   public override BinaryExpression DeepCopy() {
             BinaryExpression other = (BinaryExpression)this.MemberwiseClone();
             other.leftOperand = leftOperand.DeepCopy();
             other.rightOperand = rightOperand.DeepCopy();
             return other;
-        }
+        }*/
     }
     public abstract class UnaryExpression : Expression {
         public Expression operand;
         protected abstract string SignRepresentation { get; }
         public override string ToString() => $"({SignRepresentation}{operand})";
+
+        public override string ToHTML() => $"{SignRepresentation}{operand}";
 
         public override UnaryExpression DeepCopy() {
             UnaryExpression other = (UnaryExpression)this.MemberwiseClone();
@@ -97,6 +98,8 @@ namespace InfiniteEngine {
         public Addition(int a, int b) : base(a, b) { }
         public Addition(double a, double b) : base(a, b) { }
         public Addition(Expression a, Expression b) : base(a, b) { }
+        public Addition(double a, Expression b) : base(a, b) { }
+        
         protected override string SignRepresentation => "+";
 
         public Expression LeftSummand { // levy scitanec
@@ -109,13 +112,23 @@ namespace InfiniteEngine {
             set => rightOperand = value;
         }
         // not yet defined Sum : soucet
+
+        public override Addition DeepCopy() {
+            Addition other = (Addition)this.MemberwiseClone();
+            other.leftOperand = leftOperand.DeepCopy();
+            other.rightOperand = rightOperand.DeepCopy();
+            return other;
+        }
     }
 
     public class Subtraction : BinaryExpression {
         public Subtraction(int a, int b): base(a, b) { }
         public Subtraction(double a, double b) : base(a, b) { }
         public Subtraction(Expression a, Expression b) : base(a, b) { }
-        protected override string SignRepresentation => "-";
+        public Subtraction(double a, Expression b) : base(a, b) { }
+
+
+        protected override string SignRepresentation => "−";
 
         public Expression Minuend { // mensenec
             get => leftOperand;
@@ -127,13 +140,21 @@ namespace InfiniteEngine {
             set => rightOperand = value;
         }
         // not yet defined Difference : rozdil
+        public override Subtraction DeepCopy() {
+            Subtraction other = (Subtraction)this.MemberwiseClone();
+            other.leftOperand = leftOperand.DeepCopy();
+            other.rightOperand = rightOperand.DeepCopy();
+            return other;
+        }
     }
 
     public class Multiplication : BinaryExpression {
         public Multiplication(int a, int b) : base(a, b) { }
         public Multiplication(double a, double b) : base(a, b) { }
         public Multiplication(Expression a, Expression b) : base(a, b) { }
-        protected override string SignRepresentation => "*";
+        public Multiplication(double a, Expression b) : base(a, b) { }
+
+        protected override string SignRepresentation => "∙";
 
         public Expression LeftFactor { // levy cinitel
             get => leftOperand;
@@ -145,12 +166,20 @@ namespace InfiniteEngine {
             set => rightOperand = value;
         }
         // not yet defined Product : soucin
+        public override Multiplication DeepCopy() {
+            Multiplication other = (Multiplication)this.MemberwiseClone();
+            other.leftOperand = leftOperand.DeepCopy();
+            other.rightOperand = rightOperand.DeepCopy();
+            return other;
+        }
     }
 
     public class Division : BinaryExpression {
         public Division(int a, int b) : base(a, b) { }
         public Division(double a, double b) : base(a, b) { }
         public Division(Expression a, Expression b) : base(a, b) { }
+        public Division(double a, Expression b) : base(a, b) { }
+
         protected override string SignRepresentation => ":";
 
         public Expression Dividend { // delenec
@@ -163,14 +192,24 @@ namespace InfiniteEngine {
             set => rightOperand = value;
         }
         // not yet defined Quotient : podil
+        public override Division DeepCopy() {
+            Division other = (Division)this.MemberwiseClone();
+            other.leftOperand = leftOperand.DeepCopy();
+            other.rightOperand = rightOperand.DeepCopy();
+            return other;
+        }
     }
 
     public class Fraction : BinaryExpression {
         public Fraction(int a, int b) : base(a, b) { }
         public Fraction(double a, double b) : base(a, b) { }
         public Fraction(Expression a, Expression b) : base(a, b) { }
+        public Fraction(double a, Expression b) : base(a, b) { }
+
         protected override string SignRepresentation => "/";
         public override string ToString() => $"({Numerator})/({Denominator})";
+        // it nessecary to throw in some tricks here, since drawing proper Fractions in html is not trivial or inbuilt into web browsers
+        public override string ToHTML() => @"<div class=""frac""><span>" + Numerator + @"</span><spanclass=""symbol"">/</span><span class=""bottom"">" + Denominator + @"</span></div>'";
 
         public Expression Numerator { // citatel
             get => leftOperand;
@@ -180,15 +219,25 @@ namespace InfiniteEngine {
         public Expression Denominator { // jmenovatel
             get => rightOperand;
             set => rightOperand = value;  
-        } 
+        }
         // not yet defined Quotient : podil
+        public override Fraction DeepCopy() {
+            Fraction other = (Fraction)this.MemberwiseClone();
+            other.leftOperand = leftOperand.DeepCopy();
+            other.rightOperand = rightOperand.DeepCopy();
+            return other;
+        }
     }
 
     public class Minus : UnaryExpression {
         public Minus(int i) { operand = new Integer(i); }
         public Minus(double d) { operand = new RealNumber(d); }
         public Minus(Expression e) { operand = e; }
-        protected override string SignRepresentation => "-";
+        protected override string SignRepresentation => "−";
+
+       /* public override string ToHTML() {
+            throw new NotImplementedException();
+        }*/
     }
 
     public class Integer : Constant {
@@ -198,6 +247,8 @@ namespace InfiniteEngine {
         }
 
         public override string ToString() => number.ToString();
+        public override string ToHTML() => number.ToString();
+
         public override Integer DeepCopy() => (Integer) this.MemberwiseClone();
     }
 
@@ -208,6 +259,7 @@ namespace InfiniteEngine {
         }
 
         public override string ToString() => number.ToString();
+        public override string ToHTML() => number.ToString();
         public override RealNumber DeepCopy() => (RealNumber)this.MemberwiseClone();
     }
 
@@ -229,12 +281,20 @@ namespace InfiniteEngine {
         }
 
         public override string ToString() => $"{constant}{variableName}";
+
+        public override string ToHTML() {
+            if (constant.ToString() == "1")  
+                return variableName;
+            
+            return $"{constant}{variableName}";
+        }
+
         public override Variable DeepCopy() {
             // using Microsoft's docs recomended approach:
             // https://docs.microsoft.com/en-us/dotnet/api/system.string.copy?view=net-5.0
             string otherName = variableName[..];
             if (constant is Integer i) {
-                Integer otherConstant = new Integer(i.number);
+                Integer otherConstant = new(i.number);
                 return new Variable(otherConstant, otherName);
             } else if( constant is RealNumber r) {
                 RealNumber otherConstant = new(r.number);

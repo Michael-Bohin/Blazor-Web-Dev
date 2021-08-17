@@ -6,4 +6,8 @@
     <RootNamespace>CLI_View_of_Infinite_Engine_library</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Infinite Engine\Infinite Engine.csproj" />
+  </ItemGroup>
+
 </Project>

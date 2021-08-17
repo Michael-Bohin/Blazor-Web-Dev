@@ -8,5 +8,4 @@ namespace InfiniteEngine {
     public abstract class CombinatoricStructureGenerator {
 
     }
-
 }

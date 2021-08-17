@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infinite Engine", "Infinite Engine\Infinite Engine.csproj", "{2B28513E-7974-4C7C-A17A-5F6117C62F46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infinite Engine", "Infinite Engine\Infinite Engine.csproj", "{2B28513E-7974-4C7C-A17A-5F6117C62F46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI View of Infinite Engine library", "CLI View of Infinite Engine library\CLI View of Infinite Engine library.csproj", "{D7ACC55D-B73C-468F-8F03-F935C7C97DED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HTML View", "CLI View of Infinite Engine library\HTML View.csproj", "{D7ACC55D-B73C-468F-8F03-F935C7C97DED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xUnit Tests", "xUnit Tests\xUnit Tests.csproj", "{F5D9E0C4-EDF3-45ED-ABCC-A308F823830A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xUnit Tests", "xUnit Tests\xUnit Tests.csproj", "{F5D9E0C4-EDF3-45ED-ABCC-A308F823830A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
