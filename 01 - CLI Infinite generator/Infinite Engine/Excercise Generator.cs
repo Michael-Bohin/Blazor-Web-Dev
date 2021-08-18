@@ -38,7 +38,7 @@ namespace InfiniteEngine {
             return result;
         }
 
-        protected bool CoinFlip() => rand.Next(0, 1) == 0;
+        protected bool CoinFlip() => rand.Next(0, 2) == 0;
 
         public abstract Excercise GetNext();
     }
@@ -60,6 +60,7 @@ namespace InfiniteEngine {
 
         static readonly int[] primes = new int[4] { 2, 3, 5, 7 };
         static readonly int[] composites = new int[6] { 4, 6, 8, 9, 10, 12 };
+        static readonly int[] easyEnoughDenominators = new int[4] { 2, 4, 5, 10 }; // such that 1/item makes easy enough conversion for 9th graders
 
         public EGenerator_Fractions_S01E01(): base() { }
 
@@ -86,11 +87,11 @@ namespace InfiniteEngine {
             bool plus = CoinFlip();
 
             // >>> generate variable f 
-            f = primes[rand.Next(0, 4)];
+            f = easyEnoughDenominators[rand.Next(0, 4)];
 
             // >>> step 0
             Fraction s0_left = new(a, c);
-            double s0_divLeft = 1 / f;
+            double s0_divLeft = 1.0 / (double)f;
             Fraction s0_divRight = new(e, d*f);
 
             Division s0_right = new(s0_divLeft, s0_divRight);
@@ -125,16 +126,28 @@ namespace InfiniteEngine {
             steps[4] = plus ? new Addition(s4_left, s4_right) : new Subtraction(s4_left, s4_right);
 
             // >>> step 5
-            Fraction result = new(a * b - d, e);
+            int numerator = plus ? a * b + d : a * b - d;
+            Fraction result = new(numerator , e);
             steps[5] = result;
 
             // Now fill in all comments (popis nasledujici upravy)
 
+            Fraction ac = new(a, c);
+            Fraction bb = new(b, b);
+            Fraction ff = new(f, f);
+
+            Fraction AB = new("A", "B");
+            Fraction CD = new("C", "D");
+            Fraction DC = new("D", "C");
+            Fraction FF = new("AD", "BC");
+           /* Fraction AD = new( "AD", D');
+            Fraction BC */
+
             string[] comments = new string[] { 
                 "Převeď desetinné číslo na zlomek.", 
-                "Použij vzoreček na převod dělení dvou zlomků na jejich součin. (A/B):(C/D) = (A/B)*(D/C) = (AD):(BC)", 
-                $"Vyjádři číslo {d*f} jako součin {f} a potom vykrať {f}/{f}", 
-                $"Rozšiř {a}/{c} výrazem {b}/{b}, aby jsi rozdíl dvou zlomků mohl sloučit do jednoho.",
+                $"Použij vzoreček na převod dělení dvou zlomků na jejich součin. {AB.ToHTML()}:{CD.ToHTML()} = {AB.ToHTML()}∙{DC.ToHTML()} = {FF.ToHTML()}", 
+                $"Vyjádři číslo {d*f} jako součin {f} a potom vykrať {ff.ToHTML()}", 
+                $"Rozšiř {ac.ToHTML()} výrazem {bb.ToHTML()}, aby jsi rozdíl dvou zlomků mohl sloučit do jednoho.",
                 "Sluč rozdíl dvou zlomků se stejným jmenovatelem do jednoho a dopočítej výsledek.",
                 "Hotovo 😎😎"
             };

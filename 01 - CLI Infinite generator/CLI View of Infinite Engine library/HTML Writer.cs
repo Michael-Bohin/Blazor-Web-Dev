@@ -26,9 +26,10 @@ namespace CLI_View_of_Infinite_Engine_library {
 <!doctype html>
 <html lang=""cs"">
 <head>
-    <title>💚💙🔭🧬 Kuchařka řešení - zlomky</title>
+    <title>💙🔭🧬 Kuchařka řešení - zlomky</title>
     <meta charset=""utf-8"">
     <meta name=""viewport"" content=""width=device-width, initial-scale=1, shrink-to-fit=no"">
+    <link rel=""shortcut icon"" type=""image/x-icon"" href=""favicon.ico"">
     <link rel=""preconnect"" href=""https://fonts.googleapis.com"">
     <link rel=""preconnect"" href=""https://fonts.gstatic.com"" crossorigin>
     <link href=""https://fonts.googleapis.com/css2?family=Caveat:wght@500&display=swap"" rel=""stylesheet"">

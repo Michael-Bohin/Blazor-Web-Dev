@@ -65,7 +65,7 @@ namespace InfiniteEngine {
             return $"{leftOperand}{SignRepresentation}{rightOperand}";
         }
 
-        public override string ToHTML() => $"{leftOperand} {SignRepresentation} {rightOperand}";
+        public override string ToHTML() => $"{leftOperand.ToHTML()} {SignRepresentation} {rightOperand.ToHTML()}";
 
      /*   public override BinaryExpression DeepCopy() {
             BinaryExpression other = (BinaryExpression)this.MemberwiseClone();
@@ -79,7 +79,7 @@ namespace InfiniteEngine {
         protected abstract string SignRepresentation { get; }
         public override string ToString() => $"({SignRepresentation}{operand})";
 
-        public override string ToHTML() => $"{SignRepresentation}{operand}";
+        public override string ToHTML() => $"{SignRepresentation}{operand.ToHTML()}";
 
         public override UnaryExpression DeepCopy() {
             UnaryExpression other = (UnaryExpression)this.MemberwiseClone();
@@ -205,11 +205,12 @@ namespace InfiniteEngine {
         public Fraction(double a, double b) : base(a, b) { }
         public Fraction(Expression a, Expression b) : base(a, b) { }
         public Fraction(double a, Expression b) : base(a, b) { }
+        public Fraction(string a, string b): base( new Variable(1, a), new Variable(1, b) ) { }
 
         protected override string SignRepresentation => "/";
         public override string ToString() => $"({Numerator})/({Denominator})";
         // it nessecary to throw in some tricks here, since drawing proper Fractions in html is not trivial or inbuilt into web browsers
-        public override string ToHTML() => @"<div class=""frac""><span>" + Numerator + @"</span><spanclass=""symbol"">/</span><span class=""bottom"">" + Denominator + @"</span></div>'";
+        public override string ToHTML() => @"<div class=""frac""><span>" + Numerator.ToHTML() + @"</span><span class=""symbol"">/</span><span class=""bottom"">" + Denominator.ToHTML() + @"</span></div>";
 
         public Expression Numerator { // citatel
             get => leftOperand;
@@ -286,7 +287,7 @@ namespace InfiniteEngine {
             if (constant.ToString() == "1")  
                 return variableName;
             
-            return $"{constant}{variableName}";
+            return $"{constant.ToHTML()}{variableName}";
         }
 
         public override Variable DeepCopy() {
