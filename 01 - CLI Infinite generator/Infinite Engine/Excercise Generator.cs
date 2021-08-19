@@ -65,7 +65,7 @@ namespace InfiniteEngine {
         public EGenerator_Fractions_S01E01(): base() { }
 
         public override Excercise GetNext() {
-            Expression[] steps = new Expression[6];
+            Expression[] steps = new Expression[7];
            // string[] comments = new string[6];
             
 
@@ -127,8 +127,15 @@ namespace InfiniteEngine {
 
             // >>> step 5
             int numerator = plus ? a * b + d : a * b - d;
-            Fraction result = new(numerator , e);
-            steps[5] = result;
+            Fraction s5_result = new(numerator , e);
+            steps[5] = s5_result;
+
+            // >>> step 6
+            Fraction result = s5_result.DeepCopy();
+            if(s5_result.NumAndDenAreIntegers())  // they are
+                result.Reduce();
+
+            steps[6] = result;
 
             // Now fill in all comments (popis nasledujici upravy)
 
@@ -149,6 +156,7 @@ namespace InfiniteEngine {
                 $"Vyjádři číslo {d*f} jako součin {f} a potom vykrať {ff.ToHTML()}", 
                 $"Rozšiř {ac.ToHTML()} výrazem {bb.ToHTML()}, aby jsi rozdíl dvou zlomků mohl sloučit do jednoho.",
                 "Sluč rozdíl dvou zlomků se stejným jmenovatelem do jednoho a dopočítej výsledek.",
+                "Převeď zlomek na jeho základní tvar. Rozlož čitatele i jmenovatele na prvočinitele. Koukni se, jestli můžeme nějaké vykrátit. (Bacha, zlomek již v základním tvaru být může.)",
                 "Hotovo 😎😎"
             };
 
@@ -156,7 +164,6 @@ namespace InfiniteEngine {
 
             // po otestovani aktulanich veci dodej Expression[][] isolatedModifications
             Expression[][] isolatedModifications = new Expression[2][];
-            
 
             EFractions_S01E01 nextExcercise = new( steps, comments, isolatedModifications);
             return nextExcercise;

@@ -200,7 +200,16 @@ namespace InfiniteEngine {
         }
     }
 
-    public class Fraction : BinaryExpression {
+    interface IFraction {
+        void PrimeFactorization(); // change numerator and denomintor to consist of prime factors
+        bool NumAndDenAreIntegers(); // are numerator and denominator integer expressions? 
+        bool IsSimplestForm(); // if they are integers, is it in simplest form? 
+        void Reduce(); // gcd = GCD(num, den); num = num / gcd; den = den / gcd;
+        List<int> GetPrimeFactors(int i); // given integer, return list of its prime factors 
+        int EuclidsGCD(int a, int b); // given two integers, return their GCD
+    }
+
+    public class Fraction : BinaryExpression, IFraction {
         public Fraction(int a, int b) : base(a, b) { }
         public Fraction(double a, double b) : base(a, b) { }
         public Fraction(Expression a, Expression b) : base(a, b) { }
@@ -238,24 +247,63 @@ namespace InfiniteEngine {
         public void PrimeFactorization() {
             if( Numerator is Integer num && Denominator is Integer den ) {
                 int n = num.number;
-                int d = num.number;
+                int d = den.number;
                 List<int> primesOfNum = GetPrimeFactors(n);
                 List<int> primesOfDen = GetPrimeFactors(d);
                 // create chained multiplication expressions representing primes 
-
+                Numerator = CreatePrimeProduct(primesOfNum);
+                Denominator = CreatePrimeProduct(primesOfDen);
             }
         }
 
-        private List<int>  GetPrimeFactors(int number) {
+        public List<int> GetPrimeFactors(int number) {
+            List<int> primeFactors = new();
+            if (number == 0)
+                return primeFactors;
 
+            if (number < 0)
+                number = Math.Abs(number);
+
+            if(number == 1) {
+                primeFactors.Add(1);
+                return primeFactors;
+            }
+            
+            int divisor = 2;
+            while(number > 1) {
+                if( number % divisor == 0) {
+                    primeFactors.Add(divisor);
+                    number /= divisor;
+                } else {
+                    divisor++; // can be sped up by only using primes, for 9th grade, you can allocate them 
+                }
+            }
+            return primeFactors;
         }
 
-        public bool NumAndDenAreIntegers() {
-           
+        private static Expression CreatePrimeProduct( List<int> primeFactors) {
+            if (primeFactors.Count == 0)
+                throw new InvalidOperationException("Cannot create expression from empty list of numbers. :(");
+            if(primeFactors.Count == 1) 
+                return new Integer(primeFactors[0]);
+
+            Multiplication expr = new(primeFactors[^2], primeFactors[^1]);
+
+            for(int i = primeFactors.Count -3; i > -1; i--) {
+                Multiplication temp = expr;
+                expr = new (primeFactors[i], temp);
+            }
+            return expr;
         }
 
-        public bool IsSimplestForm() {
+        public bool NumAndDenAreIntegers() => Numerator is Integer && Denominator is Integer;
 
+        public bool IsSimplestForm() => Numerator is Integer num && Denominator is Integer den && EuclidsGCD(num.number, den.number) == 1;    
+
+        public int EuclidsGCD(int a, int b) { // euclids algorithm for greatest common divisor 
+            if (b == 0)
+                return a;
+            return EuclidsGCD(b, a % b);
         }
 
         public void Reduce() {
@@ -263,7 +311,13 @@ namespace InfiniteEngine {
             // get gcd using euclids algorithm
             // if it is greater than one 
             // use it to create new instances of integers that represent num and den 
-
+            if (Numerator is Integer num && Denominator is Integer den) {
+                int n = num.number;
+                int d = den.number;
+                int GCD = EuclidsGCD(n, d);
+                Numerator = new Integer(n / GCD);
+                Denominator = new Integer(d / GCD);
+            }
         }
     }
 

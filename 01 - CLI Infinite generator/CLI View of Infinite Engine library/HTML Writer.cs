@@ -71,7 +71,7 @@ namespace CLI_View_of_Infinite_Engine_library {
             StringBuilder sb = new();
             for(int i = 0; i < e.steps.Length; i++) {
                 sb.Append("<tr><td>" + i + @".</td><td class=""text-blue"">" + e.steps[i].ToHTML() + "</td>");
-                sb.Append(@"<td class=""text-green"">" + e.comments[i] + @"</td><td class=""text-blue""></td></tr>");
+                sb.Append(@"<td class=""text-green text-left"">" + e.comments[i] + @"</td><td class=""text-blue""></td></tr>");
             }
             return sb.ToString();
         }
