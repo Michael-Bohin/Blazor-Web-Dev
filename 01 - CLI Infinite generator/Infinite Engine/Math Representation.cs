@@ -228,6 +228,43 @@ namespace InfiniteEngine {
             other.rightOperand = rightOperand.DeepCopy();
             return other;
         }
+
+        // this function assumes that both numerator and denominator are integers!
+        // so first check it does whether num and den are Integers, if not returns doing nothing 
+        // if both are integers, it gets prime factorization 
+        // and than creates multiplication expressions that represent it
+        // for integers 0 and 1  2  3 it keeps the integer intact 
+
+        public void PrimeFactorization() {
+            if( Numerator is Integer num && Denominator is Integer den ) {
+                int n = num.number;
+                int d = num.number;
+                List<int> primesOfNum = GetPrimeFactors(n);
+                List<int> primesOfDen = GetPrimeFactors(d);
+                // create chained multiplication expressions representing primes 
+
+            }
+        }
+
+        private List<int>  GetPrimeFactors(int number) {
+
+        }
+
+        public bool NumAndDenAreIntegers() {
+           
+        }
+
+        public bool IsSimplestForm() {
+
+        }
+
+        public void Reduce() {
+            // if both num and den are prime 
+            // get gcd using euclids algorithm
+            // if it is greater than one 
+            // use it to create new instances of integers that represent num and den 
+
+        }
     }
 
     public class Minus : UnaryExpression {
