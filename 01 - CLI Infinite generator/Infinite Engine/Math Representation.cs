@@ -206,15 +206,29 @@ namespace InfiniteEngine {
         bool IsSimplestForm(); // if they are integers, is it in simplest form? 
         void Reduce(); // gcd = GCD(num, den); num = num / gcd; den = den / gcd;
         List<int> GetPrimeFactors(int i); // given integer, return list of its prime factors 
-        int EuclidsGCD(int a, int b); // given two integers, return their GCD
+        // (disabled beacuse I need it static) int EuclidsGCD(int a, int b); // given two integers, return their GCD
+    }
+
+    class MathHellException : InvalidOperationException {
+        public MathHellException() { }
+        public MathHellException(string error) : base(error) { }
     }
 
     public class Fraction : BinaryExpression, IFraction {
-        public Fraction(int a, int b) : base(a, b) { }
-        public Fraction(double a, double b) : base(a, b) { }
-        public Fraction(Expression a, Expression b) : base(a, b) { }
+        public Fraction(int a, int b) : base(a, b) {
+            if (b == 0)
+                throw new MathHellException("Attempted to create fraction with zero denominator. Division by zero detected.");
+        }
+        public Fraction(double a, double b) : base(a, b) {
+            if (b == 0)
+                throw new MathHellException("Attempted to create fraction with zero denominator. Division by zero detected.");
+        }
+        public Fraction(Expression a, Expression b) : base(a, b) {
+            if ( (b is Integer i && i.number == 0) || (b is RealNumber r && r.number == 0))
+                throw new MathHellException("Attempted to create fraction with zero denominator. Division by zero detected.");
+        }
         public Fraction(double a, Expression b) : base(a, b) { }
-        public Fraction(string a, string b): base( new Variable(1, a), new Variable(1, b) ) { }
+        public Fraction(string a, string b) : base(new Variable(1, a), new Variable(1, b)) { }
 
         protected override string SignRepresentation => "/";
         public override string ToString() => $"({Numerator})/({Denominator})";
@@ -228,7 +242,7 @@ namespace InfiniteEngine {
 
         public Expression Denominator { // jmenovatel
             get => rightOperand;
-            set => rightOperand = value;  
+            set => rightOperand = value;
         }
         // not yet defined Quotient : podil
         public override Fraction DeepCopy() {
@@ -238,6 +252,8 @@ namespace InfiniteEngine {
             return other;
         }
 
+        /* Prime factorization */
+
         // this function assumes that both numerator and denominator are integers!
         // so first check it does whether num and den are Integers, if not returns doing nothing 
         // if both are integers, it gets prime factorization 
@@ -245,7 +261,7 @@ namespace InfiniteEngine {
         // for integers 0 and 1  2  3 it keeps the integer intact 
 
         public void PrimeFactorization() {
-            if( Numerator is Integer num && Denominator is Integer den ) {
+            if (Numerator is Integer num && Denominator is Integer den) {
                 int n = num.number;
                 int d = den.number;
                 List<int> primesOfNum = GetPrimeFactors(n);
@@ -264,14 +280,14 @@ namespace InfiniteEngine {
             if (number < 0)
                 number = Math.Abs(number);
 
-            if(number == 1) {
+            if (number == 1) {
                 primeFactors.Add(1);
                 return primeFactors;
             }
-            
+
             int divisor = 2;
-            while(number > 1) {
-                if( number % divisor == 0) {
+            while (number > 1) {
+                if (number % divisor == 0) {
                     primeFactors.Add(divisor);
                     number /= divisor;
                 } else {
@@ -281,30 +297,33 @@ namespace InfiniteEngine {
             return primeFactors;
         }
 
-        private static Expression CreatePrimeProduct( List<int> primeFactors) {
+        private static Expression CreatePrimeProduct(List<int> primeFactors) {
             if (primeFactors.Count == 0)
                 throw new InvalidOperationException("Cannot create expression from empty list of numbers. :(");
-            if(primeFactors.Count == 1) 
+            if (primeFactors.Count == 1)
                 return new Integer(primeFactors[0]);
 
             Multiplication expr = new(primeFactors[^2], primeFactors[^1]);
 
-            for(int i = primeFactors.Count -3; i > -1; i--) {
+            for (int i = primeFactors.Count - 3; i > -1; i--) {
                 Multiplication temp = expr;
-                expr = new (primeFactors[i], temp);
+                expr = new(primeFactors[i], temp);
             }
             return expr;
         }
 
         public bool NumAndDenAreIntegers() => Numerator is Integer && Denominator is Integer;
 
-        public bool IsSimplestForm() => Numerator is Integer num && Denominator is Integer den && EuclidsGCD(num.number, den.number) == 1;    
+        public bool IsSimplestForm() => Numerator is Integer num && Denominator is Integer den && EuclidsGCD(num.number, den.number) == 1;
 
-        public int EuclidsGCD(int a, int b) { // euclids algorithm for greatest common divisor 
+        public static int EuclidsGCD(int a, int b) { // euclids algorithm for greatest common divisor 
             if (b == 0)
                 return a;
             return EuclidsGCD(b, a % b);
         }
+
+        // least common multiple -> multiply the two numbers and divide the result by GCD
+        public static int EuclidsLCM(int a, int b) => a * b / EuclidsGCD(a, b); 
 
         public void Reduce() {
             // if both num and den are prime 
@@ -319,6 +338,84 @@ namespace InfiniteEngine {
                 Denominator = new Integer(d / GCD);
             }
         }
+
+
+        /* Equality and arithmetic operators */
+
+        /* At first I will only be using it for integer comparison, I will later spread it across the entire math object tree. */
+        /* !!! By this logic (for teaching purposes) Fraction of same simplest form with different repr are considered different, despite their math equality. */
+        public static  bool operator == (Fraction a, Fraction b) {
+            if(a.Numerator is Integer aNum && a.Denominator is Integer aDen && b.Numerator is Integer bNum && b.Denominator is Integer bDen) {
+                return aNum.number == bNum.number && bDen.number == aDen.number;
+            }
+            return false;
+        }
+
+        public static bool operator != (Fraction a, Fraction b) {
+            if (a.Numerator is Integer aNum && a.Denominator is Integer aDen && b.Numerator is Integer bNum && b.Denominator is Integer bDen) {
+                return !(aNum.number == bNum.number && bDen.number == aDen.number);
+            }
+            return false;
+        }
+
+        public override bool Equals(object obj) {
+            if (obj == null)
+                return false;
+            return obj is Fraction f && f == this;
+        }
+
+        public bool Equals(Fraction other) => this == other;
+
+        public static Fraction operator + (Fraction a, Fraction b) {
+            if (a.Numerator is Integer NumeratorA && a.Denominator is Integer DenominatorA && b.Numerator is Integer NumeratorB && b.Denominator is Integer DenominatorB) {
+                // ? How do I treat fractions in not simplest form? Say 50/100 + 4/8? Do I convert them to 200/400 + 200 /400 ? Or Do I first reduce them to simplest form? 
+                
+                // find least common multiple
+                // divide all members with it (if it is different from 1 and 0)
+                // add up current numerators
+                // create new fraction
+                
+                int Anum = NumeratorA.number;
+                int Aden = DenominatorA.number;
+                int Bnum = NumeratorB.number;
+                int Bden = DenominatorB.number;
+
+                if( Anum == 0 ) 
+                    return b.DeepCopy();
+                if (Bnum == 0)
+                    return a.DeepCopy();
+
+                int LCM = EuclidsLCM(Aden, Bden);
+                
+                if( Aden != LCM) 
+                    Anum *= (LCM / Aden);
+                if (Bden != LCM)
+                    Bnum *= (LCM / Bden);
+
+                return new Fraction(Aden + Bden, LCM);
+            }
+            throw new InvalidOperationException("Attempted yet undefined arithemtic of fractions with other than integer members!");
+        }
+        /*public static Fraction operator -(Fraction a, Fraction b) {
+            if (a.Numerator is Integer NumeratorA && a.Denominator is Integer DenominatorA && b.Numerator is Integer NumeratorB && b.Denominator is Integer DenominatorB) {
+                int Anum = NumeratorA.number;
+                int Aden = DenominatorA.number;
+                int Bnum = NumeratorB.number;
+                int Bden = DenominatorB.number;
+                if (Bnum == 0) return a.DeepCopy();
+                if (Anum == 0) { 
+                    // this sucks, need to figure out what to do about it
+                    // return type should be minus if I intend to stay with postive integers only 
+                    // however that results into compiler complaining about mismatch in return type 
+                    return new Minus(b.DeepCopy());
+                }
+                int LCM = EuclidsLCM(Aden, Bden);
+                if (Aden != LCM) Anum *= (LCM / Aden);
+                if (Bden != LCM) Bnum *= (LCM / Bden);
+                return new Fraction(Aden + Bden, LCM);
+            }
+            throw new InvalidOperationException("Attempted yet undefined arithemtic of fractions with other than integer members!");
+        }*/
     }
 
     public class Minus : UnaryExpression {

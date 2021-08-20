@@ -30,8 +30,8 @@ namespace Expression_DeepCopy {
         [Fact]
         public void Addition() {
             // Arrange
-            BinaryExpression add = new Addition( 5, 99);
-            BinaryExpression copy = add.DeepCopy();
+            Addition add = new( 5, 99);
+            Addition copy = add.DeepCopy();
 
             Multiplication changeA = new(2, 3);
             Division changeB = new( 4, 5);
