@@ -43,131 +43,6 @@ namespace InfiniteEngine {
         public abstract Excercise GetNext();
     }
 
-    /* Deprecated generator! s02e01 is its better version */
-    public class EGenerator_Fractions_S02E00 : ExcerciseGenerator {
-        /*  [# Possible combinations]
-         *  [24]    1. Let a, c, d be different primes from: { 2, 3, 5, 7 }
-         *  [6]     2. Let b be not prime from: { 4, 6, 8, 9, 10, 12 }
-         *  [1]     3. Let e = c*b
-         *  [2]     4. Let operator be either + or -
-         *  [1]     5. Form the expression in step 4 as described on handwritten paper
-         *  [1]     6. For step 3 leave out variable b
-         *  [4]     7. Let f extend right member in the form f/f from: { 2/2, 3/3, 5/5, 7/7 }
-         *  [1]     8. Generating variables done. Finnish all steps as described on handwritten paper.
-         *  [1]     9. Define all comments 
-         *  [1]     10.Define all isolated modifications
-         *  [∏] = 24 * 6 * 2 * 4 = 1152 combinations
-         */
-
-        static readonly int[] primes = new int[4] { 2, 3, 5, 7 };
-        static readonly int[] composites = new int[6] { 4, 6, 8, 9, 10, 12 };
-        static readonly int[] easyEnoughDenominators = new int[4] { 2, 4, 5, 10 }; // such that 1/item makes easy enough conversion for 9th graders
-
-        public EGenerator_Fractions_S02E00() : base() { }
-
-        public override Excercise GetNext() {
-            Expression[] steps = new Expression[7];
-            // string[] comments = new string[6];
-
-
-            int a, b, c, d, e, f;
-
-            // >>> 1 <<<
-            int[] randPerm = GetRandomPermutation(3);
-            a = primes[randPerm[0]];
-            c = primes[randPerm[1]];
-            d = primes[randPerm[2]];
-
-            // >>> 2 <<< 
-            b = composites[rand.Next(0, 6)];
-
-            // >>> 3 <<< 
-            e = c * b;
-
-            // >>> 4 <<<
-            bool plus = CoinFlip();
-
-            // >>> generate variable f 
-            f = easyEnoughDenominators[rand.Next(0, 4)];
-
-            // >>> step 0
-            Fraction s0_left = new(a, c);
-            double s0_divLeft = 1.0 / (double)f;
-            Fraction s0_divRight = new(e, d * f);
-
-            Division s0_right = new(s0_divLeft, s0_divRight);
-            steps[0] = plus ? new Addition(s0_left, s0_right) : new Subtraction(s0_left, s0_right);
-
-            // >>> step 1
-            Fraction s1_left = new(a, c);
-            Fraction s1_divLeft = new(1, f);
-            Fraction s1_divRight = new(e, d * f);
-
-            Division s1_right = new(s1_divLeft, s1_divRight);
-            steps[1] = plus ? new Addition(s1_left, s1_right) : new Subtraction(s1_left, s1_right);
-
-            // >>> step 2
-            Fraction s2_left = new(a, c);
-            Fraction s2_mulLeft = new(1, f);
-            Fraction s2_mulRight = new(d * f, e);
-
-            Multiplication s2_right = new(s2_mulLeft, s2_mulRight);
-            steps[2] = plus ? new Addition(s2_left, s2_right) : new Subtraction(s2_left, s2_right);
-
-            // >>> step 3
-            Fraction s3_left = new(a, c);
-            Fraction s3_right = new(d, e);
-
-            steps[3] = plus ? new Addition(s3_left, s3_right) : new Subtraction(s3_left, s3_right);
-
-            // >>> step 4
-            Fraction s4_left = new(a * b, c * b);
-            Fraction s4_right = new(d, e);
-
-            steps[4] = plus ? new Addition(s4_left, s4_right) : new Subtraction(s4_left, s4_right);
-
-            // >>> step 5
-            int numerator = plus ? a * b + d : a * b - d;
-            Fraction s5_result = new(numerator, e);
-            steps[5] = s5_result;
-
-            // >>> step 6
-            Fraction result = s5_result.DeepCopy();
-            if (s5_result.NumAndDenAreIntegers())  // they are
-                result.Reduce();
-
-            steps[6] = result;
-
-            // Now fill in all comments (popis nasledujici upravy)
-
-            Fraction ac = new(a, c);
-            Fraction bb = new(b, b);
-            Fraction ff = new(f, f);
-
-            Fraction AB = new("A", "B");
-            Fraction CD = new("C", "D");
-            Fraction DC = new("D", "C");
-            Fraction FF = new("AD", "BC");
-            /* Fraction AD = new( "AD", D');
-             Fraction BC */
-
-            string[] comments = new string[] {
-                "Převeď desetinné číslo na zlomek.",
-                $"Použij vzoreček na převod dělení dvou zlomků na jejich součin. {AB.ToHTML()}:{CD.ToHTML()} = {AB.ToHTML()}∙{DC.ToHTML()} = {FF.ToHTML()}",
-                $"Vyjádři číslo {d*f} jako součin {f} a potom vykrať {ff.ToHTML()}",
-                $"Rozšiř {ac.ToHTML()} výrazem {bb.ToHTML()}, aby jsi rozdíl dvou zlomků mohl sloučit do jednoho.",
-                "Sluč rozdíl dvou zlomků se stejným jmenovatelem do jednoho a dopočítej výsledek.",
-                "Převeď zlomek na jeho základní tvar. Rozlož čitatele i jmenovatele na prvočinitele. Koukni se, jestli můžeme nějaké vykrátit. (Bacha, zlomek již v základním tvaru být může.)",
-                "Hotovo 😎😎"
-            };
-            // ! do html dodat nějak formatování zlomků
-            // po otestovani aktulanich veci dodej Expression[][] isolatedModifications
-            Expression[][] isolatedModifications = new Expression[2][];
-            EFractions_S02E00 nextExcercise = new(steps, comments, isolatedModifications);
-            return nextExcercise;
-        }
-    }
-
     public class EGenerator_Fractions_S02E01 : ExcerciseGenerator {
         public EGenerator_Fractions_S02E01() : base() {
             FractionsInSimplestForm fsf = new();
@@ -442,3 +317,130 @@ namespace InfiniteEngine {
         }
     }
 }
+
+
+
+/* Deprecated generator! s02e01 is its better version */
+/*public class EGenerator_Fractions_S02E00 : ExcerciseGenerator {
+    /*  [# Possible combinations]
+     *  [24]    1. Let a, c, d be different primes from: { 2, 3, 5, 7 }
+     *  [6]     2. Let b be not prime from: { 4, 6, 8, 9, 10, 12 }
+     *  [1]     3. Let e = c*b
+     *  [2]     4. Let operator be either + or -
+     *  [1]     5. Form the expression in step 4 as described on handwritten paper
+     *  [1]     6. For step 3 leave out variable b
+     *  [4]     7. Let f extend right member in the form f/f from: { 2/2, 3/3, 5/5, 7/7 }
+     *  [1]     8. Generating variables done. Finnish all steps as described on handwritten paper.
+     *  [1]     9. Define all comments 
+     *  [1]     10.Define all isolated modifications
+     *  [∏] = 24 * 6 * 2 * 4 = 1152 combinations
+     *//*
+
+    static readonly int[] primes = new int[4] { 2, 3, 5, 7 };
+    static readonly int[] composites = new int[6] { 4, 6, 8, 9, 10, 12 };
+    static readonly int[] easyEnoughDenominators = new int[4] { 2, 4, 5, 10 }; // such that 1/item makes easy enough conversion for 9th graders
+
+    public EGenerator_Fractions_S02E00() : base() { }
+
+    public override Excercise GetNext() {
+        Expression[] steps = new Expression[7];
+        // string[] comments = new string[6];
+
+
+        int a, b, c, d, e, f;
+
+        // >>> 1 <<<
+        int[] randPerm = GetRandomPermutation(3);
+        a = primes[randPerm[0]];
+        c = primes[randPerm[1]];
+        d = primes[randPerm[2]];
+
+        // >>> 2 <<< 
+        b = composites[rand.Next(0, 6)];
+
+        // >>> 3 <<< 
+        e = c * b;
+
+        // >>> 4 <<<
+        bool plus = CoinFlip();
+
+        // >>> generate variable f 
+        f = easyEnoughDenominators[rand.Next(0, 4)];
+
+        // >>> step 0
+        Fraction s0_left = new(a, c);
+        double s0_divLeft = 1.0 / (double)f;
+        Fraction s0_divRight = new(e, d * f);
+
+        Division s0_right = new(s0_divLeft, s0_divRight);
+        steps[0] = plus ? new Addition(s0_left, s0_right) : new Subtraction(s0_left, s0_right);
+
+        // >>> step 1
+        Fraction s1_left = new(a, c);
+        Fraction s1_divLeft = new(1, f);
+        Fraction s1_divRight = new(e, d * f);
+
+        Division s1_right = new(s1_divLeft, s1_divRight);
+        steps[1] = plus ? new Addition(s1_left, s1_right) : new Subtraction(s1_left, s1_right);
+
+        // >>> step 2
+        Fraction s2_left = new(a, c);
+        Fraction s2_mulLeft = new(1, f);
+        Fraction s2_mulRight = new(d * f, e);
+
+        Multiplication s2_right = new(s2_mulLeft, s2_mulRight);
+        steps[2] = plus ? new Addition(s2_left, s2_right) : new Subtraction(s2_left, s2_right);
+
+        // >>> step 3
+        Fraction s3_left = new(a, c);
+        Fraction s3_right = new(d, e);
+
+        steps[3] = plus ? new Addition(s3_left, s3_right) : new Subtraction(s3_left, s3_right);
+
+        // >>> step 4
+        Fraction s4_left = new(a * b, c * b);
+        Fraction s4_right = new(d, e);
+
+        steps[4] = plus ? new Addition(s4_left, s4_right) : new Subtraction(s4_left, s4_right);
+
+        // >>> step 5
+        int numerator = plus ? a * b + d : a * b - d;
+        Fraction s5_result = new(numerator, e);
+        steps[5] = s5_result;
+
+        // >>> step 6
+        Fraction result = s5_result.DeepCopy();
+        if (s5_result.NumAndDenAreIntegers())  // they are
+            result.Reduce();
+
+        steps[6] = result;
+
+        // Now fill in all comments (popis nasledujici upravy)
+
+        Fraction ac = new(a, c);
+        Fraction bb = new(b, b);
+        Fraction ff = new(f, f);
+
+        Fraction AB = new("A", "B");
+        Fraction CD = new("C", "D");
+        Fraction DC = new("D", "C");
+        Fraction FF = new("AD", "BC");
+        /* Fraction AD = new( "AD", D');
+         Fraction BC *//*
+
+        string[] comments = new string[] {
+            "Převeď desetinné číslo na zlomek.",
+            $"Použij vzoreček na převod dělení dvou zlomků na jejich součin. {AB.ToHTML()}:{CD.ToHTML()} = {AB.ToHTML()}∙{DC.ToHTML()} = {FF.ToHTML()}",
+            $"Vyjádři číslo {d*f} jako součin {f} a potom vykrať {ff.ToHTML()}",
+            $"Rozšiř {ac.ToHTML()} výrazem {bb.ToHTML()}, aby jsi rozdíl dvou zlomků mohl sloučit do jednoho.",
+            "Sluč rozdíl dvou zlomků se stejným jmenovatelem do jednoho a dopočítej výsledek.",
+            "Převeď zlomek na jeho základní tvar. Rozlož čitatele i jmenovatele na prvočinitele. Koukni se, jestli můžeme nějaké vykrátit. (Bacha, zlomek již v základním tvaru být může.)",
+            "Hotovo 😎😎"
+        };
+        // ! do html dodat nějak formatování zlomků
+        // po otestovani aktulanich veci dodej Expression[][] isolatedModifications
+        Expression[][] isolatedModifications = new Expression[2][];
+        EFractions_S02E00 nextExcercise = new(steps, comments, isolatedModifications);
+        return nextExcercise;
+    }
+}*/
