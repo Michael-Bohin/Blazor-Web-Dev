@@ -225,7 +225,7 @@ namespace InfiniteEngine {
         
         private Excercise GetExactlyThis(Fraction A, Fraction B, Fraction C) {
             Expression[] steps = CreateSteps(A, B, C);
-            string[] comments = CreateComments(A, B, C);
+            string[] comments = CreateComments(A, B, C, steps);
             Expression[][] isolatedModifications = new Expression[2][];
 
             EFractions_S02E01 result = new(steps, comments, isolatedModifications);
@@ -310,17 +310,37 @@ namespace InfiniteEngine {
             return steps;
         }
 
-        public string[] CreateComments(Fraction A, Fraction B, Fraction C) {
+        public string[] CreateComments(Fraction A, Fraction B, Fraction C, Expression[] steps) {
+            Fraction AB = new("A", "B");
+            Fraction CD = new("C", "D");
+            Fraction DC = new("D", "C");
+            Fraction FF = new("AD", "BC");
+
+            string sloveso = steps[0] is Addition ? "sečti" : "odečti";
+            Integer i = C.Denominator as Integer;
+            Integer j = B.Denominator as Integer;
+            int Cden = i.number;
+            int Bden = j.number;
+
+            Fraction inverseC = new(C.Denominator, C.Numerator);
+            Fraction tvarVhodneJednicky = new(Cden, Bden);
+            Fraction roznasobenaVhodnaJednicka = new(new Multiplication( Cden / Bden, Cden / (Cden / Bden)), B.Denominator);
+
+            BinaryExpression stepThree = steps[3] as BinaryExpression;
+            BinaryExpression stepFour = steps[4] as BinaryExpression;
+            Fraction leftFour = stepFour.leftOperand as Fraction;
+            Fraction rightFour = stepFour.rightOperand as Fraction;
             string[] comments = new string[8] {
-                "Převeď B na reprezentaci zlomkem.",
-                "Přetoč dělení zlomků B : C na jejich násobení.",
-                "V součinu B * (C.den/C.num) Vykrať jedničku ve tvaru C.den/B.den a poté zapiš součin jako jeden zlomek.",
-                "Není-li pravý člen v základním tvaru zlomku, převeď ho na něj.",
-                "Rozšiř oba zlomky na jmenovatel rovný nejmenšímu společnmu násobku jejich jmenovatelů.",
-                "Spoj oba zlomky do jednoho a sečti / odečti je.",
-                "Není-li výsledek v základním tvaru zlomku, převeď ho na něj.",
+                $"Převeď číslo {B.ToDouble()} na reprezentaci zlomkem.",
+                $"Přetoč dělení zlomků {B.ToHTML()} : {C.ToHTML()} na jejich násobení.<br>Použij vzoreček: {AB.ToHTML()} : {CD.ToHTML()} = {AB.ToHTML()} ∙ {DC.ToHTML()} = {FF.ToHTML()}",
+                $"V součinu {B.ToHTML()} ∙ {inverseC.ToHTML()} Vykrať jedničku ve tvaru {tvarVhodneJednicky.ToHTML()} = {roznasobenaVhodnaJednicka.ToHTML()}.<br>Poté zapiš součin jako jeden zlomek.",
+                $"Rozkladem na prvočinitele zkontroluj, jestli je zlomek {stepThree.rightOperand.ToHTML()} v zakladním tvaru. Pokud ne, převeď ho na něj.",
+                $"Najdi nejmenší společný násobek jmenovatelů {leftFour.Denominator.ToHTML()} a {rightFour.Denominator.ToHTML()}<br>Potom oba zlomky rozšiř na zlomky o tomto základu.",
+                $"Spoj oba zlomky do jednoho a {sloveso} je.",
+                $"Rozkladem na prvočinitele zkontroluj, jestli je zlomek A/B v zakladním tvaru. Pokud ne, převeď ho na něj.",
                 "Hotovo. 😎😎"
             };
+
             return comments;
         }
 
