@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HTML View", "CLI View of In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xUnit Tests", "xUnit Tests\xUnit Tests.csproj", "{F5D9E0C4-EDF3-45ED-ABCC-A308F823830A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Development ConsoleView", "Development ConsoleView\Development ConsoleView.csproj", "{93E81606-F024-4AE6-BEFB-214E8B8E2E15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleView Development", "Development ConsoleView\ConsoleView Development.csproj", "{93E81606-F024-4AE6-BEFB-214E8B8E2E15}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B4313A7B-554B-49D0-9BEE-988AAB7E2BEE}"
 	ProjectSection(SolutionItems) = preProject

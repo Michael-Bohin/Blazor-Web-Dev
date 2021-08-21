@@ -16,7 +16,7 @@ namespace InfiniteEngine {
     }
 
     public class FractionsInSimplestForm : ICombinatoricStructureGenerator<Fraction> {
-        Random rand;
+        readonly Random rand;
         public FractionsInSimplestForm() {
             rand = new();
         }

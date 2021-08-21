@@ -67,7 +67,7 @@ namespace InfiniteEngine {
 
         public override string ToHTML() => $"{leftOperand.ToHTML()} {SignRepresentation} {rightOperand.ToHTML()}";
 
-     /*   public override BinaryExpression DeepCopy() {
+        public override abstract BinaryExpression DeepCopy();/* {
             BinaryExpression other = (BinaryExpression)this.MemberwiseClone();
             other.leftOperand = leftOperand.DeepCopy();
             other.rightOperand = rightOperand.DeepCopy();
@@ -116,7 +116,11 @@ namespace InfiniteEngine {
         public override Addition DeepCopy() {
             Addition other = (Addition)this.MemberwiseClone();
             other.leftOperand = leftOperand.DeepCopy();
-            other.rightOperand = rightOperand.DeepCopy();
+            if (rightOperand == null) {
+                other.rightOperand = null;
+            } else {
+                other.rightOperand = rightOperand.DeepCopy();
+            }
             return other;
         }
     }
@@ -143,7 +147,12 @@ namespace InfiniteEngine {
         public override Subtraction DeepCopy() {
             Subtraction other = (Subtraction)this.MemberwiseClone();
             other.leftOperand = leftOperand.DeepCopy();
-            other.rightOperand = rightOperand.DeepCopy();
+            if (rightOperand == null) {
+                other.rightOperand = null;
+            } else {
+                other.rightOperand = rightOperand.DeepCopy();
+            }
+            
             return other;
         }
     }
@@ -235,6 +244,12 @@ namespace InfiniteEngine {
         // it nessecary to throw in some tricks here, since drawing proper Fractions in html is not trivial or inbuilt into web browsers
         public override string ToHTML() => @"<div class=""frac""><span>" + Numerator.ToHTML() + @"</span><span class=""symbol"">/</span><span class=""bottom"">" + Denominator.ToHTML() + @"</span></div>";
 
+        public double ToDouble() {
+            if (Numerator is Integer i && Denominator is Integer j)
+                return (double) i.number / (double) j.number;
+            throw new NotImplementedException("Converting other classes from object tree other than Integers is not yet supported.");
+        }
+
         public Expression Numerator { // citatel
             get => leftOperand;
             set => leftOperand = value;
@@ -258,7 +273,7 @@ namespace InfiniteEngine {
         // so first check it does whether num and den are Integers, if not returns doing nothing 
         // if both are integers, it gets prime factorization 
         // and than creates multiplication expressions that represent it
-        // for integers 0 and 1  2  3 it keeps the integer intact 
+        // for integers 0 and 1  2  3 it keeps the integer intact
 
         public void PrimeFactorization() {
             if (Numerator is Integer num && Denominator is Integer den) {
@@ -392,7 +407,7 @@ namespace InfiniteEngine {
                 if (Bden != LCM)
                     Bnum *= (LCM / Bden);
 
-                return new Fraction(Aden + Bden, LCM);
+                return new Fraction(Anum + Bnum, LCM);
             }
             throw new InvalidOperationException("Attempted yet undefined arithemtic of fractions with other than integer members!");
         }
@@ -416,6 +431,8 @@ namespace InfiniteEngine {
             }
             throw new InvalidOperationException("Attempted yet undefined arithemtic of fractions with other than integer members!");
         }*/
+
+        public override int GetHashCode() => Numerator.GetHashCode() * Denominator.GetHashCode() + Denominator.GetHashCode() ; // to plus tam je pro odliseni 'inverznich' zlomku
     }
 
     public class Minus : UnaryExpression {
@@ -439,6 +456,10 @@ namespace InfiniteEngine {
         public override string ToHTML() => number.ToString();
 
         public override Integer DeepCopy() => (Integer) this.MemberwiseClone();
+        public override int GetHashCode() => number.GetHashCode();
+        /*
+         !! doimplementit equals, operatory rovnosti nerovnosti a aritmetiky !!
+         */
     }
 
     public class RealNumber : Constant {
