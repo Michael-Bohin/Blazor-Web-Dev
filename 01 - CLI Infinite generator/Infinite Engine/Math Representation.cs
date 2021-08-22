@@ -278,6 +278,8 @@ namespace InfiniteEngine {
         public void PrimeFactorization() {
             if (Numerator is Integer num && Denominator is Integer den) {
                 int n = num.number;
+                if (n == 0)
+                    return;  // -> making prim factors of zero does not make much sense
                 int d = den.number;
                 List<int> primesOfNum = GetPrimeFactors(n);
                 List<int> primesOfDen = GetPrimeFactors(d);
@@ -329,7 +331,7 @@ namespace InfiniteEngine {
 
         public bool NumAndDenAreIntegers() => Numerator is Integer && Denominator is Integer;
 
-        public bool IsSimplestForm() => Numerator is Integer num && Denominator is Integer den && EuclidsGCD(num.number, den.number) == 1;
+        public bool IsSimplestForm() => Numerator is Integer num && Denominator is Integer den && EuclidsGCD(Math.Abs(num.number), Math.Abs(den.number)) == 1;
 
         public static int EuclidsGCD(int a, int b) { // euclids algorithm for greatest common divisor 
             if (b == 0)
@@ -439,7 +441,7 @@ namespace InfiniteEngine {
         public Minus(int i) { operand = new Integer(i); }
         public Minus(double d) { operand = new RealNumber(d); }
         public Minus(Expression e) { operand = e; }
-        protected override string SignRepresentation => "−";
+        protected override string SignRepresentation => "− ";
 
        /* public override string ToHTML() {
             throw new NotImplementedException();

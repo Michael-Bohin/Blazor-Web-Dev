@@ -26,16 +26,37 @@ namespace CLI_View_of_Infinite_Engine_library {
             /**/
 
             /**/
+            Dificulty[] levels = new Dificulty[5] { Dificulty.MENSI, Dificulty.PRIJIMACKY, Dificulty.VETSI, Dificulty.OBROVSKA, Dificulty.CPU };
+            foreach(Dificulty d in levels) {
+                Console.WriteLine($"Initiating Writin Dificulty: {d}");
+                EGenerator_Fractions_S02E01 egen = new(d);
+                List<Excercise> excercises = new();
+                for (int i = 0; i < 25; i++)
+                    foreach (Excercise e in egen.GetEight())
+                        excercises.Add(e);
+
+                Excercise[] arrayExcercises = excercises.ToArray();
+
+                HTMLWriter hw = new();
+                hw.CreateFile($"InfiniteEngine-Fraction-S0201-GetRandom200-Level-{d}.html", arrayExcercises);
+            }
+            /**/
+
+            /*/
             EGenerator_Fractions_S02E01 egen = new();
             List<Excercise> excercises = new();
-            for (int i = 0; i < 125; i++)
-                foreach(Excercise e in egen.GetEight())
-                    excercises.Add(e);
+
+            Fraction A = new(1, 3);
+            Fraction B = new(1, 2);
+            Fraction C = new(23, 26);
+            bool plus = false;
+            Excercise e = egen.UnsafeGetExactlyThis(A,B,C,plus);
+            excercises.Add(e);
 
             Excercise[] arrayExcercises = excercises.ToArray();
-
             HTMLWriter hw = new();
-            hw.CreateFile($"InfiniteEngine_Fraction_S0201_GetRandom1000.html", arrayExcercises);
+            hw.CreateFile($"InfiniteEngine-Fraction-S0201-DebugConcreteExcercise-01.html", arrayExcercises);
+
             /**/
             WriteLine("Job done. :)");
         }
@@ -132,7 +153,7 @@ namespace CLI_View_of_Infinite_Engine_library {
                 sb.Append(TableHeader);
                 for (int i = 0; i < e.Steps.Length; i++) {
                     sb.Append("<tr><td>" + i + @".</td><td class=""text-blue"">" + e.Steps[i].ToHTML() + "</td>");
-                    sb.Append(@"<td class=""text-green text-left"">" + e.Comments[i] + @"</td><td class=""text-blue""></td></tr>");
+                    sb.Append(@"<td class=""text-green text-left"">" + e.Comments[i] + @"</td><td class=""text-blue"">" + e.IsolatedModifications[i] + "</td></tr>");
                 }
                 sb.Append(TableFooter);
             }
@@ -140,12 +161,5 @@ namespace CLI_View_of_Infinite_Engine_library {
             using StreamWriter sw = new(filePath);
             sw.Write( sb.ToString() );
         }
-        /*
-        private string GenerateTable(Excercise e, StringBuilder ) {
-            for (int i = 0; i < e.steps.Length; i++) {
-                sb.Append("<tr><td>" + i + @".</td><td class=""text-blue"">" + e.steps[i].ToHTML() + "</td>");
-                sb.Append(@"<td class=""text-green text-left"">" + e.comments[i] + @"</td><td class=""text-blue""></td></tr>");
-            }
-        }*/
     }
 }
