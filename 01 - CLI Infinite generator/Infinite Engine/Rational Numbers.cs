@@ -26,11 +26,11 @@ namespace InfiniteEngine {
         void Inverse();  // throws MathHellException, if numerator is 0
         Q GetInverse();
 
+        bool IsEquivalent(Q other); // comparison based on comparing simplest forms of two rational numbers
+
         int[] NumeratorPrimeFactors();
         int[] DenominatorPrimeFactors();
 
-        // + I am expecting to overload arithmetic operators, equality operatos, comparing operators  and the hashcode and equals method. 
-        // -> figure out the correct name of the interface for this
     }
 
     interface IRationalArithmetic {
@@ -39,8 +39,6 @@ namespace InfiniteEngine {
         Q Multiply(Q multiplier);
         Q Divide(Q divisor);
     }
-
-    //https://docs.microsoft.com/en-us/dotnet/api/system.iequatable-1?view=net-5.0
 
     // Fraction with the constraint of holding some integer as numerator and denominator
     // Addition constraint is denominator can not be zero. Therefore, it is the set Q. 
@@ -76,7 +74,8 @@ namespace InfiniteEngine {
         public override Q DeepCopy() => (Q)this.MemberwiseClone();
         public override string ToHTML() => @"<div class=""frac""><span>" + _num.ToString() + @"</span><span class=""symbol"">/</span><span class=""bottom"">" + _den.ToString() + @"</span></div>";
 
-        // interface IRationalNumber:
+        /// interface IRationalNumber ///
+
         public double ToDouble() => (double)_num / (double)_den;
 
         // math analysis definition of simplest form constraints denominator to be from natural numbers
@@ -127,9 +126,17 @@ namespace InfiniteEngine {
         }
 
         public Q GetInverse() {
-            Q other = SelfCopy();
+            Q other = Copy();
             other.Inverse();
             return other;
+        }
+
+        public bool IsEquivalent(Q other) {
+            Q a = Copy();
+            Q b = other.Copy();
+            a.Reduce();
+            b.Reduce();
+            return a.Num == b.Num && a.Den == b.Den;
         }
 
         // ! treats numerator as absolute value
@@ -160,10 +167,10 @@ namespace InfiniteEngine {
             return primeFactors.ToArray();
         }
 
-        // interface IRationalArithmetic
+        /// interface IRationalArithmetic ///
+
         // all implementations first convert both operand to simplest form
-        private Q SelfCopy() => new(_num, _den);
-        private Q Copy(Q other) => new(other.Num, other.Den);
+        private Q Copy() => new(_num, _den);
 
         public Q Add(Q addend) {
             // a/b + c/d = (ad+bc)/bd -> can be shortcuted using finding LCM of simplest forms 
@@ -203,6 +210,77 @@ namespace InfiniteEngine {
                 return new(0, 1); // simplest form of zero , avoids MathHellException
             return Multiply( divisor.GetInverse() );
         }
+
+        /// interface IEquatable<RationalNumber> ///
+        /// 
+        /// https://docs.microsoft.com/en-us/dotnet/api/system.iequatable-1?view=net-5.0
+        /// 
+        /// define: 
+        /// bool Equals(Q other);
+        /// override bool Equals(Object obj)
+        /// override int GetHashCode();
+        /// static bool operator ==(Q q1, Q q2);
+        /// static bool opeartor !=(Q q1, Q q2);
+        ///
+        /// math note: 
+        /// In this code I will consider two different expansions of same simplest form different. 
+        /// As well as simplest form will be considered different from its expansion. 
+        /// 
+        /// interface IRationalNumber covers the other comparison semantic where 2/4 is equal to 1/2
+        /// with the bool IsEquivalent() method
+
+        public bool Equals(Q other) => other != null && _num == other.Num && _den == other.Den;
+
+        public override bool Equals(Object obj) => obj != null && obj is Q rationalObj && Equals(rationalObj);
+
+        // avoid inverse fractions returning same product 
+        public override int GetHashCode() => _num.GetHashCode() * _den.GetHashCode() + _num.GetHashCode();
+
+
+        public static bool operator ==(Q a, Q b) => a != null && a.Equals(b);
+
+        public static bool operator !=(Q a, Q b) {
+            if (a == null || b == null)
+                return false;
+            
+            return !(a.Equals(b));
+        }
+
+        /// interface IComparable<RationalNumber> ///
+        /// 
+        /// https://docs.microsoft.com/en-us/dotnet/api/system.icomparable-1?view=net-5.0
+        /// 
+        /// define: 
+        /// bool CompareTo(Q other); -> negative: this < other, zero: this == equal, positive: this > other. 
+        /// op_GreaterThan
+        /// op_GreaterThanOrEqual
+        /// op_LessThan
+        /// op_LessThanOrEqual
+        /// 
+
+        public int CompareTo(Q other) {
+            // If other is not a valid object reference, this instance is greater.
+            if (other == null) return 1;
+
+            // reduce both to simplest form 
+            // find least common multiple of both denominators
+            // extend both fraction to it 
+            // compare only numerators :) 
+            Q a = GetSimplestForm();
+            Q b = other.GetSimplestForm();
+            int LCM = M.EuclidsLCM(a.Den, b.Den);
+            if (LCM != a.Den)
+                a.Expand(LCM / a.Den);
+            if (LCM != b.Den)
+                b.Expand(LCM / b.Den);
+
+            return a.Num.CompareTo(b.Num);
+        }
+
+        public static bool operator >(Q operand1, Q operand2) => operand1.CompareTo(operand2) > 0;
+        public static bool operator <(Q operand1, Q operand2) => operand1.CompareTo(operand2) < 0;
+        public static bool operator >=(Q operand1, Q operand2) => operand1.CompareTo(operand2) >= 0;
+        public static bool operator <=(Q operand1, Q operand2) => operand1.CompareTo(operand2) <= 0;
     }
 
     /*/

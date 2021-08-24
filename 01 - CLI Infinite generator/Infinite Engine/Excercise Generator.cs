@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace InfiniteEngine {
 
     public abstract class ExcerciseGenerator {
-        protected Random rand = new Random();
+        protected Random rand = new();
         public ExcerciseGenerator() { }
 
         // generates random permutation of integers from 0 to ( count - 1 )
@@ -169,7 +169,7 @@ namespace InfiniteEngine {
             int Cden = i.number;
             int Bden = j.number;
 
-            Fraction meziKrok = new Fraction( new Multiplication( B.Numerator, C.Denominator), new Multiplication( B.Denominator, C.Numerator) );
+            Fraction meziKrok = new( new Multiplication( B.Numerator, C.Denominator), new Multiplication( B.Denominator, C.Numerator) );
             Fraction meziKrok02 = meziKrok.DeepCopy();
             meziKrok02.Numerator = new Multiplication(B.Numerator, new Multiplication(Cden / (Cden / Bden), Cden / Bden));
 
@@ -244,7 +244,7 @@ namespace InfiniteEngine {
             prvoCinitele.PrimeFactorization();
             isoMods[6] = $"{predVysledek.ToHTML()} = ";
             if (finalNum < 0) {
-                Minus negativePrvoCinitele = new Minus(prvoCinitele);
+                Minus negativePrvoCinitele = new(prvoCinitele);
                 isoMods[6] += negativePrvoCinitele.ToHTML();
             } else {
                 isoMods[6] += prvoCinitele.ToHTML();
