@@ -2,36 +2,6 @@
 using System.Collections.Generic;
 
 namespace InfiniteEngine {
-    /*     Intention:
-     *     Comments should contain clear explanation of each step of the solution to children
-     * therefore, there will always be StepsCount - 1 comments, unless there is a bug or 
-     * excercise creator is probably lazy and not responsible.
-     *     Each comment should also clearly mention the part of expression that changed - 
-     * isolate the change visually and discard not changed part of the expression. 
-     *     For web and unity views, it will be important to develop interactive and visual 
-     * explanations.
-     */
-
-    /*     Division having dual definition explanation: 
-     *     Division and Fraction as part of math is the same thing and so if it only 
-     * depended on math only one class would be required. However in the field of mathematics use
-     * of Fractions is so central, that specific definitions set, invented by humans, has evolved
-     * that means humans use two names for division Divison and Fraction. Division in Czech
-     * textbooks has two different operators: '/' and ':'. '/' means Fraction and ':' means Divi-
-     * sion. Both of them are the same arithmetic operation. 
-     * 
-     *     I will define both classes in math representation too. My point is to improve peoples'
-     * user experience learning math. This comes at the cost of writing repetitive code: arithemtic
-     * operation division will have two different classes that are describing it Fraction and Division.
-     * 
-     *     Question/Observation: Wouldn't it be easier for kids to understand the concept if the naming 
-     * duality would be removed?
-     */
-
-    /* To do list: 
-     * 1. Rethink how to approach creating deepcopy of Variable class
-     * 2. Double check that Fraction's redirect to left right operand doesn't cause corner case bugs.
-     */
     public abstract class Expression {
         public override abstract string ToString(); // override object.ToString so that compiler forces own implementation 
         public abstract string ToHTML();            // using predefined css tricks for fractions
@@ -67,12 +37,7 @@ namespace InfiniteEngine {
 
         public override string ToHTML() => $"{leftOperand.ToHTML()} {SignRepresentation} {rightOperand.ToHTML()}";
 
-        public override abstract BinaryExpression DeepCopy();/* {
-            BinaryExpression other = (BinaryExpression)this.MemberwiseClone();
-            other.leftOperand = leftOperand.DeepCopy();
-            other.rightOperand = rightOperand.DeepCopy();
-            return other;
-        }*/
+        public override abstract BinaryExpression DeepCopy();
     }
     public abstract class UnaryExpression : Expression {
         public Expression operand;
@@ -358,9 +323,6 @@ namespace InfiniteEngine {
 
 
         /* Equality and arithmetic operators */
-
-        /* At first I will only be using it for integer comparison, I will later spread it across the entire math object tree. */
-        /* !!! By this logic (for teaching purposes) Fraction of same simplest form with different repr are considered different, despite their math equality. */
         public static  bool operator == (Fraction a, Fraction b) {
             if(a.Numerator is Integer aNum && a.Denominator is Integer aDen && b.Numerator is Integer bNum && b.Denominator is Integer bDen) {
                 return aNum.number == bNum.number && bDen.number == aDen.number;
@@ -386,7 +348,6 @@ namespace InfiniteEngine {
         public static Fraction operator + (Fraction a, Fraction b) {
             if (a.Numerator is Integer NumeratorA && a.Denominator is Integer DenominatorA && b.Numerator is Integer NumeratorB && b.Denominator is Integer DenominatorB) {
                 // ? How do I treat fractions in not simplest form? Say 50/100 + 4/8? Do I convert them to 200/400 + 200 /400 ? Or Do I first reduce them to simplest form? 
-                
                 // find least common multiple
                 // divide all members with it (if it is different from 1 and 0)
                 // add up current numerators
@@ -413,26 +374,6 @@ namespace InfiniteEngine {
             }
             throw new InvalidOperationException("Attempted yet undefined arithemtic of fractions with other than integer members!");
         }
-        /*public static Fraction operator -(Fraction a, Fraction b) {
-            if (a.Numerator is Integer NumeratorA && a.Denominator is Integer DenominatorA && b.Numerator is Integer NumeratorB && b.Denominator is Integer DenominatorB) {
-                int Anum = NumeratorA.number;
-                int Aden = DenominatorA.number;
-                int Bnum = NumeratorB.number;
-                int Bden = DenominatorB.number;
-                if (Bnum == 0) return a.DeepCopy();
-                if (Anum == 0) { 
-                    // this sucks, need to figure out what to do about it
-                    // return type should be minus if I intend to stay with postive integers only 
-                    // however that results into compiler complaining about mismatch in return type 
-                    return new Minus(b.DeepCopy());
-                }
-                int LCM = EuclidsLCM(Aden, Bden);
-                if (Aden != LCM) Anum *= (LCM / Aden);
-                if (Bden != LCM) Bnum *= (LCM / Bden);
-                return new Fraction(Aden + Bden, LCM);
-            }
-            throw new InvalidOperationException("Attempted yet undefined arithemtic of fractions with other than integer members!");
-        }*/
 
         public override int GetHashCode() => Numerator.GetHashCode() * Denominator.GetHashCode() + Denominator.GetHashCode() ; // to plus tam je pro odliseni 'inverznich' zlomku
     }
@@ -442,10 +383,6 @@ namespace InfiniteEngine {
         public Minus(double d) { operand = new RealNumber(d); }
         public Minus(Expression e) { operand = e; }
         protected override string SignRepresentation => "− ";
-
-       /* public override string ToHTML() {
-            throw new NotImplementedException();
-        }*/
     }
 
     public class Integer : Constant {
@@ -459,9 +396,6 @@ namespace InfiniteEngine {
 
         public override Integer DeepCopy() => (Integer) this.MemberwiseClone();
         public override int GetHashCode() => number.GetHashCode();
-        /*
-         !! doimplementit equals, operatory rovnosti nerovnosti a aritmetiky !!
-         */
     }
 
     public class RealNumber : Constant {
