@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using InfiniteEngine;
 
 namespace Development_ConsoleView {
+    using Q = RationalNumber;
     class ConsoleView {
         static void Main() {
             WriteLine("What shall the console do?");
@@ -13,9 +14,38 @@ namespace Development_ConsoleView {
             switch(option) {
                 case 1 : 
                     EnumerateAllFractions(); break;
+                case 2:
+                    DebugQArithmetic(); break;
                 default:
                     WriteLine("Sorry didn't find any match. Bye."); break;
             }
+        }
+
+        static void PrintMenu() {
+            WriteLine(@"
+                Option '1' : Enumerate CSG.AllFractionsInSimplestForm(int from, int to)
+                Option '2' : Debug RationalNumber Arithemtic 
+            ");
+        }
+
+        private static void DebugQArithmetic() {
+            Q a = new(1, 2);
+            Q b = new(3, 4);
+            Q c = new(2, 11);
+
+            WriteLine("Before operations:");
+            WriteLine($"a: {a}");
+            WriteLine($"b: {b}");
+            WriteLine($"c: {c}");
+
+            Q d = a + b;
+            Q e = b + c;
+            Q f = a + c;
+
+            WriteLine("After operations:");
+            WriteLine($"d: {d}");
+            WriteLine($"e: {e}");
+            WriteLine($"f: {f}");
         }
 
         private static void EnumerateAllFractions() {
@@ -43,6 +73,8 @@ namespace Development_ConsoleView {
                  counter++;
                  WriteLine(counter + " >> " + f.ToString());
              }*/
+
+            
             List<Fraction> mnozinaB = new();
             mnozinaB.Add( new Fraction(1, 10));
             mnozinaB.Add(new Fraction(1, 5));
@@ -91,13 +123,11 @@ namespace Development_ConsoleView {
                     }
                 }
             }
+
+            
         }
 
-        static void PrintMenu() {
-            WriteLine(@"
-                Option '1' : Enumerate CSG.AllFractionsInSimplestForm(int from, int to)
-            ");
-        }
+        
     }
 
     

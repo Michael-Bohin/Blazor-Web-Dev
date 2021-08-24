@@ -5,17 +5,11 @@ VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infinite Engine", "Infinite Engine\Infinite Engine.csproj", "{2B28513E-7974-4C7C-A17A-5F6117C62F46}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HTML View", "CLI View of Infinite Engine library\HTML View.csproj", "{D7ACC55D-B73C-468F-8F03-F935C7C97DED}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xUnit Tests", "xUnit Tests\xUnit Tests.csproj", "{F5D9E0C4-EDF3-45ED-ABCC-A308F823830A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleView Development", "Development ConsoleView\ConsoleView Development.csproj", "{93E81606-F024-4AE6-BEFB-214E8B8E2E15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HTML View", "HTML View\HTML View.csproj", "{BCFB75D6-630E-45EE-906D-ECFD1DE8348E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B4313A7B-554B-49D0-9BEE-988AAB7E2BEE}"
-	ProjectSection(SolutionItems) = preProject
-		Dokumentace vývoje\Pseudokod generatoru.pdf = Dokumentace vývoje\Pseudokod generatoru.pdf
-		Dokumentace vývoje\Seznam prikladu.pdf = Dokumentace vývoje\Seznam prikladu.pdf
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleView", "Console View\ConsoleView.csproj", "{0B3E5D0A-F619-4D7D-BD6E-E94CEAD6A37D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,18 +21,18 @@ Global
 		{2B28513E-7974-4C7C-A17A-5F6117C62F46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B28513E-7974-4C7C-A17A-5F6117C62F46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B28513E-7974-4C7C-A17A-5F6117C62F46}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D7ACC55D-B73C-468F-8F03-F935C7C97DED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D7ACC55D-B73C-468F-8F03-F935C7C97DED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D7ACC55D-B73C-468F-8F03-F935C7C97DED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D7ACC55D-B73C-468F-8F03-F935C7C97DED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F5D9E0C4-EDF3-45ED-ABCC-A308F823830A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F5D9E0C4-EDF3-45ED-ABCC-A308F823830A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5D9E0C4-EDF3-45ED-ABCC-A308F823830A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5D9E0C4-EDF3-45ED-ABCC-A308F823830A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{93E81606-F024-4AE6-BEFB-214E8B8E2E15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{93E81606-F024-4AE6-BEFB-214E8B8E2E15}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{93E81606-F024-4AE6-BEFB-214E8B8E2E15}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{93E81606-F024-4AE6-BEFB-214E8B8E2E15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCFB75D6-630E-45EE-906D-ECFD1DE8348E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCFB75D6-630E-45EE-906D-ECFD1DE8348E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCFB75D6-630E-45EE-906D-ECFD1DE8348E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCFB75D6-630E-45EE-906D-ECFD1DE8348E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B3E5D0A-F619-4D7D-BD6E-E94CEAD6A37D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B3E5D0A-F619-4D7D-BD6E-E94CEAD6A37D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B3E5D0A-F619-4D7D-BD6E-E94CEAD6A37D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B3E5D0A-F619-4D7D-BD6E-E94CEAD6A37D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

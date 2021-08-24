@@ -45,7 +45,7 @@ namespace InfiniteEngine {
     }
 
     public class EGenerator_Fractions_S02E01 : ExcerciseGenerator {
-        Dificulty level;
+        readonly Dificulty level;
         public EGenerator_Fractions_S02E01() : base() { }
         public EGenerator_Fractions_S02E01(Dificulty level) : base() {
             this.level = level;
@@ -142,9 +142,9 @@ namespace InfiniteEngine {
 
         // this can brake some pedagogic logic, since user can state fractions without any limit, if called directly
         // becasue you can call itt directly but through the Unsafe prefix
-        public Excercise UnsafeGetExactlyThis(Fraction A, Fraction B, Fraction C, bool plus) => GetExactlyThis(A, B, C, plus);
+        public static Excercise UnsafeGetExactlyThis(Fraction A, Fraction B, Fraction C, bool plus) => GetExactlyThis(A, B, C, plus);
         
-        private Excercise GetExactlyThis(Fraction A, Fraction B, Fraction C, bool plus) {
+        private static Excercise GetExactlyThis(Fraction A, Fraction B, Fraction C, bool plus) {
             Expression[] steps = CreateSteps(A, B, C, plus);
             string[] comments = CreateComments(A, B, C, steps);
             string[] isolatedModifications = CreateIsolatedSteps(A, B, C, steps);
@@ -152,7 +152,7 @@ namespace InfiniteEngine {
             return result;
         }
 
-        private string[] CreateIsolatedSteps(Fraction A, Fraction B, Fraction C, Expression[] steps) {
+        private static string[] CreateIsolatedSteps(Fraction A, Fraction B, Fraction C, Expression[] steps) {
             string[] isoMods = new string[8];
             // >>> 0 <<< 
             isoMods[0] = $"{B.ToDouble()} = {B.ToHTML()}";
@@ -255,14 +255,10 @@ namespace InfiniteEngine {
             else
                 isoMods[6] += $" = {steps[7].ToHTML()}";
 
-            // >>> 7 <<< 
-            //isoMods[7] = $"77";
-
             return isoMods;
         }
-
         
-        private Expression[] CreateSteps(Fraction A, Fraction B, Fraction C, bool plus) {
+        private static Expression[] CreateSteps(Fraction A, Fraction B, Fraction C, bool plus) {
             Expression[] steps = new Expression[8];
             // right operand will always be overwritten, A.DeepCopy will stay there up to step 4
             // This line mainly defines usage of addition or subtraction. Right operands are there to just fill it with something
@@ -346,11 +342,10 @@ namespace InfiniteEngine {
             return steps;
         }
 
-        private string[] CreateComments(Fraction A, Fraction B, Fraction C, Expression[] steps) {
+        private static string[] CreateComments(Fraction A, Fraction B, Fraction C, Expression[] steps) {
             Fraction AB = new("A", "B");
             Fraction CD = new("C", "D");
             Fraction DC = new("D", "C");
-            Fraction FF = new("AD", "BC");
 
             string sloveso = steps[0] is Addition ? "sečti" : "odečti";
             Integer i = C.Denominator as Integer;

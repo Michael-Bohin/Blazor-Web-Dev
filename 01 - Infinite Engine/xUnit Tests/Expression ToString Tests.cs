@@ -59,7 +59,7 @@ namespace Expression_ToString {
         [Fact]
         public void OtherExpressionsI() {
             // Arrange
-            string expected = "(5*8+(4)/(2))";
+            string expected = "(5∙8+(4)/(2))";
             Multiplication m = new(5, 8);
             Fraction f = new(4, 2);
             Addition a = new(m, f);
@@ -74,7 +74,7 @@ namespace Expression_ToString {
         [Fact]
         public void OtherExpressionsII() {
             // Arrange
-            string expected = "(5*8+4:2)";
+            string expected = "(5∙8+4:2)";
             Multiplication m = new(5, 8);
             Division d = new(4, 2);
             Addition a = new(m, d);
@@ -95,7 +95,7 @@ namespace Expression_ToString {
         [InlineData(0, 500)]
         public void Simple(int a, int b) {
             // Arrange 
-            string expected = $"({a}-{b})";
+            string expected = $"({a}−{b})";
             Subtraction s = new(a, b);
 
             // Act
@@ -108,7 +108,7 @@ namespace Expression_ToString {
         [Fact]
         public void RealNumbers() {
             // Arrange 
-            string expected = "((2.55-2.66)-(2.77-2.88))";
+            string expected = "((2.55−2.66)−(2.77−2.88))";
             Subtraction a = new(2.55, 2.66);
             Subtraction b = new(2.77, 2.88);
             Subtraction c = new(a, b);
@@ -123,7 +123,7 @@ namespace Expression_ToString {
         [Fact]
         public void OtherExpressionsI() {
             // Arrange
-            string expected = "(5*8-(4)/(2))";
+            string expected = "(5∙8−(4)/(2))";
             Multiplication m = new(5, 8);
             Fraction f = new(4, 2);
             Subtraction s = new(m, f);
@@ -138,7 +138,7 @@ namespace Expression_ToString {
         [Fact]
         public void OtherExpressionsII() {
             // Arrange
-            string expected = "(5*8-4:2)";
+            string expected = "(5∙8−4:2)";
             Multiplication m = new(5, 8);
             Division d = new(4, 2);
             Subtraction s = new(m, d);
@@ -158,7 +158,7 @@ namespace Expression_ToString {
         [InlineData(0, 500)]
         public void Simple(int a, int b) {
             // Arrange 
-            string expected = $"{a}*{b}";
+            string expected = $"{a}∙{b}";
             Multiplication m = new(a, b);
 
             // Act
@@ -171,7 +171,7 @@ namespace Expression_ToString {
         [Fact]
         public void RealNumbers() {
             // Arrange 
-            string expected = "2.55*2.66*2.77*2.88";
+            string expected = "2.55∙2.66∙2.77∙2.88";
             Multiplication a = new(2.55, 2.66);
             Multiplication b = new(2.77, 2.88);
             Multiplication c = new(a, b);
@@ -186,7 +186,7 @@ namespace Expression_ToString {
         [Fact]
         public void OtherExpressionsI() {
             // Arrange
-            string expected = "5*8*(4)/(2)";
+            string expected = "5∙8∙(4)/(2)";
             Multiplication a = new(5, 8);
             Fraction f = new(4, 2);
             Multiplication m = new(a, f);
@@ -201,7 +201,7 @@ namespace Expression_ToString {
         [Fact]
         public void OtherExpressionsII() {
             // Arrange
-            string expected = "5*8*4:2";
+            string expected = "5∙8∙4:2";
             Multiplication a = new(5, 8);
             Division d = new(4, 2);
             Multiplication m = new(a, d);
@@ -264,7 +264,7 @@ namespace Expression_ToString {
         [Fact]
         public void OtherExpressionsII() {
             // Arrange
-            string expected = "(5+8):(4-2)";
+            string expected = "(5+8):(4−2)";
             Addition a = new(5, 8);
             Subtraction s = new(4, 2);
             Division d = new(a, s);
@@ -312,7 +312,7 @@ namespace Expression_ToString {
         [Fact]
         public void OtherExpressionsI() {
             // Arrange
-            string expected = "(5*8)/((4+2))";
+            string expected = "(5∙8)/((4+2))";
             Multiplication m = new(5, 8);
             Addition a= new(4, 2);
             Fraction f = new(m, a);
@@ -327,7 +327,7 @@ namespace Expression_ToString {
         [Fact]
         public void OtherExpressionsII() {
             // Arrange
-            string expected = "(5*8)/(4:2)";
+            string expected = "(5∙8)/(4:2)";
             Multiplication m = new(5, 8);
             Division d = new(4, 2);
             Fraction f = new(m, d);
@@ -434,7 +434,7 @@ namespace Expression_ToString {
         [InlineData(0)]
         public void SimpleInt(int a) {
             // Arrange 
-            string expected = $"(-{a})";
+            string expected = $"(− {a})";
             Minus m = new(a);
 
             // Act
@@ -451,7 +451,7 @@ namespace Expression_ToString {
         [InlineData(0.789)]
         public void SimpleReal(double a) {
             // Arrange 
-            string expected = $"(-{a})";
+            string expected = $"(− {a})";
             Minus m = new(a);
 
             // Act
@@ -467,7 +467,7 @@ namespace Expression_ToString {
         [InlineData(0.789)]
         public void Expression(double a) {
             // Arrange 
-            string expected = $"(-{a})";
+            string expected = $"(− {a})";
             Minus m = new(a);
 
             // Act

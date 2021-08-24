@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-//namespace xUnitTests {
-    public class ExcerciseGenerator_xUnitTests {
+namespace ExcerciseGenerator {
+    public class EFractions_S02E01 {
         [Fact]
         public void Test1() {
 
         }
     }
-//}
+}

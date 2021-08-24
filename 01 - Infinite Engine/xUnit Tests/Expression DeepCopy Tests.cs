@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Xunit;
 using InfiniteEngine;
 
@@ -37,7 +37,7 @@ namespace Expression_DeepCopy {
             Division changeB = new( 4, 5);
 
             string expectedOriginal = "(5+99)";
-            string expectedModificationA = "(2*3+99)";
+            string expectedModificationA = "(2∙3+99)";
             string expectedModificationB = "(5+4:5)";
 
             // Act 
@@ -75,7 +75,7 @@ namespace Expression_DeepCopy {
             Division changeB = new(4, 5);
 
             string expectedOriginal = "(5)/(99)";
-            string expectedModificationA = "(2*3)/(99)";
+            string expectedModificationA = "(2∙3)/(99)";
             string expectedModificationB = "(5)/(4:5)";
 
             // Act 
@@ -104,7 +104,7 @@ namespace Expression_DeepCopy {
         }
     }
     public class ComplexTree {
-        private BinaryExpression GetComplexTree() {
+        private static BinaryExpression GetComplexTree() {
             Multiplication m = new(2, 3);
             Variable x = new(4, "x");
             Division d = new(m, x);
@@ -123,7 +123,7 @@ namespace Expression_DeepCopy {
         [Fact]
         public void MadeExpressionThatIActuallyIntended() {
             // Arrange
-            string expected = "(2*3:4x)/((((-5.55)+3.811)-5y))";
+            string expected = "(2∙3:4x)/((((− 5.55)+3.811)−5y))";
             Expression e = GetComplexTree();
 
             // Act
@@ -136,7 +136,7 @@ namespace Expression_DeepCopy {
         [Fact]
         public void ModifyDeepCopies() {
             // Arrange 
-            string expectedOriginal = "(2*3:4x)/((((-5.55)+3.811)-5y))";
+            string expectedOriginal = "(2∙3:4x)/((((− 5.55)+3.811)−5y))";
             BinaryExpression original = GetComplexTree();
             BinaryExpression modFraction = original.DeepCopy();
             BinaryExpression modDivision = original.DeepCopy();
@@ -157,15 +157,15 @@ namespace Expression_DeepCopy {
             string actualOriginal8 = $"{modMinus}";
             string actualOriginal9 = $"{modVariableY}";
 
-            // "(2*3:4x)/((((-5.55)+3.811)-5y))";
-            string expectedFraction = "((2*3:4x)/((((-5.55)+3.811)-5y)))/((2*3:4x)/((((-5.55)+3.811)-5y)))";
-            string expectedDivison = "((1+1))/((((-5.55)+3.811)-5y))";
-            string expectedMultiplication = "(4*5:4x)/((((-5.55)+3.811)-5y))";
-            string expectedVariableX = "(2*3:50promenna)/((((-5.55)+3.811)-5y))";
-            string expectedSubtraction = "(2*3:4x)/((8-5y))";
-            string expectedAddition = "(2*3:4x)/(((9.999+3.811)-5y))";
-            string expectedMinus = "(2*3:4x)/((((-1000)+3.811)-5y))";
-            string expectedVariableY = "(2*3:4x)/((((-5.55)+3.811)-9*9))";
+            // "(2∙3:4x)/((((-5.55)+3.811)-5y))";
+            string expectedFraction = "((2∙3:4x)/((((− 5.55)+3.811)−5y)))/((2∙3:4x)/((((− 5.55)+3.811)−5y)))";
+            string expectedDivison = "((1+1))/((((− 5.55)+3.811)−5y))";
+            string expectedMultiplication = "(4∙5:4x)/((((− 5.55)+3.811)−5y))";
+            string expectedVariableX = "(2∙3:50promenna)/((((− 5.55)+3.811)−5y))";
+            string expectedSubtraction = "(2∙3:4x)/((8−5y))";
+            string expectedAddition = "(2∙3:4x)/(((9.999+3.811)−5y))";
+            string expectedMinus = "(2∙3:4x)/((((− 1000)+3.811)−5y))";
+            string expectedVariableY = "(2∙3:4x)/((((− 5.55)+3.811)−9∙9))";
 
             // Act 
             Expression left = original.DeepCopy();

@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace xUnitTests {
-    public class CombinatoricStructureGenerator_xUnitTests {
+namespace CombinatoricStructureGenerator {
+    public class Fraction_In_Simplest_Form {
         [Fact]
         public void Test1() {
 

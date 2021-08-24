@@ -43,7 +43,7 @@ namespace InfiniteEngine {
     // Addition constraint is denominator can not be zero. Therefore, it is the set Q. 
     // With usefull methods, that are frequently used in primary school math. 
     // Because it is Q, unlike Fractions (which can hold nested infix expression), it is a value as a real number or integer. 
-    class RationalNumber : Value, IRationalNumber, IRationalArithmetic, 
+    public class RationalNumber : Value, IRationalNumber, IRationalArithmetic, 
         IEquatable<RationalNumber>, IComparable<RationalNumber>
         /// IFormattable : Implement in future, if sending it to different view like HTML, WinForms, Unity etc. requires significantly different formatting
         /// IConvertible : Maybe implement in future 
@@ -102,7 +102,7 @@ namespace InfiniteEngine {
             return other;
         }
 
-        private string invalidExpandException = "Expanding rational number using 0, not only doesn't preserve same simplest form, but also leads to Math Hell Exception!";
+        private const string invalidExpandException = "Expanding rational number using 0, not only doesn't preserve same simplest form, but also leads to Math Hell Exception!";
         public void Expand(int i) {
             if (i == 0)
                 throw new InvalidOperationException(invalidExpandException);
@@ -142,7 +142,7 @@ namespace InfiniteEngine {
         public int[] NumeratorPrimeFactors() => GetPrimeFactors(_num);
         public int[] DenominatorPrimeFactors() => GetPrimeFactors(_den);
 
-        private int[] GetPrimeFactors(int number) {
+        private static int[] GetPrimeFactors(int number) {
             List<int> primeFactors = new();
             if (number == 0)
                 return primeFactors.ToArray();
@@ -171,10 +171,19 @@ namespace InfiniteEngine {
         // all implementations first convert both operand to simplest form
         private Q Copy() => new(_num, _den);
 
+
+        // note: adding operator using the equation (avoiding LCM calc)
+        // is going to be faster on CPU, however in the educational 
+        // child of RationalNumber class I will implement more approaches 
+        // in order to be able to generate step by step walkthrough for each apporach. 
+        // so later I will have three different implementations of arithemtic operators
+        // they will all generate different comments for kids to go through. 
+
         public Q Add(Q addend) {
             // a/b + c/d = (ad+bc)/bd -> can be shortcuted using finding LCM of simplest forms 
             (Q a, Q b) = PrepareAddSub(addend);
             a.Num += b.Num;
+            a.Reduce();
             return a;
         }
 
@@ -182,9 +191,20 @@ namespace InfiniteEngine {
             Q a = GetSimplestForm();
             Q b = rightOperand.GetSimplestForm();
 
+            Console.WriteLine("Prepare Add Sub reporting:");
+            Console.WriteLine(a);
+            Console.WriteLine(b);
+
             int LCM = M.EuclidsLCM(a.Den, b.Den);
-            a.Expand(LCM);
-            b.Expand(LCM);
+            if(LCM != a.Den)
+                a.Expand(LCM/ a.Den);
+
+            if (LCM != b.Den)
+                b.Expand(LCM /b.Den);
+
+            Console.WriteLine("Prepare Add Sub reporting expanded forms:");
+            Console.WriteLine(a);
+            Console.WriteLine(b);
             return (a, b);
         }
 
@@ -208,6 +228,16 @@ namespace InfiniteEngine {
             if (divisor.Num == 0)
                 return new(0, 1); // simplest form of zero , avoids MathHellException
             return Multiply( divisor.GetInverse() );
+        }
+
+        public static Q operator -(Q a) => new (-a._num, a._den);
+        public static Q operator +(Q a, Q b) => a.Add(b);
+        public static Q operator -(Q a, Q b) => a.Subtract(b);
+        public static Q operator *(Q a, Q b) => a.Multiply(b);
+        public static Q operator /(Q a, Q b) {
+            if (b.Num == 0) 
+                throw new DivideByZeroException();
+            return a.Divide(b);
         }
 
         /// interface IEquatable<RationalNumber> ///
@@ -234,7 +264,6 @@ namespace InfiniteEngine {
 
         // avoid inverse fractions returning same product 
         public override int GetHashCode() => _num.GetHashCode() * _den.GetHashCode() + _num.GetHashCode();
-
 
         public static bool operator ==(Q a, Q b) => a != null && a.Equals(b);
 
@@ -281,7 +310,6 @@ namespace InfiniteEngine {
         public static bool operator >=(Q operand1, Q operand2) => operand1.CompareTo(operand2) >= 0;
         public static bool operator <=(Q operand1, Q operand2) => operand1.CompareTo(operand2) <= 0;
     }
-
     /*/
     // Educational child of Q class will consist of same 
     // opeartions as its parent and foreach of these methods 
