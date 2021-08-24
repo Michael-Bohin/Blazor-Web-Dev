@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace InfiniteEngine {
-    using M = MathAlgorithms;
     class MathAlgorithms {
         // contains general math algorithms, that are usefull across different topics of math
         

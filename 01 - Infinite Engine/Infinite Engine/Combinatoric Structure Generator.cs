@@ -5,10 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace InfiniteEngine {
-    /*public abstract class CombinatoricStructureGenerator {
-        public abstract List<Expression> GetAll();
-        public abstract Expression GetRandomOne();
-    }*/
 
     interface ICombinatoricStructureGenerator<T> {
         public List<T> GetAll();
