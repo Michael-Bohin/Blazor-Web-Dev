@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InfiniteEngine {
     using M = MathAlgorithms;
@@ -12,11 +9,13 @@ namespace InfiniteEngine {
 
     interface IRationalNumber {
         double ToDouble();
-        
-        bool IsSimplestForm();
-        bool IsInteger();
+
+        // Simplest form definition:
         // 1. denominator is from natural numbers
         // 2. the only divisor of num and den is 1.
+        bool IsSimplestForm();
+        bool IsInteger();
+        
         void Reduce();
         Q GetSimplestForm();
 
@@ -300,30 +299,4 @@ namespace InfiniteEngine {
 /// Study IFormattable in depth and implement it in future
 ///
 /// https://github.com/microsoft/referencesource/blob/master/mscorlib/system/double.cs
-/// Double IArithmetic<Double>.Add(Double addend, out bool overflowed) {
-///            Double s = m_value + addend;
-///            overflowed = IsInfinity(s) || IsNaN(s);
-///            return s;
-///        }
-///
-///        /// <internalonly/>
-///        Double IArithmetic<Double>.Subtract(Double subtrahend, out bool overflowed) {
-///            Double s = m_value - subtrahend;
-///            overflowed = IsInfinity(s) || IsNaN(s);
-///            return s;
-///        }
-///
-///        /// <internalonly/>
-///        Double IArithmetic<Double>.Multiply(Double multiplier, out bool overflowed) {
-///            Double s = m_value * multiplier;
-///            overflowed = IsInfinity(s) || IsNaN(s);
-///            return s;
-///        }
-///
-///
-///        /// <internalonly/>
-///        Double IArithmetic<Double>.Divide(Double divisor, out bool overflowed) {
-///            Double s = m_value / divisor;
-///            overflowed = IsInfinity(s) || IsNaN(s);
-///            return s;
-///        }
+/// IArithmetic<Double> template at the end 
