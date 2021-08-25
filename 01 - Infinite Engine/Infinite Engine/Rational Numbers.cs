@@ -5,33 +5,7 @@ namespace InfiniteEngine {
     using M = MathAlgorithms;
     using Q = RationalNumber;
     // using EQ = Educational_RationalNumber;
-    // implement N, Z, R, C and in future! :) 
-
-    interface IRationalNumber {
-        double ToDouble();
-
-        // Simplest form definition:
-        // 1. denominator is from natural numbers
-        // 2. the only divisor of num and den is 1.
-        bool IsSimplestForm();
-        bool IsInteger();
-        
-        void Reduce();
-        Q GetSimplestForm();
-
-        void Expand(int i); // expand the rational number, throws InvalidOperationException if i == 0
-        Q GetExpandedForm(int i);
-
-        void Inverse();  // throws MathHellException, if numerator is 0
-        Q GetInverse();
-
-        bool IsEquivalent(Q other); // comparison based on comparing simplest forms of two rational numbers
-
-        int[] NumeratorPrimeFactors();
-        int[] DenominatorPrimeFactors();
-
-    }
-
+    // implement N, Z, and R in future! :) 
 
     /// I can see several approaches to doing Rational arithemtic 
     /// Beacuse of kids, all will need to have its reprezentation in code 
@@ -55,6 +29,61 @@ namespace InfiniteEngine {
     ///     3. Add/Subtract numerators after joining the Ration numbers 
     ///     4. don't reduce anything 
 
+    /// IComparable<RationalNumber>
+    /// https://docs.microsoft.com/en-us/dotnet/api/system.icomparable-1?view=net-5.0
+    /// 
+    /// defines: 
+    /// bool CompareTo(Q other); -> negative: this < other, zero: this == equal, positive: this > other. 
+    /// op_GreaterThan, op_GreaterThanOrEqual
+    /// op_LessThan, op_LessThanOrEqual
+    /// 
+    /// IEquatable<RationalNumber>
+    /// https://docs.microsoft.com/en-us/dotnet/api/system.iequatable-1?view=net-5.0
+    /// 
+    /// define: 
+    /// bool Equals(Q other);
+    /// override bool Equals(Object obj)
+    /// override int GetHashCode();
+    /// static bool operator ==(Q q1, Q q2);
+    /// static bool opeartor !=(Q q1, Q q2);
+    ///
+    /// math note:
+    /// In this code I will consider two different expansions of same simplest form different. 
+    /// bool IsEquivalent() covers the other comparison semantic where 2/4 is equal to 1/2
+
+    /// RationalNumber:
+    // Fraction with the constraint of holding some integer as numerator and denominator
+    // Denominator can not be zero. Therefore, it is the set Q. 
+    // With usefull methods, that are frequently used in primary school math. 
+    // Because it is Q, unlike Fractions (which can hold nested infix expression),
+    // it inherits from value as real number or integer does.
+    // Simplest form definition:
+    // 1. denominator is from natural numbers
+    // 2. the only divisor of num and den is 1.
+
+    interface IRationalNumber {
+        double ToDouble();
+
+        bool IsSimplestForm();
+        bool IsInteger();
+
+        void Reduce();
+        Q GetSimplestForm();
+
+        void Expand(int i); // expand the rational number, throws InvalidOperationException if i == 0
+        Q GetExpandedForm(int i);
+
+        Q Copy();
+
+        void Inverse();  // throws MathHellException, if numerator is 0
+        Q GetInverse();
+
+        bool IsEquivalent(Q other); // comparison based on comparing simplest forms of two rational numbers
+
+        int[] NumeratorPrimeFactors();
+        int[] DenominatorPrimeFactors();
+    }
+
     interface IRationalArithmetic {
         Q Add(Q addend);
         Q Subtract(Q subtrahend);
@@ -62,10 +91,6 @@ namespace InfiniteEngine {
         Q Divide(Q divisor);
     }
 
-    // Fraction with the constraint of holding some integer as numerator and denominator
-    // Addition constraint is denominator can not be zero. Therefore, it is the set Q. 
-    // With usefull methods, that are frequently used in primary school math. 
-    // Because it is Q, unlike Fractions (which can hold nested infix expression), it is a value as a real number or integer. 
     public class RationalNumber : Value, IRationalNumber, IRationalArithmetic, 
         IEquatable<RationalNumber>, IComparable<RationalNumber>
         /// IFormattable : Implement in future, if sending it to different view like HTML, WinForms, Unity etc. requires significantly different formatting
@@ -92,17 +117,14 @@ namespace InfiniteEngine {
             _den = denominator;
         }
 
-        // inherited abstract methods overrides:
+        /// inherited abstract methods overrides ///
         public override string ToString() => $"{_num} / {_den}";
         public override Q DeepCopy() => (Q)this.MemberwiseClone();
         public override string ToHTML() => @"<div class=""frac""><span>" + _num.ToString() + @"</span><span class=""symbol"">/</span><span class=""bottom"">" + _den.ToString() + @"</span></div>";
 
         /// interface IRationalNumber ///
-
         public double ToDouble() => (double)_num / (double)_den;
 
-        // math analysis definition of simplest form constraints denominator to be from natural numbers
-        // requires EuclidsGCD from MathAlgorithms
         public bool IsSimplestForm() => !(_den < 0) && M.EuclidsGCD(Math.Abs(_num), _den) == 1;
 
         public bool IsInteger() => Math.Abs(_num) % Math.Abs(_den) == 0;
@@ -139,6 +161,8 @@ namespace InfiniteEngine {
                 throw new InvalidOperationException(invalidExpandException);
             return new(_num * i, _den * i);
         }
+
+        public Q Copy() => new(_num, _den);
 
         public void Inverse() {
             if (_num == 0)
@@ -194,17 +218,6 @@ namespace InfiniteEngine {
 
         /// interface IRationalArithmetic ///
 
-        // all implementations first convert both operand to simplest form
-        private Q Copy() => new(_num, _den);
-
-
-        // note: adding operator using the equation (avoiding LCM calc)
-        // is going to be faster on CPU, however in the educational 
-        // child of RationalNumber class I will implement more approaches 
-        // in order to be able to generate step by step walkthrough for each apporach. 
-        // so later I will have three different implementations of arithemtic operators
-        // they will all generate different comments for kids to go through. 
-
         public Q Add(Q addend) {
             // a/b + c/d = (ad+bc)/bd -> can be shortcuted using finding LCM of simplest forms 
             (Q a, Q b) = PrepareAddSub(addend);
@@ -217,10 +230,6 @@ namespace InfiniteEngine {
             Q a = GetSimplestForm();
             Q b = rightOperand.GetSimplestForm();
 
-           /* Console.WriteLine("Prepare Add Sub reporting:");
-            Console.WriteLine(a);
-            Console.WriteLine(b);*/
-
             int LCM = M.EuclidsLCM(a.Den, b.Den);
             if(LCM != a.Den)
                 a.Expand(LCM/ a.Den);
@@ -228,9 +237,6 @@ namespace InfiniteEngine {
             if (LCM != b.Den)
                 b.Expand(LCM /b.Den);
 
-           /* Console.WriteLine("Prepare Add Sub reporting expanded forms:");
-            Console.WriteLine(a);
-            Console.WriteLine(b);*/
             return (a, b);
         }
 
@@ -269,22 +275,6 @@ namespace InfiniteEngine {
         }
 
         /// interface IEquatable<RationalNumber> ///
-        /// 
-        /// https://docs.microsoft.com/en-us/dotnet/api/system.iequatable-1?view=net-5.0
-        /// 
-        /// define: 
-        /// bool Equals(Q other);
-        /// override bool Equals(Object obj)
-        /// override int GetHashCode();
-        /// static bool operator ==(Q q1, Q q2);
-        /// static bool opeartor !=(Q q1, Q q2);
-        ///
-        /// math note: 
-        /// In this code I will consider two different expansions of same simplest form different. 
-        /// As well as simplest form will be considered different from its expansion. 
-        /// 
-        /// interface IRationalNumber covers the other comparison semantic where 2/4 is equal to 1/2
-        /// with the bool IsEquivalent() method
 
         public bool Equals(Q other) => other != null && _num == other.Num && _den == other.Den;
 
@@ -302,17 +292,7 @@ namespace InfiniteEngine {
             return !(a.Equals(b));
         }
 
-        /// interface IComparable<RationalNumber> ///
-        /// 
-        /// https://docs.microsoft.com/en-us/dotnet/api/system.icomparable-1?view=net-5.0
-        /// 
-        /// define: 
-        /// bool CompareTo(Q other); -> negative: this < other, zero: this == equal, positive: this > other. 
-        /// op_GreaterThan
-        /// op_GreaterThanOrEqual
-        /// op_LessThan
-        /// op_LessThanOrEqual
-        /// 
+        /// interface IComparable<RationalNumber> /// 
 
         public int CompareTo(Q other) {
             // If other is not a valid object reference, this instance is greater.
@@ -352,7 +332,7 @@ namespace InfiniteEngine {
 }
 
 /// https://docs.microsoft.com/en-us/dotnet/api/system.iformattable?view=net-5.0
-/// Study IFormattable in depth and implement it in future
+/// Study IFormattable in depth and if usefull implement it in future
 ///
 /// https://github.com/microsoft/referencesource/blob/master/mscorlib/system/double.cs
 /// IArithmetic<Double> template at the end 
