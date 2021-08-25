@@ -279,7 +279,7 @@ namespace InfiniteEngine {
             return primeFactors;
         }
 
-        private static Expression CreatePrimeProduct(List<int> primeFactors) {
+        public static Expression CreatePrimeProduct(List<int> primeFactors) {
             if (primeFactors.Count == 0)
                 throw new InvalidOperationException("Cannot create expression from empty list of numbers. :(");
             if (primeFactors.Count == 1)

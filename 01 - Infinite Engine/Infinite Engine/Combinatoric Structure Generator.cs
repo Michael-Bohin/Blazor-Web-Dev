@@ -1,51 +1,72 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InfiniteEngine {
+    using Q = RationalNumber;
 
     interface ICombinatoricStructureGenerator<T> {
         public List<T> GetAll();
         public T GetRandomOne();
     }
 
-    public class FractionsInSimplestForm : ICombinatoricStructureGenerator<Fraction> {
+    public class FractionsInSimplestForm : ICombinatoricStructureGenerator<Q> {
         readonly Random rand;
+
+        readonly List<Q> easilyFractionable = new() {
+            new Q(1, 10),
+            new Q(1, 5),
+            new Q(1, 4),
+            new Q(3, 10),
+            new Q(2, 5),
+            new Q(1, 2),
+            new Q(3, 5),
+            new Q(3, 4),
+            new Q(4, 5),
+            new Q(9, 10)
+        };
+
+        readonly List<Q> easilyFractionableMini = new() {
+            new Q(1, 10),
+            new Q(1, 5),
+            new Q(1, 4),
+            new Q(1, 2)
+        };
+
         public FractionsInSimplestForm() {
             rand = new();
         }
 
-        public List<Fraction> GetAll() => GetAll(1, 50);
-        public Fraction GetRandomOne() => GetRandomOne(1, 50);
+        public List<Q> GetAll() => GetAll(1, 50);
+        public Q GetRandomOne() => GetRandomOne(1, 50);
 
-        public List<Fraction> GetAll(int lowerBound, int upperBound) {
-            List<Fraction> result = new();
-            for(int numerator = lowerBound; numerator <= upperBound; numerator++)
-                for (int denominator = lowerBound; denominator <= upperBound; denominator++) {
+        public List<Q> GetEasilyFractionable() => easilyFractionable;
+        public List<Q> GetEasilyFractionableMini() => easilyFractionableMini;
+
+        public static List<Q> GetAll(int low, int high) {
+            List<Q> result = new();
+            for(int numerator = low; numerator <= high; numerator++)
+                for (int denominator = low; denominator <= high; denominator++) {
                     if (denominator == 1)
                         continue; // ignore whole numbers, despite making it through the simplest form definition
-                    Fraction f = new(numerator, denominator);
+                    Q f = new(numerator, denominator);
                     if (f.IsSimplestForm())
                         result.Add(f);
                 }
             return result;
         }
 
-        // !!! repeat equality conditions and implement itacordingly : implement equality operator and hashcode operator 
-        public List<Fraction> GetAll(int lowerBound, int upperBound, List<Fraction> except) {
-            List<Fraction> notFiltered = GetAll(lowerBound, upperBound);
-            List<Fraction> filtered = new();
-            foreach( Fraction f in notFiltered)
-                if (!except.Contains(f)) // !! implement equality comparison !!
+        public static List<Q> GetAll(int low, int high, List<Q> except) {
+            List<Q> notFiltered = GetAll(low, high);
+            List<Q> filtered = new();
+            foreach( Q f in notFiltered)
+                if (!except.Contains(f))
                     filtered.Add(f);
             return filtered;
         }
 
-        public Fraction GetRandomOne(int lowerBound, int upperBound) {
-            List<Fraction> candidates = GetAll(lowerBound, upperBound);
-            return candidates[rand.Next(0, candidates.Count)].DeepCopy(); // usereturning deep copy as means for GC to collect candidates sooner. Note: Does this actually help or not? 
+        public Q GetRandomOne(int lowerBound, int upperBound) {
+            List<Q> candidates = GetAll(lowerBound, upperBound);
+            return candidates[rand.Next(0, candidates.Count)]; // usereturning deep copy as means for GC to collect candidates sooner. Note: Does this actually help or not? 
         }
     }
 }

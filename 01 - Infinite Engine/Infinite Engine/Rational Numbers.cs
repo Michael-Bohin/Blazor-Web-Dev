@@ -216,6 +216,14 @@ namespace InfiniteEngine {
             return primeFactors.ToArray();
         }
 
+        public Fraction GetPrimeFactorization() {
+            int[] numPF = NumeratorPrimeFactors();
+            int[] denPF = DenominatorPrimeFactors();
+            Expression num = Fraction.CreatePrimeProduct(new List<int>(numPF));
+            Expression den = Fraction.CreatePrimeProduct(new List<int>(denPF));
+            return new Fraction(num, den);
+        }
+
         /// interface IRationalArithmetic ///
 
         public Q Add(Q addend) {
@@ -276,20 +284,52 @@ namespace InfiniteEngine {
 
         /// interface IEquatable<RationalNumber> ///
 
-        public bool Equals(Q other) => other != null && _num == other.Num && _den == other.Den;
-
-        public override bool Equals(Object obj) => obj != null && obj is Q rationalObj && Equals(rationalObj);
+        // public bool Equals(Q other) => other != null && _num == other.Num && _den == other.Den;
+        
+        // public override bool Equals(Object obj) => obj != null && obj is Q rationalObj && Equals(rationalObj);
 
         // avoid inverse fractions returning same product 
         public override int GetHashCode() => _num.GetHashCode() * _den.GetHashCode() + _num.GetHashCode();
 
-        public static bool operator ==(Q a, Q b) => a != null && a.Equals(b);
+        /*public static bool operator ==(Q a, Q b) => a != null && a.Equals(b);
 
         public static bool operator !=(Q a, Q b) {
             if (a == null || b == null)
                 return false;
             
             return !(a.Equals(b));
+        }*/
+
+        public bool Equals(Q other) {
+            if (other == null)
+                return false;
+
+            return this._num == other.Num && this._den == other.Den;
+        }
+
+        public override bool Equals(Object obj) {
+            if (obj == null)
+                return false;
+
+            Q fractionObj = obj as Q;
+            if (fractionObj == null)
+                return false;
+            else
+                return Equals(fractionObj);
+        }
+
+        public static bool operator ==(Q person1, Q person2) {
+            if (((object)person1) == null || ((object)person2) == null)
+                return Object.Equals(person1, person2);
+
+            return person1.Equals(person2);
+        }
+
+        public static bool operator !=(Q person1, Q person2) {
+            if (((object)person1) == null || ((object)person2) == null)
+                return !Object.Equals(person1, person2);
+
+            return !(person1.Equals(person2));
         }
 
         /// interface IComparable<RationalNumber> /// 
