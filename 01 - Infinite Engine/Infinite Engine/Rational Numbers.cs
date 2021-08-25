@@ -32,6 +32,29 @@ namespace InfiniteEngine {
 
     }
 
+
+    /// I can see several approaches to doing Rational arithemtic 
+    /// Beacuse of kids, all will need to have its reprezentation in code 
+    /// For now, the one leading to the result in reduced form will be in place. 
+    /// Different approaches: (Addition and subtraction)
+    /// A: ( most steps, but guaranteed smallest product of multiplication )
+    ///     1. Reduce operands 
+    ///     2. Find the least common multiple of denominators 
+    ///     3. Expand operands to LCM denominator 
+    ///     4. Add/Subtract numerators after joining the Ration numbers 
+    ///     5. Reduce result to simplest form 
+    /// 
+    /// B: 
+    ///     1. Use equation: (ad+-cb)/bd and dont reduce anything
+    ///     
+    /// C:  
+    ///     1. B + reduce operands before and result after 
+    ///     
+    /// D:  1. Find the least common multiple of denominators 
+    ///     2. Expand operands to LCM denominator 
+    ///     3. Add/Subtract numerators after joining the Ration numbers 
+    ///     4. don't reduce anything 
+
     interface IRationalArithmetic {
         Q Add(Q addend);
         Q Subtract(Q subtrahend);
@@ -56,14 +79,15 @@ namespace InfiniteEngine {
             get => _den;
             set {
                 if (value == 0)
-                    throw new MathHellException("Math hell alert! 😈🙀 Rational number can not have denominator equal to zero.");
+                    throw new MathHellException(mathHellAlert);
                 _den = value;
             }
         }
+        private const string mathHellAlert = "Math hell alert! 😈🙀 Rational number can not have denominator equal to zero.";
 
         public RationalNumber(int numerator, int denominator) {
             if(denominator == 0)
-                throw new MathHellException("Math hell alert! 😈🙀 Rational number can not have denominator equal to zero.");
+                throw new MathHellException(mathHellAlert);
             _num = numerator;
             _den = denominator;
         }
@@ -125,6 +149,8 @@ namespace InfiniteEngine {
         }
 
         public Q GetInverse() {
+            if (_num == 0)
+                throw new MathHellException(mathHellAlert);
             Q other = Copy();
             other.Inverse();
             return other;
@@ -191,9 +217,9 @@ namespace InfiniteEngine {
             Q a = GetSimplestForm();
             Q b = rightOperand.GetSimplestForm();
 
-            Console.WriteLine("Prepare Add Sub reporting:");
+           /* Console.WriteLine("Prepare Add Sub reporting:");
             Console.WriteLine(a);
-            Console.WriteLine(b);
+            Console.WriteLine(b);*/
 
             int LCM = M.EuclidsLCM(a.Den, b.Den);
             if(LCM != a.Den)
@@ -202,15 +228,16 @@ namespace InfiniteEngine {
             if (LCM != b.Den)
                 b.Expand(LCM /b.Den);
 
-            Console.WriteLine("Prepare Add Sub reporting expanded forms:");
+           /* Console.WriteLine("Prepare Add Sub reporting expanded forms:");
             Console.WriteLine(a);
-            Console.WriteLine(b);
+            Console.WriteLine(b);*/
             return (a, b);
         }
 
         public Q Subtract(Q subtrahend) {
             (Q a, Q b) = PrepareAddSub(subtrahend);
             a.Num -= b.Num;
+            a.Reduce();
             return a;
         }
 
@@ -226,7 +253,8 @@ namespace InfiniteEngine {
 
         public Q Divide(Q divisor) {
             if (divisor.Num == 0)
-                return new(0, 1); // simplest form of zero , avoids MathHellException
+                throw new MathHellException(mathHellAlert);
+
             return Multiply( divisor.GetInverse() );
         }
 

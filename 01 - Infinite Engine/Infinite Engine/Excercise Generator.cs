@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace InfiniteEngine {
+    using Q = RationalNumber;
 
     public abstract class ExcerciseGenerator {
         protected Random rand = new();
@@ -49,12 +50,6 @@ namespace InfiniteEngine {
         public EGenerator_Fractions_S02E01() : base() { }
         public EGenerator_Fractions_S02E01(Dificulty level) : base() {
             this.level = level;
-            //static bool fun(Fraction f) => f.ToDouble() > 1;
-            //Predicate<Fraction> thatAreGreaterThanOne = fun;
-            /*mnozinaA.RemoveAll( (Fraction f) => { 
-                return f.ToDouble() > 1 ; 
-            });*/
-            //mnozinaA.RemoveAll(thatAreGreaterThanOne);
             FractionsInSimplestForm fsf = new();
             int lowerA = 0; int upperA = 0; int lowerC = 0; int upperC = 0;
 
@@ -218,15 +213,32 @@ namespace InfiniteEngine {
             string operatorRepr = plus ? "+" : "−";
 
 
-            isoMods[4] = $"LCM({x}, {y}) = {LCM}<br>{step04.ToHTML()} = {left04.ToHTML()} {operatorRepr} {right04.ToHTML()}";
+            isoMods[4] = $"LCM({x}, {y}) = {LCM}<br>";
+
+            int left = LCM / x;
+            int right = LCM / y;
+
+            Q vhodnaLeft = new(left, left);
+            Q vhodnaRight = new(right, right);
+
+            isoMods[4] += $"Vhodná jednička nalevo: {LCM} : {x} = {left} => {vhodnaLeft.ToHTML()}<br>";
+            isoMods[4] += $"Vhodná jednička napravo: {LCM} : {y} = {right} => {vhodnaRight.ToHTML()}<br>";
+
+
+            isoMods[4] += $"{steps[4].ToHTML()} = ";
+
+            BinaryExpression be = steps[4] as BinaryExpression;
+            Fraction beLeft = be.leftOperand as Fraction;
+            Fraction beRight = be.rightOperand as Fraction;
+
+            isoMods[4] += $"{beLeft.ToHTML()} ∙ {vhodnaLeft.ToHTML()} {operatorRepr} {beRight.ToHTML()} ∙ {vhodnaRight.ToHTML()}";
+
             right04.Numerator = new Multiplication(rightNum, LCM/ y);
             left04.Numerator = new Multiplication(leftNum, LCM/ x);
-            isoMods[4] += $" = {left04.ToHTML()} {operatorRepr} {right04.ToHTML()}";
+            //isoMods[4] += $" = {left04.ToHTML()} {operatorRepr} {right04.ToHTML()}";
             right04.Numerator = new Integer(rightNum * LCM / y);
             left04.Numerator = new Integer(leftNum * LCM / x);
             isoMods[4] += $" = {left04.ToHTML()} {operatorRepr} {right04.ToHTML()}";
-
-
 
 
             // >>> 5 <<< 
@@ -367,7 +379,7 @@ namespace InfiniteEngine {
                 $"Přetoč dělení zlomků {B.ToHTML()} : {C.ToHTML()} na jejich násobení.<br>Použij vzoreček: {AB.ToHTML()} : {CD.ToHTML()} = {AB.ToHTML()} ∙ {DC.ToHTML()}",
                 $"V součinu {B.ToHTML()} ∙ {inverseC.ToHTML()} Vykrať jedničku ve tvaru {tvarVhodneJednicky.ToHTML()} = {roznasobenaVhodnaJednicka.ToHTML()}.<br>Poté zapiš součin jako jeden zlomek.",
                 $"Rozkladem na prvočinitele zkontroluj, jestli je zlomek {stepThree.rightOperand.ToHTML()} v zakladním tvaru. Pokud ne, převeď ho na něj.",
-                $"Najdi nejmenší společný násobek jmenovatelů {leftFour.Denominator.ToHTML()} a {rightFour.Denominator.ToHTML()}. (NSN nebo LCM jako least common multiple)<br>Potom oba zlomky rozšiř na zlomky o tomto základu.",
+                $"Najdi nejmenší společný násobek jmenovatelů {leftFour.Denominator.ToHTML()} a {rightFour.Denominator.ToHTML()}. (NSN nebo LCM jako least common multiple)<br>Zjisti jakým vhodným tvarem jedničky čísla rozšíříš na zlomky o tomto základu.",
                 $"Spoj oba zlomky do jednoho a {sloveso} je.",
                 $"Rozkladem na prvočinitele zkontroluj, jestli je zlomek {steps[6].ToHTML()} v základním tvaru. Pokud ne, převeď ho na něj.",
                 "Hotovo. 😎😎"
@@ -515,8 +527,6 @@ namespace InfiniteEngine {
         }
     }
 }
-
-
 
 /* Deprecated generator! s02e01 is its better version */
 /*public class EGenerator_Fractions_S02E00 : ExcerciseGenerator {

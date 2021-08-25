@@ -17,6 +17,11 @@ namespace InfiniteEngine {
         public Excercise( Expression[] s, string[] c, string[] im) {
             Steps = s; Comments = c; IsolatedModifications = im;
         }
+
+        public void TestInitProperty() {
+            Comments[4] = "Hi there";
+
+        }
     }
     
     record EFractions_S02E01 : Excercise { public EFractions_S02E01(Expression[] s, string[] c, string[] im) : base(s, c, im) { } }

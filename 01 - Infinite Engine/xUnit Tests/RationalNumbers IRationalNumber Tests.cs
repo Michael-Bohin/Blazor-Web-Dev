@@ -79,6 +79,7 @@ namespace RationalNumber_IRationalNumber {
             // Arrange 
             int expectedNum = num;
             int expectedDen = den;
+            // setting the value in constructor intentionally to be different than the value passed to setter later
             Q a = new(num * den, den - num);
 
             // Act
@@ -111,13 +112,14 @@ namespace RationalNumber_IRationalNumber {
         }
 
         [Fact]
-        public void SeimplestSet() {
+        public void SimplestSet() {
             // Arrange 
             const int num = 55;
             const int den = 66;
             int expectedNum = num;
             int expectedDen = den;
-            Q a = new(num * den, den - num);
+            // setting the value in constructor intentionally to be different than the value passed to setter later
+            Q a = new(num * den, den - num); 
 
             // Act
             a.Num = num;
