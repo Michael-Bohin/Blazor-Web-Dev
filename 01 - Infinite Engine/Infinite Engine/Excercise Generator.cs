@@ -38,7 +38,7 @@ namespace InfiniteEngine {
 
         protected bool CoinFlip() => rand.Next(0, 2) == 0;
 
-        public abstract Excercise GetNext();
+        public abstract Excercise<T> GetNext();
     }
 
     public enum Dificulty {
