@@ -4,11 +4,6 @@ using System.Collections.Generic;
 namespace InfiniteEngine {
     using Q = RationalNumber;
 
-    interface ICombinatoricStructureGenerator<T> {
-        public List<T> GetAll();
-        public T GetRandomOne();
-    }
-
     public class FractionsInSimplestForm : ICombinatoricStructureGenerator<Q> {
         readonly Random rand;
 
@@ -44,7 +39,7 @@ namespace InfiniteEngine {
 
         public static List<Q> GetAll(int low, int high) {
             List<Q> result = new();
-            for(int numerator = low; numerator <= high; numerator++)
+            for (int numerator = low; numerator <= high; numerator++)
                 for (int denominator = low; denominator <= high; denominator++) {
                     if (denominator == 1)
                         continue; // ignore whole numbers, despite making it through the simplest form definition
@@ -58,7 +53,7 @@ namespace InfiniteEngine {
         public static List<Q> GetAll(int low, int high, List<Q> except) {
             List<Q> notFiltered = GetAll(low, high);
             List<Q> filtered = new();
-            foreach( Q f in notFiltered)
+            foreach (Q f in notFiltered)
                 if (!except.Contains(f))
                     filtered.Add(f);
             return filtered;

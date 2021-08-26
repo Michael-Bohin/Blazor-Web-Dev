@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InfiniteEngine {
     using Q = RationalNumber;
@@ -183,9 +180,12 @@ namespace InfiniteEngine {
 
             /// Step 6:
             Q result = preResult.GetSimplestForm();
+            Fraction preResultFact = preResult.GetPrimeFactorization();
+            ending = preResult.IsSimplestForm() ? "=> Je v základním tvaru." : $"= {result.ToHTML()}";
+
             steps[6] = preResult.ToHTML();
             comments[6] = $"Zkontroluj, jestli je zlomek {preResult.ToHTML()} v základním tvaru. Pokud ne, převeď ho na něj.";
-            isoMods[6] = $"";
+            isoMods[6] = $"{preResult.ToHTML()} = {preResultFact.ToHTML()} {ending}";
 
             /// Step 7:
             steps[7] = result.ToHTML();
