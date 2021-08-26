@@ -267,6 +267,10 @@ namespace InfiniteEngine {
 
             EFractions_S02E01[] result = new EFractions_S02E01[8];
             for (int i = 0; i < 8; i++) {
+                // assert result is not zero or one. in both cases, change A untill it is. 
+                while( ResultIsZeroOrOne(acka[i], KonecnaBecka[i], cecka[i], permuation[i] < 4)) {
+                    acka[i] = ChooseAnyQ(mnozinaA);
+                }
                 result[i] = GetExactlyThis(acka[i], KonecnaBecka[i], cecka[i], permuation[i] < 4);
                 // je-li vysledek prilis velky proti omezenim obtiznosti, ponechej becko a vytoc nove A a C a podivej se jestli tentokrat je jiz vse ok
                 int BDEN = KonecnaBecka[i].Den;
@@ -285,6 +289,21 @@ namespace InfiniteEngine {
                 }
             }
             return result;
+        }
+
+        bool ResultIsZeroOrOne(Q A, Q B, Q C, bool plus) {
+            Console.WriteLine($" Checking: {A}  {B}  {C}  {plus}");
+            Q right = B / C;
+            right.Reduce();
+            Q result = plus ? A + right : A - right;
+            result.Reduce();
+            Console.WriteLine("The result is: " + result);
+            if(result.Num == 0 || result.Num == 1) {
+                Console.WriteLine(">>>>>>>> Zero or one detected!! <<<<<<");
+                return true;
+            }
+
+            return false;
         }
 
         bool LevelIsOk(EFractions_S02E01 e) {
