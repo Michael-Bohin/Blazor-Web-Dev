@@ -12,14 +12,14 @@ namespace CLI_View_of_Infinite_Engine_library {
             /**/
             Dificulty[] levels = new Dificulty[5] { Dificulty.MENSI, Dificulty.PRIJIMACKY, Dificulty.VETSI, Dificulty.OBROVSKA, Dificulty.CPU };
             foreach(Dificulty d in levels) {
-                Console.WriteLine($"Initiating Writin Dificulty: {d}");
+                Console.WriteLine($"Initiating Writing Dificulty: {d}");
                 EGenerator_Fractions_S02E01 egen = new(d);
                 List<Excercise> excercises = new();
-                for (int i = 0; i < 1; i++)
-                    foreach (Excercise e in egen.GetEight())
+                for (int i = 0; i < 10; i++)
+                    foreach (Excercise e in egen.GetTen())
                         excercises.Add(e);
 
-                HTMLWriter.CreateFile($"InfiniteEngine-Fraction-S0201-v2-DevBuild-{d}.html", excercises.ToArray());
+                HTMLWriter.CreateFile($"InfiniteEngine-Fraction-S0201-v2-Final-100-Collection-{d}.html", excercises.ToArray());
             }
             /**/
 

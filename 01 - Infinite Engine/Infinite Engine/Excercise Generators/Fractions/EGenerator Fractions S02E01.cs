@@ -89,6 +89,24 @@ namespace InfiniteEngine {
                         mnozinaC_Desetiny.Add(possibleC);
                 }
             }
+
+            /*Console.WriteLine($"Mozne poloviny:");
+            foreach(Q q in mnozinaC_Poloviny) {
+                Console.WriteLine($"{q}");
+            }
+            Console.WriteLine($"Mozne ctvrtiny");
+            foreach (Q q in mnozinaC_Ctvrtiny) {
+                Console.WriteLine($"{q}");
+            }
+            Console.WriteLine($"Mozne Petiny ");
+            foreach (Q q in mnozinaC_Petiny) {
+                Console.WriteLine($"{q}");
+            }
+            Console.WriteLine($"Mozne desetiny");
+            foreach (Q q in mnozinaC_Desetiny) {
+                Console.WriteLine($"{q}");
+            }*/
+
         }
         /// end of constructor helper functions
 
@@ -181,45 +199,43 @@ namespace InfiniteEngine {
             /// Step 6:
             Q result = preResult.GetSimplestForm();
             Fraction preResultFact = preResult.GetPrimeFactorization();
-            ending = preResult.IsSimplestForm() ? "=> Je v základním tvaru." : $"= {result.ToHTML()}";
+            Q absRes = result.Copy();
+            absRes.Num = Math.Abs(absRes.Num);
+            ending = preResult.IsSimplestForm() ? "=> Je v základním tvaru." : $"= {absRes.ToHTML()}";
+            string begining = result.Num < 0 ? $"Abs({preResult.ToHTML()})" : $"{preResult.ToHTML()}";
 
             steps[6] = preResult.ToHTML();
             comments[6] = $"Zkontroluj, jestli je zlomek {preResult.ToHTML()} v základním tvaru. Pokud ne, převeď ho na něj.";
-            isoMods[6] = $"{preResult.ToHTML()} = {preResultFact.ToHTML()} {ending}";
+            isoMods[6] = $"{begining} = {preResultFact.ToHTML()} {ending}";
 
             /// Step 7:
-            steps[7] = result.ToHTML();
+            Q absResult = new( Math.Abs(result.Num), result.Den);
+            steps[7] = result.Num < 0 ? $"−{absResult.ToHTML()}" : result.ToHTML();
             comments[7] = "Hotovo. 😎😎";
             isoMods[7] = "";
 
             return new EFractions_S02E01(steps, comments, isoMods, result, problem);
         }
 
+        /// Different ways to retrieve collections of excercises:
+        /// GetOne -> any without restrictions
+        /// GetTen -> uniform distirbutions of varibles in terms of teaching needs 
+        /// GetAll -> unsafe may explode memory, no random factor, always all possible
 
         public override Excercise GetOne() {
-            (Q A, Q B, Q C) = ChooseAnyCSG();
+            Q A = ChooseAnyQ(mnozinaA);
+            Q B = ChooseAnyQ(mnozinaB);
+            List<Q> filteredC = new();
+            foreach (Q f in mnozinaC)
+                if (f.Den % B.Den == 0)
+                    filteredC.Add(f);
+            Q C = ChooseAnyQ(filteredC);
             return GetExactlyThis(A, B, C, CoinFlip());
         }
 
-        (Q, Q, Q) ChooseAnyCSG() {
-            Q A = ChooseAnyQ(mnozinaA);
-            Q B = ChooseAnyQ(mnozinaB);
-            int Bden = B.Den;
+        Q ChooseAnyQ(List<Q> from) => from[rand.Next(0, from.Count)];
 
-            List<Q> filteredC = new();
-            foreach (Q f in mnozinaC)
-                if (f.Den % Bden == 0)
-                    filteredC.Add(f);
-            Q C = ChooseAnyQ(filteredC);
-
-            return (A, B, C);
-        }
-
-        Q ChooseAnyQ(List<Q> from) => from[rand.Next(0, from.Count)].DeepCopy(); // here the deepcopy is extremely important
-        public override Excercise[] GetTwo() { throw new NotImplementedException(); }
-        public override Excercise[] GetTen() { throw new NotImplementedException(); }
-
-        public Excercise[] GetEight() {
+        public override Excercise[] GetTen() {
             Q[] acka = new Q[8];
             for (int i = 0; i < 8; i++)
                 acka[i] = ChooseAnyQ(mnozinaA);
@@ -262,19 +278,14 @@ namespace InfiniteEngine {
                     cecka[i] = ChooseAnyQ(mnozinaC_Desetiny);
                 }
             }
-            
+
             int[] permuation = GetRandomPermutation(8);
 
             EFractions_S02E01[] result = new EFractions_S02E01[8];
+
             for (int i = 0; i < 8; i++) {
-                // assert result is not zero or one. in both cases, change A untill it is. 
-                while( ResultIsZeroOrOne(acka[i], KonecnaBecka[i], cecka[i], permuation[i] < 4)) {
-                    acka[i] = ChooseAnyQ(mnozinaA);
-                }
-                result[i] = GetExactlyThis(acka[i], KonecnaBecka[i], cecka[i], permuation[i] < 4);
-                // je-li vysledek prilis velky proti omezenim obtiznosti, ponechej becko a vytoc nove A a C a podivej se jestli tentokrat je jiz vse ok
                 int BDEN = KonecnaBecka[i].Den;
-                while (!LevelIsOk(result[i])) {
+                while ( NotValid( acka[i].Copy(), KonecnaBecka[i].Copy(), cecka[i].Copy(), permuation[i] < 4) ) {
                     acka[i] = ChooseAnyQ(mnozinaA);
                     if (BDEN == 2) {
                         cecka[i] = ChooseAnyQ(mnozinaC_Poloviny);
@@ -285,47 +296,35 @@ namespace InfiniteEngine {
                     } else if (BDEN == 10) {
                         cecka[i] = ChooseAnyQ(mnozinaC_Desetiny);
                     }
-                    result[i] = GetExactlyThis(acka[i], KonecnaBecka[i], cecka[i], CoinFlip());
                 }
+                result[i] = GetExactlyThis(acka[i].Copy(), KonecnaBecka[i].Copy(), cecka[i].Copy(), permuation[i] < 4);
             }
             return result;
         }
 
-        bool ResultIsZeroOrOne(Q A, Q B, Q C, bool plus) {
-            Console.WriteLine($" Checking: {A}  {B}  {C}  {plus}");
+        bool NotValid(Q A, Q B, Q C, bool plus) {
             Q right = B / C;
-            right.Reduce();
             Q result = plus ? A + right : A - right;
-            result.Reduce();
-            Console.WriteLine("The result is: " + result);
-            if(result.Num == 0 || result.Num == 1) {
-                Console.WriteLine(">>>>>>>> Zero or one detected!! <<<<<<");
-                return true;
-            }
+            return !LevelIsOk(result) || (result.Num == 0 || (result.Num == 1 && result.Den == 1)) || right.Num == 0;
+        } 
 
-            return false;
-        }
-
-        bool LevelIsOk(EFractions_S02E01 e) {
-            // this depends on the level and it restrictions
+        bool LevelIsOk(Q result) { // this depends on the level and it restrictions
             if (level == Dificulty.CPU)
                 return true; // no resetrictions on CPU level.. :) 
 
-            Q answer = e.Answer;
-            int num = answer.Num;
-            int den = answer.Den;
-            return true;
-            /*
+            int num = result.Num;
+            int den = result.Den;
             if (level == Dificulty.MENSI)
                 return num < 21 && den < 21;
             else if (level == Dificulty.PRIJIMACKY)
                 return num < 41 && den < 41;
             else if (level == Dificulty.VETSI)
                 return num < 250 && den < 250 && (50 < num || 50 < den);
-            return num < 10_000 && den < 10_000;*/
+            
+            return num < 10_000 && den < 10_000;
         }
 
-        public Excercise[] GetAll() {
+        public override Excercise[] UnsafeGetAll() {
             List<Excercise> result = new();
             foreach (Q A in mnozinaA)
                 foreach (Q B in mnozinaB) {
@@ -334,8 +333,12 @@ namespace InfiniteEngine {
                     foreach (Q f in mnozinaC)
                         if (f.Den % den == 0)
                             filtrovanaMnozinaC.Add(f);
-                    foreach (Q C in filtrovanaMnozinaC)
-                        result.Add(GetExactlyThis(A, B, C, CoinFlip()));
+                    foreach (Q C in filtrovanaMnozinaC) {
+                        if (!NotValid(A, B, C, true)) 
+                            result.Add(GetExactlyThis(A, B, C, true));
+                        if (!NotValid(A, B, C, false)) 
+                            result.Add(GetExactlyThis(A, B, C, false));
+                    }
                 }
             return result.ToArray();
         }

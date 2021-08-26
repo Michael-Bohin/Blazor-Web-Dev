@@ -36,7 +36,7 @@ namespace InfiniteEngine {
 
         // ensure reasonable distribution of different variables in excercises
         public abstract Excercise GetOne();
-        public abstract Excercise[] GetTwo();
         public abstract Excercise[] GetTen();
+        public abstract Excercise[] UnsafeGetAll(); // beware may blow up memory, only use to get estimate on number of different problem per dificulty 
     }
 }
