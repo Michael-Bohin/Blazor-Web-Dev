@@ -324,7 +324,7 @@ namespace InfiniteEngine {
             return num < 10_000 && den < 10_000;
         }
 
-        public override Excercise[] UnsafeGetAll() {
+        public Excercise[] UnsafeGetAll() {
             List<Excercise> result = new();
             foreach (Q A in mnozinaA)
                 foreach (Q B in mnozinaB) {

@@ -130,6 +130,12 @@ namespace InfiniteEngine {
             _den = denominator;
         }
 
+        public RationalNumber(int integer)
+        {
+            _num = integer;
+            _den = 1;
+        }
+
         /// inherited abstract methods overrides ///
         public override string ToString() => $"{_num} / {_den}";
         public override Q DeepCopy() => (Q)this.MemberwiseClone();
