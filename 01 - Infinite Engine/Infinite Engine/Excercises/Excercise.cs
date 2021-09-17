@@ -23,5 +23,19 @@ namespace InfiniteEngine {
             IsolatedModifications = im.ToImmutableArray<string>();
             TypeOfAnswer = ak;
         }
+
+        public Excercise(string[] s, string[] c, AnswerKind ak) {
+            Steps = s.ToImmutableArray<string>();
+            Comments = c.ToImmutableArray<string>();
+            string[] empty = Array.Empty<string>();
+            IsolatedModifications = empty.ToImmutableArray<string>();
+            TypeOfAnswer = ak;
+        }
+    }
+
+    public abstract record BriefExcercise : Excercise {
+        public BriefExcercise(string[] steps, string[] comments, AnswerKind ak): base(steps, comments, ak) { 
+            // empty own constructor
+        }
     }
 }

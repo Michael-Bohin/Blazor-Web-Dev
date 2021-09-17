@@ -8,6 +8,12 @@ namespace InfiniteEngine {
     public abstract class ExcerciseGenerator {
         protected Random rand;
         public readonly Dificulty level;
+
+        public ExcerciseGenerator() {
+            rand = new();
+            level = Dificulty.PRIJIMACKY;
+        }
+
         public ExcerciseGenerator(Dificulty l) {
             rand = new();
             level = l;

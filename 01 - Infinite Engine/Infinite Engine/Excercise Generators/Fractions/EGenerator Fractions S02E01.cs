@@ -25,25 +25,25 @@ namespace InfiniteEngine {
         readonly List<Q> mnozinaC_Petiny = new();
         readonly List<Q> mnozinaC_Desetiny = new();
 
-        readonly FractionsInSimplestForm fsf = new();
+        readonly SetOfRationals setOfR = new();
 
         public EGenerator_Fractions_S02E01() : this(Dificulty.PRIJIMACKY) { }
 
         // create different sets of fractions depending on the dificulty
         public EGenerator_Fractions_S02E01(Dificulty l) : base(l) {
-            mnozinaB = fsf.GetEasilyFractionable();
-            mnozinaBmini = fsf.GetEasilyFractionableMini();
+            mnozinaB = setOfR.GetEasilyFractionable();
+            mnozinaBmini = setOfR.GetEasilyFractionableMini();
             SetDificultyBounds();
 
             if (Dificulty.MENSI == level)
                 mnozinaB = mnozinaBmini;
 
             // define setA:
-            mnozinaA = FractionsInSimplestForm.GetAll(lowerA, upperA, mnozinaB);
+            mnozinaA = SetOfRationals.GetAll(lowerA, upperA, true, mnozinaB);
 
             // define setC:
             if (level != Dificulty.CPU)
-                mnozinaC = FractionsInSimplestForm.GetAll(lowerC, upperC);
+                mnozinaC = SetOfRationals.GetAll(lowerC, upperC, true);
             else  // do not generate all for CPU ranges
                 for (int i = 0; i < 2000; i++)
                     mnozinaC.Add(new Q(rand.Next(lowerC, upperC), rand.Next(lowerC, upperC)));

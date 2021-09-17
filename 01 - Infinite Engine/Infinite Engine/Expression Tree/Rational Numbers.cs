@@ -98,7 +98,20 @@ namespace InfiniteEngine {
         {
         private int _num;
         public int Num { get => _num; set => _num = value; }
-        
+/*#pragma warning disable IDE1006 // Styly pojmenování
+        public int p { get => _num; set => _num = value; }
+        public int q
+        {
+            get => _den;
+            set
+            {
+                if (value == 0)
+                    throw new MathHellException(mathHellAlert);
+                _den = value;
+            }
+        }
+#pragma warning restore IDE1006 // Styly pojmenování
+*/
         private int _den;
         public int Den {
             get => _den;

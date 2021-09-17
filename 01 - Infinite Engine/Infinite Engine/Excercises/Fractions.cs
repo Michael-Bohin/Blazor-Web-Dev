@@ -14,4 +14,14 @@ namespace InfiniteEngine {
         public readonly Expression Problem;
         public readonly Q Answer;
     }
+
+    public record EFractions_S02_A : BriefExcercise {
+        public readonly Expression Problem;
+        public readonly Q Answer;
+
+        public EFractions_S02_A(string[] steps, string[] comments, Q answer, Expression prob) : base(steps, comments, AnswerKind.Q) {
+            Answer = answer;
+            Problem = prob;
+        }
+    }
 }
