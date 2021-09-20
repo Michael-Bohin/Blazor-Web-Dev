@@ -49,15 +49,20 @@ namespace InfiniteEngine
 			// 3. Vysledky aritmetiky kroku B se rovnaji (tady spadne +- 90% kombinaci)
 			// 4. Vysledek nalezi do dostatecne jednoduchych vysledku 
 			// 5. Kombinace je pedagogicky legitimni
+			Q A = z.A;
+			Q B = z.B;
+			int C = z.C;
+			Q D = z.D;
+			Op opA = z.opA;
+			Op opB = z.opB;
 			
-
-			if (! (z.A.Den != z.B.Den))
+			if (! (A.Den != B.Den))
 				illegal[0].Add(z);
-			else if ( ! (M.EuclidsLCM(z.A.Den, z.B.Den) != z.D.Den))
+			else if ( ! (M.EuclidsLCM(A.Den, B.Den) != D.Den))
 				illegal[1].Add(z);
-			else if ( ! VysledekAritmetikySeRovna( z.A, z.B, z.C, z.D , z.opA, z.opB ))
+			else if ( ! VysledekAritmetikySeRovna( A, B, C, D , opA, opB ))
 				illegal[2].Add(z);
-			else if ( ! VysledekNaleziDoMoznychVysledku(z.A, z.B, z.C, z.D, z.opA, z.opB))
+			else if ( ! VysledekNaleziDoMoznychVysledku( A, B, C, D, opA, opB))
 				illegal[3].Add(z);
 			else
 				legit.Add(z);
@@ -84,7 +89,7 @@ namespace InfiniteEngine
 
 		protected override Excercise Construct(Zadani z) {
 			int C = z.C; Op opA = z.opA; Op opB = z.opB;
-			Q A = z.A.Copy(); Q B = z.A.Copy(); Q D = z.D.Copy(); // @ defensive programming
+			Q A = z.A.Copy(); Q B = z.B.Copy(); Q D = z.D.Copy(); // @ defensive programming
 			string opReprA = opA == Op.Add ? "+" : "-";
 			string opReprB = opB == Op.Add ? "+" : "-";
 			string[] steps = new string[6];
