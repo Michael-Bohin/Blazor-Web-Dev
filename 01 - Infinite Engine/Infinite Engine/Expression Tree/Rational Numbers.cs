@@ -96,7 +96,7 @@ namespace InfiniteEngine {
         /// IFormattable : Implement in future, if sending it to different view like HTML, WinForms, Unity etc. requires significantly different formatting
         /// IConvertible : Maybe implement in future 
         {
-        private int _num;
+        int _num;
         public int Num { get => _num; set => _num = value; }
 /*#pragma warning disable IDE1006 // Styly pojmenování
         public int p { get => _num; set => _num = value; }
@@ -112,7 +112,7 @@ namespace InfiniteEngine {
         }
 #pragma warning restore IDE1006 // Styly pojmenování
 */
-        private int _den;
+        int _den;
         public int Den {
             get => _den;
             set {
@@ -121,7 +121,7 @@ namespace InfiniteEngine {
                 _den = value;
             }
         }
-        private const string mathHellAlert = "Math hell alert! 😈🙀 Rational number can not have denominator equal to zero.";
+        const string mathHellAlert = "Math hell alert! 😈🙀 Rational number can not have denominator equal to zero.";
 
         public RationalNumber(int numerator, int denominator) {
             if(denominator == 0)
@@ -168,7 +168,7 @@ namespace InfiniteEngine {
             return other;
         }
 
-        private const string invalidExpandException = "Expanding rational number using 0, not only doesn't preserve same simplest form, but also leads to Math Hell Exception!";
+        const string invalidExpandException = "Expanding rational number using 0, not only doesn't preserve same simplest form, but also leads to Math Hell Exception!";
         public void Expand(int i) {
             if (i == 0)
                 throw new InvalidOperationException(invalidExpandException);
@@ -212,7 +212,7 @@ namespace InfiniteEngine {
         public int[] NumeratorPrimeFactors() => GetPrimeFactors(_num);
         public int[] DenominatorPrimeFactors() => GetPrimeFactors(_den);
 
-        private static int[] GetPrimeFactors(int number) {
+        static int[] GetPrimeFactors(int number) {
             List<int> primeFactors = new();
             if (number == 0)
                 return primeFactors.ToArray();
@@ -254,7 +254,7 @@ namespace InfiniteEngine {
             return a;
         }
 
-        private (Q a, Q b) PrepareAddSub(Q rightOperand) {
+        (Q a, Q b) PrepareAddSub(Q rightOperand) {
             Q a = GetSimplestForm();
             Q b = rightOperand.GetSimplestForm();
 
@@ -324,10 +324,10 @@ namespace InfiniteEngine {
             if (other == null)
                 return false;
 
-            return this._num == other.Num && this._den == other.Den;
+            return _num == other.Num && _den == other.Den;
         }
 
-        public override bool Equals(Object obj) {
+        public override bool Equals(object obj) {
             if (obj == null)
                 return false;
 

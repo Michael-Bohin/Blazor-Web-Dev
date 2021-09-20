@@ -6,7 +6,19 @@ namespace InfiniteEngine {
     using M = MathAlgorithms; // required?
 
     public class EGenerator_Fractions_S02E01 : ExcerciseGenerator {
-        string[] steps = new string[8];
+		// just to make it compilable before rewriting: 
+		protected override Excercise Construct(Zadani zt) {
+			Q A = new(2, 3);
+			Q B = new(4, 5);
+			Q C = new(6, 7);
+			return GetExactlyThis(A, B, C, true);
+		}
+
+		protected override void Consider(Zadani z) => throw new NotImplementedException();
+
+
+
+		string[] steps = new string[8];
         string[] comments = new string[8];
         string[] isoMods = new string[8];
 
@@ -222,7 +234,7 @@ namespace InfiniteEngine {
         /// GetTen -> uniform distirbutions of varibles in terms of teaching needs 
         /// GetAll -> unsafe may explode memory, no random factor, always all possible
 
-        public override Excercise GetOne() {
+        /*public override Excercise GetOne() {
             Q A = ChooseAnyQ(mnozinaA);
             Q B = ChooseAnyQ(mnozinaB);
             List<Q> filteredC = new();
@@ -231,7 +243,7 @@ namespace InfiniteEngine {
                     filteredC.Add(f);
             Q C = ChooseAnyQ(filteredC);
             return GetExactlyThis(A, B, C, CoinFlip());
-        }
+        }*/
 
         Q ChooseAnyQ(List<Q> from) => from[rand.Next(0, from.Count)];
 
