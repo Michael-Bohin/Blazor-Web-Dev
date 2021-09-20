@@ -134,14 +134,7 @@ namespace InfiniteEngine
 			comments[5] = "Hotovo! 😎😎";
 
 			return new EFractions_S02_A(steps, comments, result);
-			// ! dodelat: a) detekovani ruznych koncu prevod na ZT nebo neprevod, 4 mozne kombinace +- v zadani
+			// ! dodelat: detekovani ruznych koncu prevod na ZT nebo neprevod
 		}
 	} // end egen fractions 
 } // end namespace IE
-
-/* -> prilis nebezpecne pri 4.8 milionu kombinaci prikladu
-    *public List<Excercise> GetAllIllegal1 => ConstructExcercises(illegal1);
-public List<Excercise> GetAllIllegal2 => ConstructExcercises(illegal2);
-public List<Excercise> GetAllIllegal3 => ConstructExcercises(illegal3);
-public List<Excercise> GetAllIllegal4 => ConstructExcercises(illegal4);
-public List<Excercise> GetAllLegit => ConstructExcercises(legit);*/
