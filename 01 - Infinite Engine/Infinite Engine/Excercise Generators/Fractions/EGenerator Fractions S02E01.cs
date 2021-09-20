@@ -5,18 +5,21 @@ namespace InfiniteEngine {
     using Q = RationalNumber;
     using M = MathAlgorithms; // required?
 
-    public class EGenerator_Fractions_S02E01 : ExcerciseGenerator {
+	public record Zadani_Fractions_S02E01 : Zadani
+	{
+		// docasne uspokojeni compileru, nez to prepisu
+	}
+
+    public class EGenerator_Fractions_S02E01 : ExcerciseGenerator<Zadani_Fractions_S02E01> {
 		// just to make it compilable before rewriting: 
-		protected override Excercise Construct(Zadani zt) {
+		protected override Excercise Construct(Zadani_Fractions_S02E01 zt) {
 			Q A = new(2, 3);
 			Q B = new(4, 5);
 			Q C = new(6, 7);
 			return GetExactlyThis(A, B, C, true);
 		}
 
-		protected override void Consider(Zadani z) => throw new NotImplementedException();
-
-
+		protected override void Consider(Zadani_Fractions_S02E01 z) => throw new NotImplementedException();
 
 		string[] steps = new string[8];
         string[] comments = new string[8];
@@ -101,24 +104,6 @@ namespace InfiniteEngine {
                         mnozinaC_Desetiny.Add(possibleC);
                 }
             }
-
-            /*Console.WriteLine($"Mozne poloviny:");
-            foreach(Q q in mnozinaC_Poloviny) {
-                Console.WriteLine($"{q}");
-            }
-            Console.WriteLine($"Mozne ctvrtiny");
-            foreach (Q q in mnozinaC_Ctvrtiny) {
-                Console.WriteLine($"{q}");
-            }
-            Console.WriteLine($"Mozne Petiny ");
-            foreach (Q q in mnozinaC_Petiny) {
-                Console.WriteLine($"{q}");
-            }
-            Console.WriteLine($"Mozne desetiny");
-            foreach (Q q in mnozinaC_Desetiny) {
-                Console.WriteLine($"{q}");
-            }*/
-
         }
         /// end of constructor helper functions
 

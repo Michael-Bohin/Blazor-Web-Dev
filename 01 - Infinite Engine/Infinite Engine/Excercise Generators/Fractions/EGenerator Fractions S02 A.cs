@@ -6,18 +6,64 @@ namespace InfiniteEngine
 {
 	using Q = RationalNumber;
 	using M = MathAlgorithms;
-	public record Zadani
+	/*
+	public record Zadani<A, B, C, D, E, F, opA, opB, opC>
+	{
+		public readonly A a; 
+		public readonly B b; 
+		public readonly C c; 
+		public readonly D d; 
+		public readonly E e; 
+		public readonly F f; 
+		public readonly opA opa; 
+		public readonly opB opb; 
+		public readonly opC opc;
+		public Zadani(A a, B b, C c, D d, E e, F f, opA opa, opB opb, opC opc) {
+			this.a = a; this.b = b; this.c = c; this.d = d; this.e = e; this.f = f; this.opa = opa; this.opb = opb; this.opc = opc;
+		}
+	}
+
+	public record Zadani<a, b, opa>
+	{
+		public readonly a A;
+		public readonly b B;
+		public readonly opa opA;
+		public Zadani(a A, b B, opa opA) {
+			this.A = A; this.B = B; this.opA = opA;
+		}
+	}
+
+	public interface IZadani { 
+		void DoSomething();
+		}
+	public record Zadani<a, b, c, d, opa, opb> : IZadani
+	{
+		public readonly a A;
+		public readonly b B;
+		public readonly c C;
+		public readonly d D;
+
+		public readonly opa opA;
+		public readonly opb opB;
+		public Zadani(a A, b B, c C, d D, opa opA, opb opB) {
+			this.A = A; this.B = B; this.C = C; this.D = D; this.opA = opA; this.opB= opB;
+		}
+
+		public void DoSomething() => WriteLine("I did something.");
+	}*/
+
+	public record Zadani_Fractions_S02_A : Zadani
 	{
 		public readonly Q A, B, D;
 		public readonly int C;
 		public readonly Op opA, opB;
 
-		public Zadani(Q A, Q B, int C, Q D, Op opA, Op opB) {
+		public Zadani_Fractions_S02_A(Q A, Q B, int C, Q D, Op opA, Op opB) {
 			this.A = A; this.B = B; this.C = C; this.D = D; this.opA = opA; this.opB = opB;
 		}
 	}
 
-	public class EGenerator_Fractions_S02_A : ExcerciseGenerator
+	public class EGenerator_Fractions_S02_A : ExcerciseGenerator <Zadani_Fractions_S02_A>
 	{
 		public EGenerator_Fractions_S02_A() : base(4) {
 			// at this point generate all possible zadani in constructor
@@ -37,18 +83,19 @@ namespace InfiniteEngine
 					foreach (int C in moznaC)
 						foreach (Q D in moznaD)
 							foreach((Op opA, Op opB) in operatorCombinations)
-								Consider(new Zadani(A.Copy(), B.Copy(), C, D.Copy(), opA, opB));
+								Consider(new Zadani_Fractions_S02_A(A.Copy(), B.Copy(), C, D.Copy(), opA, opB));
 
 			CreateStatsLog();
 		}
 
-		protected override void Consider(Zadani z) {
+		protected override void Consider(Zadani_Fractions_S02_A z) {
 			// from pedagogic point of view: 
 			// 1. A.q != B.q
 			// 2. LCM(A.q, B.q) != D.q
 			// 3. Vysledky aritmetiky kroku B se rovnaji (tady spadne +- 90% kombinaci)
 			// 4. Vysledek nalezi do dostatecne jednoduchych vysledku 
 			// 5. Kombinace je pedagogicky legitimni
+			
 			Q A = z.A;
 			Q B = z.B;
 			int C = z.C;
@@ -87,7 +134,7 @@ namespace InfiniteEngine
 			return -11 < cit && cit < 11 && 1 < jm && jm < 11;
 		}
 
-		protected override Excercise Construct(Zadani z) {
+		protected override Excercise Construct(Zadani_Fractions_S02_A z) {
 			int C = z.C; Op opA = z.opA; Op opB = z.opB;
 			Q A = z.A.Copy(); Q B = z.B.Copy(); Q D = z.D.Copy(); // @ defensive programming
 			string opReprA = opA == Op.Add ? "+" : "-";
