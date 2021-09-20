@@ -12,10 +12,28 @@ namespace InfiniteEngine {
 		Add, Sub, Mul, Div
 	}
 
+	/*
+	Excercise Generator abstraction thought process:
+	
+	Each exercise generator should: 
+
+	1. Define child of class Zadani: what input variables for every excercise are there? 
+	2. In constructor:
+		a) How many illegal sets of Zadani from pedagogic point of view are there? 
+			-> call base constructor with int equal to this answer 
+		b) Instantiate all combinatoric sets of possible variables 
+		c) For each possible zadani consider its pedagogic legitimacy.
+			That means assign it ither to some illegal list or legit list. 
+		d) create the kontrolaAritmetiky string, that does the 'podvojne ucetnictvi' of possible combinations
+		e) call CreateStatsLog of ExcerciseGenerator parent.
+	3. Give implementation to abstract method Consider -> rule out all not legit Zadani's
+	4. Give implementation to abstract method Construct -> Define Kuchařka řešení: the heart of the entire idea.
+	 */
+
 	interface IExcerciseGenerator {
 		List<Excercise> GetIllegal(int type, int count);
 		List<Excercise> GetLegit(int count);
-		List<Excercise> GetPedagogicSet(List<Zadani> zList, int count);
+		List<Excercise> GetPedagogicSet(List<Zadani> zList, int count); // enables easier exploring of options 
 		Excercise GetOne();
 		Excercise[] GetTen();
 	}
