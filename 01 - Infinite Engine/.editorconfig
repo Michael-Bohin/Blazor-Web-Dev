@@ -1,4 +1,4 @@
-# Rules in this file were initially inferred by Visual Studio IntelliCode from the D:\Github repos\Blazor-Web-Dev\01 - Infinite Engine codebase based on best match to current usage at 9/17/2021
+# Rules in this file were initially inferred by Visual Studio IntelliCode from the D:\Github repos\Blazor-Web-Dev\01 - Infinite Engine codebase based on best match to current usage at 9/20/2021
 # You can modify the rules from these initially generated values to suit your own policies
 # You can learn more about editorconfig here: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
 [*.cs]
@@ -101,12 +101,12 @@ dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
 #Style - modifier options
 
 #prefer accessibility modifiers to be declared except for public interface members. This will currently not differ from always and will act as future proofing for if C# adds default interface methods.
-dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggestion
+dotnet_style_require_accessibility_modifiers = omit_if_default:suggestion
 
 #Style - Modifier preferences
 
 #when this rule is set to a list of modifiers, prefer the specified ordering.
-csharp_preferred_modifier_order = public,protected,private,override,readonly,static,abstract,new:suggestion
+csharp_preferred_modifier_order = public,protected,private,override,static,readonly,abstract,new:suggestion
 
 #Style - Pattern matching
 
@@ -121,4 +121,6 @@ dotnet_style_qualification_for_field = false:suggestion
 dotnet_style_qualification_for_method = false:suggestion
 #prefer properties not to be prefaced with this. or Me. in Visual Basic
 dotnet_style_qualification_for_property = false:suggestion
-csharp_new_line_before_open_brace=all
+
+[*.{cs,vb}]
+indent_style=tab

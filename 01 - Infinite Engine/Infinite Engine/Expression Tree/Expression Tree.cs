@@ -47,7 +47,7 @@ namespace InfiniteEngine {
         public override string ToHTML() => $"{SignRepresentation}{operand.ToHTML()}";
 
         public override UnaryExpression DeepCopy() {
-            UnaryExpression other = (UnaryExpression)this.MemberwiseClone();
+            UnaryExpression other = (UnaryExpression)MemberwiseClone();
             other.operand = operand.DeepCopy();
             return other;
         }
@@ -79,7 +79,7 @@ namespace InfiniteEngine {
         // not yet defined Sum : soucet
 
         public override Addition DeepCopy() {
-            Addition other = (Addition)this.MemberwiseClone();
+            Addition other = (Addition)MemberwiseClone();
             other.leftOperand = leftOperand.DeepCopy();
             if (rightOperand == null) {
                 other.rightOperand = null;
@@ -110,7 +110,7 @@ namespace InfiniteEngine {
         }
         // not yet defined Difference : rozdil
         public override Subtraction DeepCopy() {
-            Subtraction other = (Subtraction)this.MemberwiseClone();
+            Subtraction other = (Subtraction) MemberwiseClone();
             other.leftOperand = leftOperand.DeepCopy();
             if (rightOperand == null) {
                 other.rightOperand = null;
@@ -141,7 +141,7 @@ namespace InfiniteEngine {
         }
         // not yet defined Product : soucin
         public override Multiplication DeepCopy() {
-            Multiplication other = (Multiplication)this.MemberwiseClone();
+            Multiplication other = (Multiplication)MemberwiseClone();
             other.leftOperand = leftOperand.DeepCopy();
             other.rightOperand = rightOperand.DeepCopy();
             return other;
@@ -167,7 +167,7 @@ namespace InfiniteEngine {
         }
         // not yet defined Quotient : podil
         public override Division DeepCopy() {
-            Division other = (Division)this.MemberwiseClone();
+            Division other = (Division)MemberwiseClone();
             other.leftOperand = leftOperand.DeepCopy();
             other.rightOperand = rightOperand.DeepCopy();
             return other;
@@ -208,6 +208,7 @@ namespace InfiniteEngine {
         public override string ToString() => $"({Numerator})/({Denominator})";
         // it nessecary to throw in some tricks here, since drawing proper Fractions in html is not trivial or inbuilt into web browsers
         public override string ToHTML() => @"<div class=""frac""><span>" + Numerator.ToHTML() + @"</span><span class=""symbol"">/</span><span class=""bottom"">" + Denominator.ToHTML() + @"</span></div>";
+        public static string ToHTML(string left, string right) => @"<div class=""frac""><span>" + left + @"</span><span class=""symbol"">/</span><span class=""bottom"">" + right + @"</span></div>";
 
         public double ToDouble() {
             if (Numerator is Integer i && Denominator is Integer j)
@@ -226,7 +227,7 @@ namespace InfiniteEngine {
         }
         // not yet defined Quotient : podil
         public override Fraction DeepCopy() {
-            Fraction other = (Fraction)this.MemberwiseClone();
+            Fraction other = (Fraction) MemberwiseClone();
             other.leftOperand = leftOperand.DeepCopy();
             other.rightOperand = rightOperand.DeepCopy();
             return other;
@@ -386,7 +387,7 @@ namespace InfiniteEngine {
     }
 
     public class Integer : Constant {
-        public new readonly int number;
+        public readonly new int number;
         public Integer(int i) {
             number = i;
         }
@@ -394,19 +395,19 @@ namespace InfiniteEngine {
         public override string ToString() => number.ToString();
         public override string ToHTML() => number.ToString();
 
-        public override Integer DeepCopy() => (Integer) this.MemberwiseClone();
+        public override Integer DeepCopy() => (Integer) MemberwiseClone();
         public override int GetHashCode() => number.GetHashCode();
     }
 
     public class RealNumber : Constant {
-        public new readonly double number;
+        public readonly new double number;
         public RealNumber(double d) {
             number = d;
         }
 
         public override string ToString() => number.ToString();
         public override string ToHTML() => number.ToString();
-        public override RealNumber DeepCopy() => (RealNumber)this.MemberwiseClone();
+        public override RealNumber DeepCopy() => (RealNumber)MemberwiseClone();
     }
 
     public class Variable : Value {

@@ -9,18 +9,42 @@ namespace CLI_View_of_Infinite_Engine_library {
     class Program {
         static void Main() {
             WriteLine("Hello World!");
-            /**/
+            /*/
             Dificulty[] levels = new Dificulty[5] { Dificulty.MENSI, Dificulty.PRIJIMACKY, Dificulty.VETSI, Dificulty.OBROVSKA, Dificulty.CPU };
             foreach(Dificulty d in levels) {
                 Console.WriteLine($"Initiating Writing Dificulty: {d}");
                 EGenerator_Fractions_S02E01 egen = new(d);
                 List<Excercise> excercises = new();
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 5; i++)
                     foreach (Excercise e in egen.GetTen())
                         excercises.Add(e);
 
                 HTMLWriter.CreateFile($"InfiniteEngine-Fraction-S0201-v2-Final-100-Collection-{d}.html", excercises.ToArray());
             }
+            /**/
+
+            /**/
+            Console.WriteLine($"Initiating Writing Fractions S02 A:");
+            EGenerator_Fractions_S02_A egen = new();
+            using StreamWriter sw = new("stats-log.txt");
+            sw.Write( egen.Stats );
+
+            List<Excercise> eList = new();
+            eList = egen.GetIllegal1(50);
+            HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-3-illegal-1.html", eList.ToArray());
+
+            eList = egen.GetIllegal2(50);
+            HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-3-illegal-2.html", eList.ToArray());
+
+            eList = egen.GetIllegal3(50);
+            HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-3-illegal-3.html", eList.ToArray());
+
+            eList = egen.GetIllegal4(50);
+            HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-3-illegal-4.html", eList.ToArray());
+
+            eList = egen.GetLegit(200);
+            HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-3-legit.html", eList.ToArray());
+
             /**/
 
             /*/
@@ -48,6 +72,8 @@ namespace CLI_View_of_Infinite_Engine_library {
         const string TableFooter = "</tbody></table>";
         const string footerTableLess = "</div></body></html>";
 
+        //const string TableHeaderBrief = @"<table class=""table-fill""><thead><tr><th></th></tr></thead><tbody class=""tableBody""> ";
+
         public HTMLWriter() { }
 
         public static void CreateFile(string filePath, Excercise[] excercises) {
@@ -62,6 +88,52 @@ namespace CLI_View_of_Infinite_Engine_library {
                     sb.Append("<tr><td>" + i + @".</td><td class=""text-blue"">" + e.Steps[i] + "</td>");
                     sb.Append(@"<td class=""text-green text-left"">" + e.Comments[i] + @"</td><td class=""text-blue"">" + e.IsolatedModifications[i] + "</td></tr>");
                 }
+                sb.Append(TableFooter);
+            }
+            sb.Append(footerTableLess);
+            using StreamWriter sw = new(filePath);
+            sw.Write( sb.ToString() );
+        }
+
+        public static void CreateFileBriefExcercies(string filePath, Excercise[] excercises)
+        {
+            StringBuilder sb = new();
+            sb.Append(headerTableLess);
+            int counter = 0;
+            foreach (Excercise e in excercises) {
+                counter++;
+                sb.Append($"<h2>Příklad číslo: {counter}</h2>");
+                sb.Append(TableHeader);
+                for (int i = 0; i < e.Steps.Length; i++) {
+                    sb.Append("<tr><td>" + i + @".</td><td class=""text-blue"">" + e.Steps[i] + "</td>");
+                    sb.Append(@"<td class=""text-green text-left"">" + e.Comments[i] + @"</td><td class=""text-blue"">Tady by byli izolovane upravy</td></tr>");
+                }
+                sb.Append(TableFooter);
+            }
+            sb.Append(footerTableLess);
+            using StreamWriter sw = new(filePath);
+            sw.Write( sb.ToString() );
+        }
+
+        public static void CreateFileBriefExcercies2(string filePath, Excercise[] excercises)
+        {
+            StringBuilder sb = new();
+            sb.Append(headerTableLess);
+            int counter = 0;
+            foreach (Excercise e in excercises) {
+                counter++;
+                sb.Append($"<h2>Příklad číslo: {counter}</h2>");
+                sb.Append(@"<table class=""table-fill""> ");
+
+                sb.Append(@"<tbody class=""tableBody""><tr><td colspan=""2"">");
+                for (int i = 0; i < e.Steps.Length - 1; i++) 
+                    sb.Append( e.Steps[i] + " = ");
+                sb.Append( e.Steps[^1]);
+                sb.Append("</td></tr>");
+
+                for (int i = 0; i < e.Comments.Length; i++) 
+                    sb.Append(@"<tr><td>Krok " + i + @":</td><td class=""text-green text-left"">" + e.Comments[i] + @"</td></tr>");
+
                 sb.Append(TableFooter);
             }
             sb.Append(footerTableLess);
