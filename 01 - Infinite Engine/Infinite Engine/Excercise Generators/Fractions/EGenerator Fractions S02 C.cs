@@ -20,6 +20,7 @@ namespace InfiniteEngine
 
 	public class EGenerator_Fractions_S02_C : ExcerciseGenerator <Zadani_Fractions_S02_C>
 	{
-
+		protected override void Consider(Zadani_Fractions_S02_C z) => throw new NotImplementedException();
+		protected override Excercise Construct(Zadani_Fractions_S02_C z) => throw new NotImplementedException();
 	}
 }

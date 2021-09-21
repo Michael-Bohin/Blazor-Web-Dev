@@ -89,29 +89,21 @@ namespace InfiniteEngine {
         Q Subtract(Q subtrahend);
         Q Multiply(Q multiplier);
         Q Divide(Q divisor);
-    }
+	}
 
-    public class RationalNumber : Value, IRationalNumber, IRationalArithmetic, 
+	interface ITeacherAtomicOperations
+	{
+		// To be implemented! First need to carefully think through what are all the use cases. 
+	}
+
+	public class RationalNumber : Value, IRationalNumber, IRationalArithmetic, 
         IEquatable<RationalNumber>, IComparable<RationalNumber>
         /// IFormattable : Implement in future, if sending it to different view like HTML, WinForms, Unity etc. requires significantly different formatting
         /// IConvertible : Maybe implement in future 
         {
         int _num;
         public int Num { get => _num; set => _num = value; }
-/*#pragma warning disable IDE1006 // Styly pojmenování
-        public int p { get => _num; set => _num = value; }
-        public int q
-        {
-            get => _den;
-            set
-            {
-                if (value == 0)
-                    throw new MathHellException(mathHellAlert);
-                _den = value;
-            }
-        }
-#pragma warning restore IDE1006 // Styly pojmenování
-*/
+
         int _den;
         public int Den {
             get => _den;
@@ -311,15 +303,6 @@ namespace InfiniteEngine {
         // avoid inverse fractions returning same product 
         public override int GetHashCode() => _num.GetHashCode() * _den.GetHashCode() + _num.GetHashCode();
 
-        /*public static bool operator ==(Q a, Q b) => a != null && a.Equals(b);
-
-        public static bool operator !=(Q a, Q b) {
-            if (a == null || b == null)
-                return false;
-            
-            return !(a.Equals(b));
-        }*/
-
         public bool Equals(Q other) {
             if (other == null)
                 return false;
@@ -377,6 +360,18 @@ namespace InfiniteEngine {
         public static bool operator <(Q operand1, Q operand2) => operand1.CompareTo(operand2) < 0;
         public static bool operator >=(Q operand1, Q operand2) => operand1.CompareTo(operand2) >= 0;
         public static bool operator <=(Q operand1, Q operand2) => operand1.CompareTo(operand2) <= 0;
+
+		/* ! To be properly implemented ! -> also think out all possible usages -> from teaching point of view, what are all the atomic opeartions? 
+		 * First define interface: ITeacher_RationalAtomicOperations
+		 * public void Operate(Op op, Q rightOperand) {
+			if(op == Op.Mul || op == Op.Div)
+				throw new NotImplementedException();
+
+			if( _den != rightOperand.Den) {
+				// expand to same denominator 
+
+			}
+		}*/
     }
     /*/
     // Educational child of Q class will consist of same 

@@ -39,18 +39,10 @@ namespace InfiniteEngine {
 			return nahore == dole;
 		}
 
-		public static bool VysledekNaleziDoMnozinyEasyZlomky(Q A, Q B, int C, Q D, Op opA, Op opB) {
-			// spocitej vysledek, podivej jestli vysledek.Num je v [-10, 10] a vysledek.Den v [2, 10]
-			Q top = opA == Op.Add ? A + B : A - B;
-			Q bottom = opB == Op.Add ? (new Q(C) + D) : (new Q(C) - D);
-			Q vysledek = top / bottom;
-			int cit = vysledek.Num;
-			int jm = vysledek.Den;
-			return -11 < cit && cit < 11 && 1 < jm && jm < 11;
-		}
+		
 
 		// je reduced vysledek operace cele cislo? 
-		public static bool AritmetikaVedeNaNeceleCislo(Q A, Q B, Op op) => op == Op.Add ? (A + B).IsInteger() : (A - B).IsInteger();
+		public static bool AritmetikaVedeNaNeceleCislo(Q A, Q B, Op op) => op == Op.Add ? !(A + B).IsInteger() : !(A - B).IsInteger();
 		
 		// existuje k z prirozenych cisel t.ž.: 
 		// k >= 2 && (k * y) == x && x neni nula 

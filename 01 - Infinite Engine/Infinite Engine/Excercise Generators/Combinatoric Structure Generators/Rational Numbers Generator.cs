@@ -67,13 +67,13 @@ namespace InfiniteEngine {
 		public static List<Q> GetEasyMediumZTSet() {
 			List<Q> result = new();
 			for(int i = 1; i < 10; i++)
-				for(int j = 10; j < 20; j++) {
+				for(int j = 10; j < 16; j++) {
 					Q test = new(i, j);
 					if(test.IsSimplestForm())
 						result.Add(test);
 				}
 
-			for(int i = 10; i < 20; i++)
+			for(int i = 10; i < 16; i++)
 				for(int j = 2; j < 10; j++) {
 					Q test = new(i, j);
 					if(test.IsSimplestForm())

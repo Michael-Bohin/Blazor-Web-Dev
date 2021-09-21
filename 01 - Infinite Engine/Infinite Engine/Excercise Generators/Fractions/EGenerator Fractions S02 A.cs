@@ -64,10 +64,20 @@ namespace InfiniteEngine
 				illegal[1].Add(z);
 			else if ( ! M.VysledekAritmetikySeRovna( A, B, C, D , opA, opB ))
 				illegal[2].Add(z);
-			else if ( ! M.VysledekNaleziDoMnozinyEasyZlomky( A, B, C, D, opA, opB))
+			else if ( ! VysledekNaleziDoMnozinyEasyZlomky( A, B, C, D, opA, opB))
 				illegal[3].Add(z);
 			else
 				legit.Add(z);
+		}
+
+		static bool VysledekNaleziDoMnozinyEasyZlomky(Q A, Q B, int C, Q D, Op opA, Op opB) {
+			// spocitej vysledek, podivej jestli vysledek.Num je v [-10, 10] a vysledek.Den v [2, 10]
+			Q top = opA == Op.Add ? A + B : A - B;
+			Q bottom = opB == Op.Add ? (new Q(C) + D) : (new Q(C) - D);
+			Q vysledek = top / bottom;
+			int cit = vysledek.Num;
+			int jm = vysledek.Den;
+			return -11 < cit && cit < 11 && 1 < jm && jm < 11;
 		}
 
 		protected override Excercise Construct(Zadani_Fractions_S02_A z) {
@@ -81,10 +91,7 @@ namespace InfiniteEngine
 
 			// step 1:
 			steps[0] = Fraction.ToHTML($"{A} {opReprA} {B}", $"{C} {opReprB} {D}");
-			string aJmenovatel = A.Den < 21 ? xtiny[A.Den] : $"zlomek se jmenovatelem {A.Den}";
-			string bJmenovatel = B.Den < 21 ? xtiny[B.Den] : $"zlomek se jmenovatelem {B.Den}";
-			string cilovyJmenovatel = lcm < 21 ? xtiny[lcm] : $"zlomek se jmenovatelem {lcm}";
-			comments[0] = $"V čitateli rozšiř {aJmenovatel} a {bJmenovatel} na {cilovyJmenovatel}.<br>Ve jmenovateli převeď číslo {C} na zlomek se jmenovatelem {D.Den}.";
+			comments[0] = $"V čitateli rozšiř {XtinyCesky(A.Den)} a {XtinyCesky(B.Den)} na {XtinyCesky(lcm)}.<br>Ve jmenovateli převeď číslo {C} na zlomek se jmenovatelem {D.Den}.";
 
 			// step 2:
 			A.Expand(lcm / A.Den);
@@ -116,7 +123,7 @@ namespace InfiniteEngine
 			steps[5] = $"{result}";
 			comments[5] = "Hotovo! 😎😎";
 
-			return new EFractions_S02_A(steps, comments, result);
+			return new EFractions_S02(steps, comments, result);
 			// ! dodelat: detekovani ruznych koncu prevod na ZT nebo neprevod
 		}
 	} // end egen fractions 

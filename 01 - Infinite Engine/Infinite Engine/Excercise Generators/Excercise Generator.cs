@@ -49,6 +49,7 @@ namespace InfiniteEngine {
         public readonly Dificulty level;
 
 		protected readonly List<T>[] illegal;
+		public int[] illegalCounter;
 		protected readonly List<T> legit = new();
 		protected readonly string[] xtiny = new string[] { "nula", "jedniny", "poloviny", "třetiny", "čtvrtiny", "pětiny", "šestiny", "sedminy", "osminy", "devítiny", "desetiny", "jedenáctiny", "dvanáctiny", "třináctiny", "čtrnáctiny", "patnáctiny", "šestnáctiny", "sedmnáctiny", "osmnáctiny", "devatenáctiny", "dvacetiny" };
 		public string stats;
@@ -69,21 +70,20 @@ namespace InfiniteEngine {
 			for(int i = 0; i < illegal.Length; i++)
 				illegal[i] = new();
 
+			illegalCounter = new int[illegalSetsCount];
 			rand = new();
             level = Dificulty.PRIJIMACKY;
 		}
-
-		
 
 		protected void CreateStatsLog() {
 			StringBuilder sb = new();
 			int total = legit.Count;
 			for(int i = 0; i < illegal.Length; i++)
-				total += illegal[i].Count;
+				total += illegalCounter[i];
 
 			sb.Append($"Total possible: {total} --> {(double)total / total * 100}%\n");
 			for(int i = 0; i < illegal.Length; i++)
-				sb.Append($"illegal {i} count: {illegal[i].Count} --> {(double)illegal[i].Count / total * 100}%\n");
+				sb.Append($"illegal {i} count: {illegalCounter[i]} --> {(double)illegalCounter[i] / total * 100}%\n");
 			
 			sb.Append($"legit count: {legit.Count} --> {(double)legit.Count / total * 100}%\n");
 			sb.Append(aritmetickaKontrola);
@@ -159,5 +159,7 @@ namespace InfiniteEngine {
 			}
 			return result;
 		}
+
+		protected string XtinyCesky(int jmenovatel) => jmenovatel < 21 ? xtiny[jmenovatel] : $"zlomek se jmenovatelem {jmenovatel}";
     }
 }
