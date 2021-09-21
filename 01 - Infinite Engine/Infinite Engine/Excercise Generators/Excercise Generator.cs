@@ -32,15 +32,19 @@ namespace InfiniteEngine {
 	4. Give implementation to abstract method Construct -> Define Kuchařka řešení: the heart of the entire idea.
 	 */
 
-	interface IExcerciseGenerator<T> {
+	public interface IExcerciseGenerator<T>  {
 		List<Excercise> GetIllegal(int type, int count);
 		List<Excercise> GetLegit(int count);
 		List<Excercise> GetPedagogicSet(List<T> zList, int count); // enables easier exploring of options 
 		Excercise GetOne();
-		Excercise[] GetTen();
+		Excercise[] GetTen(); // enables defining not uniform distribution of excercises
 	}
 
-    public abstract class ExcerciseGenerator<T> : IExcerciseGenerator<T> {
+    public abstract class ExcerciseGenerator<T> : IExcerciseGenerator<T> where T : Zadani  {
+		protected abstract void Consider(T z);
+		protected abstract Excercise Construct(T z);
+
+
         protected Random rand;
         public readonly Dificulty level;
 
@@ -69,8 +73,7 @@ namespace InfiniteEngine {
             level = Dificulty.PRIJIMACKY;
 		}
 
-		protected abstract void Consider(T z);
-		protected abstract Excercise Construct(T z);
+		
 
 		protected void CreateStatsLog() {
 			StringBuilder sb = new();

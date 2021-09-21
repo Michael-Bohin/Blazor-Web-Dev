@@ -6,51 +6,6 @@ namespace InfiniteEngine
 {
 	using Q = RationalNumber;
 	using M = MathAlgorithms;
-	/*
-	public record Zadani<A, B, C, D, E, F, opA, opB, opC>
-	{
-		public readonly A a; 
-		public readonly B b; 
-		public readonly C c; 
-		public readonly D d; 
-		public readonly E e; 
-		public readonly F f; 
-		public readonly opA opa; 
-		public readonly opB opb; 
-		public readonly opC opc;
-		public Zadani(A a, B b, C c, D d, E e, F f, opA opa, opB opb, opC opc) {
-			this.a = a; this.b = b; this.c = c; this.d = d; this.e = e; this.f = f; this.opa = opa; this.opb = opb; this.opc = opc;
-		}
-	}
-
-	public record Zadani<a, b, opa>
-	{
-		public readonly a A;
-		public readonly b B;
-		public readonly opa opA;
-		public Zadani(a A, b B, opa opA) {
-			this.A = A; this.B = B; this.opA = opA;
-		}
-	}
-
-	public interface IZadani { 
-		void DoSomething();
-		}
-	public record Zadani<a, b, c, d, opa, opb> : IZadani
-	{
-		public readonly a A;
-		public readonly b B;
-		public readonly c C;
-		public readonly d D;
-
-		public readonly opa opA;
-		public readonly opb opB;
-		public Zadani(a A, b B, c C, d D, opa opA, opb opB) {
-			this.A = A; this.B = B; this.C = C; this.D = D; this.opA = opA; this.opB= opB;
-		}
-
-		public void DoSomething() => WriteLine("I did something.");
-	}*/
 
 	public record Zadani_Fractions_S02_A : Zadani
 	{
@@ -107,31 +62,12 @@ namespace InfiniteEngine
 				illegal[0].Add(z);
 			else if ( ! (M.EuclidsLCM(A.Den, B.Den) != D.Den))
 				illegal[1].Add(z);
-			else if ( ! VysledekAritmetikySeRovna( A, B, C, D , opA, opB ))
+			else if ( ! M.VysledekAritmetikySeRovna( A, B, C, D , opA, opB ))
 				illegal[2].Add(z);
-			else if ( ! VysledekNaleziDoMoznychVysledku( A, B, C, D, opA, opB))
+			else if ( ! M.VysledekNaleziDoMnozinyEasyZlomky( A, B, C, D, opA, opB))
 				illegal[3].Add(z);
 			else
 				legit.Add(z);
-		}
-
-		static bool VysledekAritmetikySeRovna(Q A, Q B, int C, Q D, Op opA, Op opB) {
-			int lcm = M.EuclidsLCM(A.Den, B.Den);
-			int expandedA = A.Num * (lcm / A.Den);
-			int expandedB = B.Num * (lcm / B.Den);
-			int nahore = opA == Op.Add ? expandedA + expandedB : expandedA - expandedB;
-			int dole = opB == Op.Add ? D.Den * C + D.Num : D.Den * C - D.Num;
-			return nahore == dole;
-		}
-
-		static bool VysledekNaleziDoMoznychVysledku(Q A, Q B, int C, Q D, Op opA, Op opB) {
-			// spocitej vysledek, podivej jestli vysledek.Num je v [-10, 10] a vysledek.Den v [2, 10]
-			Q top = opA == Op.Add ? A + B : A - B;
-			Q bottom = opB == Op.Add ? (new Q(C) + D) : (new Q(C) - D);
-			Q vysledek = top / bottom;
-			int cit = vysledek.Num;
-			int jm = vysledek.Den;
-			return -11 < cit && cit < 11 && 1 < jm && jm < 11;
 		}
 
 		protected override Excercise Construct(Zadani_Fractions_S02_A z) {

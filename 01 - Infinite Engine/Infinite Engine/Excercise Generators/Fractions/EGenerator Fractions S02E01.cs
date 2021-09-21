@@ -8,6 +8,7 @@ namespace InfiniteEngine {
 	public record Zadani_Fractions_S02E01 : Zadani
 	{
 		// docasne uspokojeni compileru, nez to prepisu
+		
 	}
 
     public class EGenerator_Fractions_S02E01 : ExcerciseGenerator<Zadani_Fractions_S02E01> {

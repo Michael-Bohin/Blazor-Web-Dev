@@ -5,8 +5,6 @@ using System;
 /// I want deep immutablity -> immutable arrays
 
 namespace InfiniteEngine {
-    using Q = RationalNumber;
-
     public enum AnswerKind {
         N, Z, Q, R, STRING, YESNO, 
     }

@@ -63,5 +63,23 @@ namespace InfiniteEngine {
             List<Q> candidates = GetAll(lowerBound, upperBound, simplestForm);
             return candidates[rand.Next(0, candidates.Count)]; // usereturning deep copy as means for GC to collect candidates sooner. Note: Does this actually help or not? 
         }
+
+		public static List<Q> GetEasyMediumZTSet() {
+			List<Q> result = new();
+			for(int i = 1; i < 10; i++)
+				for(int j = 10; j < 20; j++) {
+					Q test = new(i, j);
+					if(test.IsSimplestForm())
+						result.Add(test);
+				}
+
+			for(int i = 10; i < 20; i++)
+				for(int j = 2; j < 10; j++) {
+					Q test = new(i, j);
+					if(test.IsSimplestForm())
+						result.Add(test);
+				}
+			return result;
+		}
     }
 }
