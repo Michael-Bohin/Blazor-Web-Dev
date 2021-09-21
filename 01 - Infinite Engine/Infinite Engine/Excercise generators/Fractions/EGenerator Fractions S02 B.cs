@@ -82,11 +82,7 @@ namespace InfiniteEngine
 			}
 		}
 
-		void ProcessZadani(Zadani_Fractions_S02_B z, int i) {
-			illegalCounter[i]++;
-			if(illegalCounter[i] < 1000)
-				illegal[i].Add(z);
-		}
+		
 
 		static bool VysledekNaleziDoMnozinyEasyZlomky(Q A, Q B, Q C, Q D, Op opA, Op opB) {
 			// spocitej vysledek, podivej jestli vysledek.Num je v [-10, 10] a vysledek.Den v [2, 10]

@@ -25,7 +25,7 @@ namespace CLI_View_of_Infinite_Engine_library
             }
             /**/
 
-			/*/
+			/**/
 			Console.WriteLine($"Initiating Writing Fractions S02 A:");
 			EGenerator_Fractions_S02_A egen = new();
 			using StreamWriter sw = new("stats-log-Fractions-S02-A.txt");
@@ -33,21 +33,21 @@ namespace CLI_View_of_Infinite_Engine_library
 
 			List<Excercise> eList = new();
 			eList = egen.GetIllegal(0, 50);
-			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-3-illegal-1.html", eList.ToArray());
+			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-4-illegal-1.html", eList.ToArray());
 
 			eList = egen.GetIllegal(1, 50);
-			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-3-illegal-2.html", eList.ToArray());
+			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-4-illegal-2.html", eList.ToArray());
 
 			eList = egen.GetIllegal(2, 50);
-			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-3-illegal-3.html", eList.ToArray());
+			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-4-illegal-3.html", eList.ToArray());
 
 			eList = egen.GetIllegal(3, 50);
-			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-3-illegal-4.html", eList.ToArray());
+			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-4-illegal-4.html", eList.ToArray());
 
 			eList = egen.GetLegit(200);
-			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-3-legit.html", eList.ToArray());
+			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-4-legit.html", eList.ToArray());
 
-			/**/
+			/*
 
 			Console.WriteLine($"Initiating Writing Fractions S02 B:");
 			EGenerator_Fractions_S02_B egen = new();
@@ -78,12 +78,12 @@ namespace CLI_View_of_Infinite_Engine_library
 			WriteLine("init write index 5:");
 			eList = egen.GetIllegal(5, 50);
 			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-B-version-0-1-illegal-5.html", eList.ToArray());*/
-
+			/*
 			WriteLine("init write legit excercises:");
 			eList = egen.GetLegit(200);
 			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-B-version-0-1-LEGIT.html", eList.ToArray());
 
-			/*/
+			/** /
             EGenerator_Fractions_S02E01 egen = new();
             List<Excercise> excercises = new();
 

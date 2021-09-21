@@ -59,13 +59,13 @@ namespace InfiniteEngine
 			Op opB = z.opB;
 			
 			if (! (A.Den != B.Den))
-				illegal[0].Add(z);
+				ProcessZadani(z, 0);
 			else if ( ! (M.EuclidsLCM(A.Den, B.Den) != D.Den))
-				illegal[1].Add(z);
+				ProcessZadani(z, 1);
 			else if ( ! M.VysledekAritmetikySeRovna( A, B, C, D , opA, opB ))
-				illegal[2].Add(z);
+				ProcessZadani(z, 2);
 			else if ( ! VysledekNaleziDoMnozinyEasyZlomky( A, B, C, D, opA, opB))
-				illegal[3].Add(z);
+				ProcessZadani(z, 3);
 			else
 				legit.Add(z);
 		}

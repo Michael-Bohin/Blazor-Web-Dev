@@ -75,6 +75,12 @@ namespace InfiniteEngine {
             level = Dificulty.PRIJIMACKY;
 		}
 
+		protected void ProcessZadani(T z, int i) {
+			illegalCounter[i]++;
+			if(illegalCounter[i] < 1000)
+				illegal[i].Add(z);
+		}
+
 		protected void CreateStatsLog() {
 			StringBuilder sb = new();
 			int total = legit.Count;
