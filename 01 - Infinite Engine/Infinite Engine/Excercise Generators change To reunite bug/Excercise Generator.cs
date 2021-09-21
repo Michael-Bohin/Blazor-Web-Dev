@@ -66,7 +66,7 @@ namespace InfiniteEngine {
         }
 
 		public ExcerciseGenerator(int illegalSetsCount) {
-			illega = new List<T>[illegalSetsCount];
+			illegal = new List<T>[illegalSetsCount];
 			for(int i = 0; i < illegal.Length; i++)
 				illegal[i] = new();
 
