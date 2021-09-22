@@ -39,7 +39,7 @@ namespace InfiniteEngine
 			CreateStatsLog();
 		}
 
-		protected override void Consider(Zadani_Fractions_S02_B z) {
+		protected void Consider(Zadani_Fractions_S02_B z) {
 			// from pedagogic point of view: 
 			// 1. "Jmenovatele dvojic A a B, C a D jsou různé"
 			//			A.Den != B.Den && C.Den != D.Den
@@ -88,10 +88,7 @@ namespace InfiniteEngine
 			// spocitej vysledek, podivej jestli vysledek.Num je v [-10, 10] a vysledek.Den v [2, 10]
 			Q left = opA == Op.Add ? A + B : A - B;
 			Q right = opB == Op.Add ? C + D : C - D;
-			Q vysledek = left * right;
-			int cit = vysledek.Num;
-			int jm = vysledek.Den;
-			return -11 < cit && cit < 11 && 1 < jm && jm < 11;
+			return IsEasyZt(left * right);
 		}
 
 		protected override Excercise Construct(Zadani_Fractions_S02_B z) { 

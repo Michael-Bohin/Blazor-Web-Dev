@@ -11,94 +11,28 @@ namespace CLI_View_of_Infinite_Engine_library
 	{
 		static void Main() {
 			WriteLine("Hello World!");
-			/*/
-            Dificulty[] levels = new Dificulty[5] { Dificulty.MENSI, Dificulty.PRIJIMACKY, Dificulty.VETSI, Dificulty.OBROVSKA, Dificulty.CPU };
-            foreach(Dificulty d in levels) {
-                Console.WriteLine($"Initiating Writing Dificulty: {d}");
-                EGenerator_Fractions_S02E01 egen = new(d);
-                List<Excercise> excercises = new();
-                for (int i = 0; i < 5; i++)
-                    foreach (Excercise e in egen.GetTen())
-                        excercises.Add(e);
 
-                HTMLWriter.CreateFile($"InfiniteEngine-Fraction-S0201-v2-Final-100-Collection-{d}.html", excercises.ToArray());
-            }
-            /**/
+			EGenerator_Fractions_S02_C egen = new();
+			Process(egen, "C", 50, 200, "version-0-1");
 
-			/**/
-			Console.WriteLine($"Initiating Writing Fractions S02 A:");
-			EGenerator_Fractions_S02_A egen = new();
-			using StreamWriter sw = new("stats-log-Fractions-S02-A.txt");
-			sw.Write(egen.stats);
-
-			List<Excercise> eList = new();
-			eList = egen.GetIllegal(0, 50);
-			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-4-illegal-1.html", eList.ToArray());
-
-			eList = egen.GetIllegal(1, 50);
-			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-4-illegal-2.html", eList.ToArray());
-
-			eList = egen.GetIllegal(2, 50);
-			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-4-illegal-3.html", eList.ToArray());
-
-			eList = egen.GetIllegal(3, 50);
-			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-4-illegal-4.html", eList.ToArray());
-
-			eList = egen.GetLegit(200);
-			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-A-version-0-4-legit.html", eList.ToArray());
-
-			/*
-
-			Console.WriteLine($"Initiating Writing Fractions S02 B:");
-			EGenerator_Fractions_S02_B egen = new();
-			using StreamWriter sw = new("stats-log-Fractions-S02-B.txt");
-			sw.Write(egen.stats);
-			List<Excercise> eList = new();
-
-			// 0  vede na nesmysl ktery pada na deleni nulou
-			//eList = egen.GetIllegal(0, 50);
-			//HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-B-version-0-1-illegal-1.html", eList.ToArray());
-
-			//eList = egen.GetIllegal(1, 50);
-			//HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-B-version-0-1-illegal-2.html", eList.ToArray());
-			
-			WriteLine("init write index 2:");
-			eList = egen.GetIllegal(2, 50);
-			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-B-version-0-1-illegal-2.html", eList.ToArray());
-
-
-			WriteLine("init write index 3:");
-			eList = egen.GetIllegal(3, 50);
-			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-B-version-0-1-illegal-3.html", eList.ToArray());
-
-			/*WriteLine("init write index 4:");
-			eList = egen.GetIllegal(4, 50);
-			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-B-version-0-1-illegal-4.html", eList.ToArray());
-
-			WriteLine("init write index 5:");
-			eList = egen.GetIllegal(5, 50);
-			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-B-version-0-1-illegal-5.html", eList.ToArray());*/
-			/*
-			WriteLine("init write legit excercises:");
-			eList = egen.GetLegit(200);
-			HTMLWriter.CreateFileBriefExcercies2($"InfiniteEngine-Fractions-S02-B-version-0-1-LEGIT.html", eList.ToArray());
-
-			/** /
-            EGenerator_Fractions_S02E01 egen = new();
-            List<Excercise> excercises = new();
-
-            Fraction A = new(1, 3);
-            Fraction B = new(1, 2);
-            Fraction C = new(23, 26);
-            bool plus = false;
-            Excercise e = egen.UnsafeGetExactlyThis(A,B,C,plus);
-            excercises.Add(e);
-
-            Excercise[] arrayExcercises = excercises.ToArray();
-            HTMLWriter hw = new();
-            hw.CreateFile($"InfiniteEngine-Fraction-S0201-DebugConcreteExcercise-01.html", arrayExcercises);
-            /**/
 			WriteLine("Job done. :)");
+		}
+
+		static void Process(ExcerciseGenerator<Zadani_Fractions_S02_C> egen, string episode, int illegalCount, int legitCount, string version) {
+			
+			WriteLine($"Initiating Writing Fractions S02 {episode}:");
+			using StreamWriter sw = new($"stats-log-Fractions-S02-{episode}.txt");
+			sw.Write(egen.stats);
+			sw.Dispose();
+
+			List<Excercise> eList = new();
+			for(int i = 0; i < egen.illegalSetsCount; i++) {
+				eList = egen.GetIllegal(i, illegalCount);
+				HTMLWriter.CreateFileBriefExcercise($"InfiniteEngine-Fractions-S02-{episode}-{version}-illegal-{i+1}.html", eList.ToArray());
+			}
+
+			eList = egen.GetLegit(legitCount);
+			HTMLWriter.CreateFileBriefExcercise($"InfiniteEngine-Fractions-S02-C-version-0-1-legit.html", eList.ToArray());
 		}
 	}
 
@@ -109,12 +43,9 @@ namespace CLI_View_of_Infinite_Engine_library
 		const string TableFooter = "</tbody></table>";
 		const string footerTableLess = "</div></body></html>";
 
-		//const string TableHeaderBrief = @"<table class=""table-fill""><thead><tr><th></th></tr></thead><tbody class=""tableBody""> ";
+		public HTMLWriter() { }
 
-		public HTMLWriter() {
-		}
-
-		public static void CreateFile(string filePath, Excercise[] excercises) {
+		public static void CreateFileDetailedExcercise(string filePath, Excercise[] excercises) {
 			StringBuilder sb = new();
 			sb.Append(headerTableLess);
 			int counter = 0;
@@ -133,26 +64,7 @@ namespace CLI_View_of_Infinite_Engine_library
 			sw.Write(sb.ToString());
 		}
 
-		public static void CreateFileBriefExcercies(string filePath, Excercise[] excercises) {
-			StringBuilder sb = new();
-			sb.Append(headerTableLess);
-			int counter = 0;
-			foreach (Excercise e in excercises) {
-				counter++;
-				sb.Append($"<h2>Příklad číslo: {counter}</h2>");
-				sb.Append(TableHeader);
-				for (int i = 0; i < e.Steps.Length; i++) {
-					sb.Append("<tr><td>" + i + @".</td><td class=""text-blue"">" + e.Steps[i] + "</td>");
-					sb.Append(@"<td class=""text-green text-left"">" + e.Comments[i] + @"</td><td class=""text-blue"">Tady by byli izolovane upravy</td></tr>");
-				}
-				sb.Append(TableFooter);
-			}
-			sb.Append(footerTableLess);
-			using StreamWriter sw = new(filePath);
-			sw.Write(sb.ToString());
-		}
-
-		public static void CreateFileBriefExcercies2(string filePath, Excercise[] excercises) {
+		public static void CreateFileBriefExcercise(string filePath, Excercise[] excercises) {
 			StringBuilder sb = new();
 			sb.Append(headerTableLess);
 			int counter = 0;

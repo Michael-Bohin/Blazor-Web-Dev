@@ -43,7 +43,7 @@ namespace InfiniteEngine
 			CreateStatsLog();
 		}
 
-		protected override void Consider(Zadani_Fractions_S02_A z) {
+		protected void Consider(Zadani_Fractions_S02_A z) {
 			// from pedagogic point of view: 
 			// 1. A.q != B.q
 			// 2. LCM(A.q, B.q) != D.q
@@ -73,31 +73,26 @@ namespace InfiniteEngine
 		static bool VysledekNaleziDoMnozinyEasyZlomky(Q A, Q B, int C, Q D, Op opA, Op opB) {
 			// spocitej vysledek, podivej jestli vysledek.Num je v [-10, 10] a vysledek.Den v [2, 10]
 			Q top = opA == Op.Add ? A + B : A - B;
-			Q bottom = opB == Op.Add ? (new Q(C) + D) : (new Q(C) - D);
-			Q vysledek = top / bottom;
-			int cit = vysledek.Num;
-			int jm = vysledek.Den;
-			return -11 < cit && cit < 11 && 1 < jm && jm < 11;
+			Q bottom = opB == Op.Add ?  (Q)C + D : (Q)C - D;
+			return IsEasyZt(top / bottom);
 		}
 
 		protected override Excercise Construct(Zadani_Fractions_S02_A z) {
 			int C = z.C; Op opA = z.opA; Op opB = z.opB;
 			Q A = z.A.Copy(); Q B = z.B.Copy(); Q D = z.D.Copy(); // @ defensive programming
-			string opReprA = opA == Op.Add ? "+" : "-";
-			string opReprB = opB == Op.Add ? "+" : "-";
 			string[] steps = new string[6];
 			string[] comments = new string[6];
 			int lcm = M.EuclidsLCM(A.Den, B.Den);
 
 			// step 1:
-			steps[0] = Fraction.ToHTML($"{A} {opReprA} {B}", $"{C} {opReprB} {D}");
+			steps[0] = Fraction.ToHTML($"{A} {Repr(opA)} {B}", $"{C} {Repr(opB)} {D}");
 			comments[0] = $"V čitateli rozšiř {XtinyCesky(A.Den)} a {XtinyCesky(B.Den)} na {XtinyCesky(lcm)}.<br>Ve jmenovateli převeď číslo {C} na zlomek se jmenovatelem {D.Den}.";
 
 			// step 2:
 			A.Expand(lcm / A.Den);
 			B.Expand(lcm / B.Den);
 			Q cRational = new(C * D.Den, D.Den);
-			steps[1] = Fraction.ToHTML($"{A} {opReprA} {B}", $"{cRational} {opReprB} {D}");
+			steps[1] = Fraction.ToHTML($"{A} {Repr(opA)} {B}", $"{cRational} {Repr(opB)} {D}");
 			comments[1] = $"Sečti/odečti zlomky se stejným jmenovatelem.";
 
 			// step 3: 

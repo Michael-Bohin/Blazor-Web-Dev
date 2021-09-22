@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Text;
 
 namespace InfiniteEngine {
+	using Q = RationalNumber;
     public enum Dificulty {
         MENSI, PRIJIMACKY, VETSI, OBROVSKA, CPU
     }
@@ -41,17 +43,39 @@ namespace InfiniteEngine {
 	}
 
     public abstract class ExcerciseGenerator<T> : IExcerciseGenerator<T> where T : Zadani  {
-		protected abstract void Consider(T z);
+		//protected abstract void Consider(T z);
 		protected abstract Excercise Construct(T z);
-
 
         protected Random rand;
         public readonly Dificulty level;
 
 		protected readonly List<T>[] illegal;
+		public readonly int illegalSetsCount;
 		public int[] illegalCounter;
 		protected readonly List<T> legit = new();
 		protected readonly string[] xtiny = new string[] { "nula", "jedniny", "poloviny", "třetiny", "čtvrtiny", "pětiny", "šestiny", "sedminy", "osminy", "devítiny", "desetiny", "jedenáctiny", "dvanáctiny", "třináctiny", "čtrnáctiny", "patnáctiny", "šestnáctiny", "sedmnáctiny", "osmnáctiny", "devatenáctiny", "dvacetiny" };
+		
+		/*protected Func<Op, char> OpRepr = (Op o) => { 
+			if(o == Op.Add) return '+';
+			if(o == Op.Sub) return '-';
+			if(o == Op.Mul) return '*';
+			return ':';
+		};*/
+		// Lambda doesnt do hashing and so should be more lightweight solution.
+		//protected readonly Dictionary<Op, char> OpRepr = new() { { Op.Add ,'+' } , { Op.Sub, '-' } , { Op.Mul, '*' } , {Op.Div, ':' } };
+		protected string Repr(Op o) { 
+			if(o == Op.Add) return "+";
+			if(o == Op.Sub) return "-";
+			if(o == Op.Mul) return "*";
+			return ":";
+		}
+
+		protected static bool IsEasyZt(Q a) {
+			int cit = a.Num;
+			int jm = a.Den;
+			return -11 < cit && cit < 11 && 1 < jm && jm < 11;
+		}
+
 		public string stats;
 		protected string aritmetickaKontrola;
 
@@ -71,6 +95,7 @@ namespace InfiniteEngine {
 				illegal[i] = new();
 
 			illegalCounter = new int[illegalSetsCount];
+			this.illegalSetsCount = illegalSetsCount;
 			rand = new();
             level = Dificulty.PRIJIMACKY;
 		}
@@ -79,6 +104,11 @@ namespace InfiniteEngine {
 			illegalCounter[i]++;
 			if(illegalCounter[i] < 1000)
 				illegal[i].Add(z);
+		}
+
+		protected bool ProcessZadani(int i) {
+			illegalCounter[i]++;
+			return illegalCounter[i] < 1000;
 		}
 
 		protected void CreateStatsLog() {

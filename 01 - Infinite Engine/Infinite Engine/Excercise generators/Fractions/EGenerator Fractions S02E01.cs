@@ -20,7 +20,7 @@ namespace InfiniteEngine {
 			return GetExactlyThis(A, B, C, true);
 		}
 
-		protected override void Consider(Zadani_Fractions_S02E01 z) => throw new NotImplementedException();
+		protected void Consider(Zadani_Fractions_S02E01 z) => throw new NotImplementedException();
 
 		string[] steps = new string[8];
         string[] comments = new string[8];

@@ -8,7 +8,7 @@ namespace InfiniteEngine {
     // implement N, Z, and R in future! :) 
 
     /// I can see several approaches to doing Rational arithemtic 
-    /// Beacuse of kids, all will need to have its reprezentation in code 
+    /// Beacuse of kids, all will need to have its representation in code 
     /// For now, the one leading to the result in reduced form will be in place. 
     /// Different approaches: (Addition and subtraction)
     /// A: ( most steps, but guaranteed smallest product of multiplication )
@@ -52,14 +52,14 @@ namespace InfiniteEngine {
     /// bool IsEquivalent() covers the other comparison semantic where 2/4 is equal to 1/2
 
     /// RationalNumber:
-    // Fraction with the constraint of holding some integer as numerator and denominator
-    // Denominator can not be zero. Therefore, it is the set Q. 
-    // With usefull methods, that are frequently used in primary school math. 
-    // Because it is Q, unlike Fractions (which can hold nested infix expression),
-    // it inherits from value as real number or integer does.
-    // Simplest form definition:
-    // 1. denominator is from natural numbers
-    // 2. the only divisor of num and den is 1.
+    /// Fraction with the constraint of holding some integer as numerator and denominator
+    /// Denominator can not be zero. Therefore, it is the set Q. 
+    /// With usefull methods, that are frequently used in primary school math. 
+    /// Because it is Q, unlike Fractions (which can hold nested infix expression),
+    /// it inherits from value as real number or integer does.
+    /// Simplest form definition:
+    /// 1. denominator is from natural numbers
+    /// 2. the only divisor of num and den is 1.
 
     interface IRationalNumber {
         double ToDouble();
@@ -91,15 +91,21 @@ namespace InfiniteEngine {
         Q Divide(Q divisor);
 	}
 
-	interface ITeacherAtomicOperations
+	interface ITeacher { }
+
+	interface IRationalAtomicOperations : ITeacher
 	{
-		// To be implemented! First need to carefully think through what are all the use cases. 
+		// 'Least common denominator'
+		// does modify the contents of A and B
+		void ExpandToLCD(Q other);
+		
+		// does all the arithemtic operations without conversion 
+		// of the result into simplest form (or the input)
+		Q Operate(Q other, Op o);
 	}
 
 	public class RationalNumber : Value, IRationalNumber, IRationalArithmetic, 
-        IEquatable<RationalNumber>, IComparable<RationalNumber>
-        /// IFormattable : Implement in future, if sending it to different view like HTML, WinForms, Unity etc. requires significantly different formatting
-        /// IConvertible : Maybe implement in future 
+        IEquatable<RationalNumber>, IComparable<RationalNumber>, IRationalAtomicOperations
         {
         int _num;
         public int Num { get => _num; set => _num = value; }
@@ -127,6 +133,8 @@ namespace InfiniteEngine {
             _num = integer;
             _den = 1;
         }
+		
+		public static explicit operator Q(int integer) => new(integer, 1);
 
         /// inherited abstract methods overrides ///
         //public override string ToString() => $"{_num} / {_den}";
@@ -236,9 +244,11 @@ namespace InfiniteEngine {
             return new Fraction(num, den);
         }
 
+		///
         /// interface IRationalArithmetic ///
-
-        public Q Add(Q addend) {
+		///
+        
+		public Q Add(Q addend) {
             // a/b + c/d = (ad+bc)/bd -> can be shortcuted using finding LCM of simplest forms 
             (Q a, Q b) = PrepareAddSub(addend);
             a.Num += b.Num;
@@ -294,13 +304,11 @@ namespace InfiniteEngine {
             return a.Divide(b);
         }
 
+		///
         /// interface IEquatable<RationalNumber> ///
-
-        // public bool Equals(Q other) => other != null && _num == other.Num && _den == other.Den;
+		///
         
-        // public override bool Equals(Object obj) => obj != null && obj is Q rationalObj && Equals(rationalObj);
-
-        // avoid inverse fractions returning same product 
+		// avoid inverse fractions returning same product 
         public override int GetHashCode() => _num.GetHashCode() * _den.GetHashCode() + _num.GetHashCode();
 
         public bool Equals(Q other) {
@@ -335,8 +343,6 @@ namespace InfiniteEngine {
             return !(person1.Equals(person2));
         }
 
-        /// interface IComparable<RationalNumber> /// 
-
         public int CompareTo(Q other) {
             // If other is not a valid object reference, this instance is greater.
             if (other == null) return 1;
@@ -361,29 +367,48 @@ namespace InfiniteEngine {
         public static bool operator >=(Q operand1, Q operand2) => operand1.CompareTo(operand2) >= 0;
         public static bool operator <=(Q operand1, Q operand2) => operand1.CompareTo(operand2) <= 0;
 
-		/* ! To be properly implemented ! -> also think out all possible usages -> from teaching point of view, what are all the atomic opeartions? 
-		 * First define interface: ITeacher_RationalAtomicOperations
-		 * public void Operate(Op op, Q rightOperand) {
-			if(op == Op.Mul || op == Op.Div)
-				throw new NotImplementedException();
+		///
+        /// interface IRationalAtomicOperations ///
+		///
 
-			if( _den != rightOperand.Den) {
-				// expand to same denominator 
+		public void ExpandToLCD(Q other) { 
+			// 'Least common denominator'
+			// does modify the contents of A and B
+			int lcd = M.EuclidsLCM(Den, other.Den);
+			Expand(lcd / Den);
+			other.Expand(lcd / other.Den);
+		}
 
+		// does all the arithemtic operations without conversion 
+		// of the result into simplest form (or the input)
+		public Q Operate(Q other, Op o) {
+			if(o == Op.Add) {
+				if(Den != other.Den) {
+					(Q a, Q b) = ImmutableExpandToLCD(other);
+					return new(a.Num + b.Num, a.Den);
+				}
+				return new(Num + other.Num, Den);
 			}
-		}*/
-    }
-    /*/
-    // Educational child of Q class will consist of same 
-    // opeartions as its parent and foreach of these methods 
-    // will also consist of educational method which will do the 
-    // same operation and on top will return "kucharka reseni"
-    // which will exhaustively describe each step
 
-    interface IEducational_RationalNumber { }
-    interface IEducational_RationalArithmetic { }
-    class Educational_RationalNumber : RationalNumber { }
-    /**/
+			if(o == Op.Sub) {
+				if(Den != other.Den) {
+					(Q a, Q b) = ImmutableExpandToLCD(other);
+					return new(a.Num - b.Num, a.Den);
+				}
+				return new(Num - other.Num, Den);
+			}
+			return o == Op.Mul ? new Q(Num * other.Num, Den * other.Den) : new Q(Num * other.Den, Den * other.Num);
+		}
+
+		public (Q, Q) ImmutableExpandToLCD(Q other) {
+			int lcd = M.EuclidsLCM(Den, other.Den);
+			Q a = Copy();
+			Q b = other.Copy();
+			a.Expand(lcd / a.Den);
+			b.Expand(lcd / b.Den);
+			return (a, b);
+		}
+	}
 }
 
 /// https://docs.microsoft.com/en-us/dotnet/api/system.iformattable?view=net-5.0
