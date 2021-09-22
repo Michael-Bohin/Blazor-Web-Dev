@@ -59,7 +59,7 @@ namespace InfiniteEngine
 				ProcessZadani(A, B, C, D, E, x, y , 1);
 			else if( !( D.Den != E.Den ) ) 
 				ProcessZadani(A, B, C, D, E, x, y , 2);
-			else if( ! VysledekNaleziDoMnozinyEasyZlomky(A, B, C, D, E, x, y) )
+			else if( ! VysledekNaleziDoMnozinyEasyZlomky(D, E, y) )
 				ProcessZadani(A, B, C, D, E, x, y , 3);
 			else
 				legit.Add( GetZadani(A, B, C, D, E, x, y) );
@@ -73,10 +73,11 @@ namespace InfiniteEngine
 
 		static Zadani_Fractions_S02_C GetZadani(int A, Q B, Q C, Q D, Q E, Op x, Op y) => new (A, B.Copy(), C.Copy(), D.Copy(), E.Copy(), x, y);
 
-		static bool VysledekNaleziDoMnozinyEasyZlomky(int A, Q B, Q C, Q D, Q E, Op x, Op y) {
-			Q left = x == Op.Add ? (Q)A + B : (Q)A - B;
+		static bool VysledekNaleziDoMnozinyEasyZlomky(Q D, Q E, Op y) {
 			Q right = y == Op.Add ? D + E : D - E;
-			return IsEasyZt(left * C / right);
+			right.Inverse();
+			right.Reduce(); // in case of negative Qs, this is nessecary
+			return IsEasyZt(right);
 		}
 
 		/// 
