@@ -52,7 +52,6 @@ namespace InfiniteEngine
 			// D.Den != E.Den
 			// Vysledek nalezi do EasyZT
 
-
 			if( !(  ((Q)A-B) * C == (Q)1 )  ) // massive constraint
 				ProcessZadani(A, B, C, D, E, x, y , 0);
 			else if( !( (D.Operate(E, y)).Num != 0 )  ) // keep this despite the next constraint also filtering out this option -> in order to test construct doesnt fall on exception
