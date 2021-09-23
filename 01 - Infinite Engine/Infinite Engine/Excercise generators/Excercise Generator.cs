@@ -77,7 +77,6 @@ namespace InfiniteEngine {
 		}
 
 		public string stats;
-		protected string aritmetickaKontrola;
 
         public ExcerciseGenerator() {
             rand = new();
@@ -111,7 +110,7 @@ namespace InfiniteEngine {
 			return illegalCounter[i] < 1000;
 		}
 
-		protected void CreateStatsLog() {
+		protected void CreateStatsLog(params int[] list) {
 			StringBuilder sb = new();
 			int total = legit.Count;
 			for(int i = 0; i < illegal.Length; i++)
@@ -120,11 +119,29 @@ namespace InfiniteEngine {
 			sb.Append($"Total possible: {total} --> {(double)total / total * 100}%\n");
 			for(int i = 0; i < illegal.Length; i++)
 				sb.Append($"illegal {i} count: {illegalCounter[i]} --> {(double)illegalCounter[i] / total * 100}%\n");
-			
-			sb.Append($"legit count: {legit.Count} --> {(double)legit.Count / total * 100}%\n");
-			sb.Append(aritmetickaKontrola);
 
+			sb.Append($"legit count: {legit.Count} --> {(double)legit.Count / total * 100}%\n");
+			sb.Append(AssertCardinality(list));
 			stats = sb.ToString();
+		}
+
+		protected static string AssertCardinality(params int[] list) {
+			string message = "\nPro kontrolu aritmeticky by melo existovat celkem ";
+			for (int i = 0; i < list.Length-1; i++) 
+				message += $"{list[i]} *  ";
+			message += $"{list[^1]} = ";
+			int product = 1;
+			for (int i = 0; i < list.Length; i++) 
+				product *= list[i];
+			message += $"{product} moznosti.\n";
+			return message;
+		}
+
+		protected static List<int> GetRange(int from, int to) { // inclusive from, to
+			List<int> result = new();
+			for(int i = from; i <= to; i++)
+				result.Add(i);
+			return result;
 		}
 
 		public List<Excercise> GetIllegal(int type, int count) { 

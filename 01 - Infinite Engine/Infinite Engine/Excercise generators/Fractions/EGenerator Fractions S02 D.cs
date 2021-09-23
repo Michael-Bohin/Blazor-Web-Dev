@@ -20,24 +20,12 @@ namespace InfiniteEngine
 		/// Jaká je množina pedagogicky legit zadání?
 		///
 		public EGenerator_Fractions_S02_D() : base(4) {
-			List<int> moznaA = new();
-			AddRange(moznaA, 2, 9);
-
-			List<int> moznaB = new();
-			AddRange(moznaB, 2, 9);
-
-			List<int> moznaD = new();
-			AddRange(moznaD, 1, 9);
-
-			List<int> moznaE = new();
-			AddRange(moznaE, 1, 9);
-
-			List<int> moznaF = new();
-			AddRange(moznaF, 1, 9);
-
+			List<int> moznaA = GetRange(2, 9);
+			List<int> moznaB = GetRange(2, 9);
+			List<int> moznaD = GetRange(1, 9);
+			List<int> moznaE = GetRange(1, 9);
+			List<int> moznaF = GetRange(1, 9);
 			(Op, Op)[] operatorCombinations = new (Op, Op)[] { (Op.Add, Op.Add), (Op.Sub , Op.Add), (Op.Add , Op.Sub), (Op.Sub , Op.Sub) };
-
-			aritmetickaKontrola = $"\nPro kontrolu aritmeticky by melo existovat celkem {moznaA.Count} * {moznaB.Count} * {moznaD.Count} * {moznaE.Count} * {moznaF.Count} *{operatorCombinations.Length} = {moznaA.Count * moznaB.Count * moznaD.Count * moznaE.Count * moznaF.Count *operatorCombinations.Length} moznosti.\n";
 
 			foreach(int A in moznaA)
 				foreach(int B in moznaB)
@@ -46,13 +34,8 @@ namespace InfiniteEngine
 							foreach(int F in moznaF)
 								foreach((Op x, Op y) in operatorCombinations)
 									Consider(A, B, D, E, F, x, y);
-			CreateStatsLog();
-		}
 
-		void AddRange(List<int> target, int from, int to) {
-			// inclusive from, to
-			for(int i = from; i <= to; i++)
-				target.Add(i);
+			CreateStatsLog(moznaA.Count, moznaB.Count, moznaD.Count, moznaE.Count, moznaF.Count, operatorCombinations.Length);
 		}
 
 		void Consider(int A, int B, int D, int E, int F, Op x, Op y) {
@@ -69,21 +52,19 @@ namespace InfiniteEngine
 				ProcessZadani(A, B, D, E, F, x, y , 1);
 			else if( !( A != D && B != D )  ) 
 				ProcessZadani(A, B, D, E, F, x, y , 2);
-			else if( ! VysledekNaleziDoMnozinyEasyZlomky(A, B, C, D, E, F, x, y) )
+			else if( ! VysledekNaleziDoMnozinyEasyZlomky(C, D, E, F, x, y) )
 				ProcessZadani(A, B, D, E, F, x, y , 3);
 			else
-				legit.Add( GetZadani(A, B, D, E, F, x, y) );
+				legit.Add( new (A, B, D, E, F, x, y) );
 		}
 
 		void ProcessZadani(int A, int B, int D, int E, int F, Op x, Op y, int i) {
 			illegalCounter[i]++;
 			if(illegalCounter[i] < 1000)
-				illegal[i].Add( GetZadani(A, B, D, E, F, x, y) );
+				illegal[i].Add( new (A, B, D, E, F, x, y) );
 		}
 
-		static Zadani_Fractions_S02_D GetZadani(int A, int B, int D, int E, int F, Op x, Op y) => new (A, B, D, E, F, x, y);
-
-		static bool VysledekNaleziDoMnozinyEasyZlomky(int A, int B, int C, int D, int E, int F, Op x, Op y) {
+		static bool VysledekNaleziDoMnozinyEasyZlomky(int C, int D, int E, int F, Op x, Op y) {
 			Q right = new(D, C);
 			Q top = x == Op.Add ? (Q)1 + right : (Q)1 - right;
 			Q bottom = y == Op.Add ? new(E+F, C) : new(E-F, C);

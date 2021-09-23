@@ -25,9 +25,9 @@ namespace InfiniteEngine
 			moznaB = SetOfRationals.GetAll(1, 9, true);
 			moznaC = SetOfRationals.GetEasyMediumZTSet();
 			moznaD = SetOfRationals.GetAll(1, 9, true);
-			(Op, Op)[] operatorCombinations = new (Op, Op)[] { (Op.Add, Op.Add) ,(Op.Sub , Op.Add), (Op.Add , Op.Sub), (Op.Sub , Op.Sub) /**/};
+			(Op, Op)[] operatorCombinations = new (Op, Op)[] { (Op.Add, Op.Add) ,(Op.Sub , Op.Add), (Op.Add , Op.Sub), (Op.Sub , Op.Sub) };
 
-			aritmetickaKontrola = $"\nPro kontrolu aritmeticky by melo existovat celkem {moznaA.Count} * {moznaB.Count} * {moznaC.Count} * {moznaD.Count} * {operatorCombinations.Length} = {moznaA.Count * moznaB.Count * moznaC.Count * moznaD.Count * operatorCombinations.Length} moznosti.\n";
+			AssertCardinality(moznaA.Count, moznaB.Count, moznaC.Count, moznaD.Count, operatorCombinations.Length);
 
 			foreach (Q A in moznaA)
 				foreach (Q B in moznaB)
@@ -35,7 +35,6 @@ namespace InfiniteEngine
 						foreach (Q D in moznaD)
 							foreach((Op opA, Op opB) in operatorCombinations)
 								Consider(new Zadani_Fractions_S02_B(A.Copy(), B.Copy(), C.Copy(), D.Copy(), opA, opB));
-
 			CreateStatsLog();
 		}
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using static System.Console;
+﻿using System.Collections.Generic;
 
 namespace InfiniteEngine
 {
@@ -21,29 +19,24 @@ namespace InfiniteEngine
 	public class EGenerator_Fractions_S02_A : ExcerciseGenerator <Zadani_Fractions_S02_A>
 	{
 		public EGenerator_Fractions_S02_A() : base(4) {
-			// at this point generate all possible zadani in constructor
-			// also filter each to belong to appropriate category
 			List<Q> moznaA = SetOfRationals.GetAll(1, 9, true);
 			List<Q> moznaB = SetOfRationals.GetAll(1, 9, true);
+			List<int> moznaC = GetRange(2, 10);
 			List<Q> moznaD = SetOfRationals.GetAll(10, 19, true);
-			List<int> moznaC = new();
-			for (int i = 2; i < 11; i++)
-				moznaC.Add(i);
+			
 			(Op, Op)[] operatorCombinations = new (Op, Op)[] { (Op.Add, Op.Add), (Op.Sub , Op.Add), (Op.Add , Op.Sub), (Op.Sub , Op.Sub) };
-
-			aritmetickaKontrola = $"\nPro kontrolu aritmeticky by melo existovat celkem {moznaA.Count} * {moznaB.Count} * {moznaC.Count} * {moznaD.Count} * {operatorCombinations.Length} = {moznaA.Count * moznaB.Count * moznaC.Count * moznaD.Count * operatorCombinations.Length} moznosti.\n";
 
 			foreach (Q A in moznaA)
 				foreach (Q B in moznaB)
 					foreach (int C in moznaC)
 						foreach (Q D in moznaD)
 							foreach((Op opA, Op opB) in operatorCombinations)
-								Consider(new Zadani_Fractions_S02_A(A.Copy(), B.Copy(), C, D.Copy(), opA, opB));
+								Consider(A, B, C, D, opA, opB);
 
-			CreateStatsLog();
+			CreateStatsLog(moznaA.Count, moznaB.Count, moznaC.Count, moznaD.Count, operatorCombinations.Length);
 		}
 
-		protected void Consider(Zadani_Fractions_S02_A z) {
+		protected void Consider(Q A, Q B, int C, Q D, Op x, Op y) {
 			// from pedagogic point of view: 
 			// 1. A.q != B.q
 			// 2. LCM(A.q, B.q) != D.q
@@ -51,23 +44,22 @@ namespace InfiniteEngine
 			// 4. Vysledek nalezi do dostatecne jednoduchych vysledku 
 			// 5. Kombinace je pedagogicky legitimni
 			
-			Q A = z.A;
-			Q B = z.B;
-			int C = z.C;
-			Q D = z.D;
-			Op opA = z.opA;
-			Op opB = z.opB;
-			
 			if (! (A.Den != B.Den))
-				ProcessZadani(z, 0);
+				ProcessZadani(A, B, C, D , x, y, 0);
 			else if ( ! (M.EuclidsLCM(A.Den, B.Den) != D.Den))
-				ProcessZadani(z, 1);
-			else if ( ! M.VysledekAritmetikySeRovna( A, B, C, D , opA, opB ))
-				ProcessZadani(z, 2);
-			else if ( ! VysledekNaleziDoMnozinyEasyZlomky( A, B, C, D, opA, opB))
-				ProcessZadani(z, 3);
+				ProcessZadani(A, B, C, D , x, y, 1);
+			else if ( ! M.VysledekAritmetikySeRovna( A, B, C, D , x, y ))
+				ProcessZadani(A, B, C, D , x, y, 2);
+			else if ( ! VysledekNaleziDoMnozinyEasyZlomky( A, B, C, D, x, y))
+				ProcessZadani(A, B, C, D , x, y, 3);
 			else
-				legit.Add(z);
+				legit.Add(new (A, B, C, D, x, y));
+		}
+
+		void ProcessZadani(Q A, Q B, int C, Q D, Op x, Op y, int i) {
+			illegalCounter[i]++;
+			if(illegalCounter[i] < 1000)
+				illegal[i].Add( new (A, B, C, D, x, y) );
 		}
 
 		static bool VysledekNaleziDoMnozinyEasyZlomky(Q A, Q B, int C, Q D, Op opA, Op opB) {
