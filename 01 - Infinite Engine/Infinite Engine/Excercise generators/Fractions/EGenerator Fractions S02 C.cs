@@ -41,8 +41,8 @@ namespace InfiniteEngine
 					foreach (Q C in moznaC)
 						foreach (Q D in moznaD)
 							foreach(Q E in moznaE)
-								foreach((Op opA, Op opB) in operatorCombinations)
-									Consider(A, B, C, D, E, opA, opB);
+								foreach((Op x, Op y) in operatorCombinations)
+									Consider(A, B, C, D, E, x, y);
 			CreateStatsLog();
 		}
 

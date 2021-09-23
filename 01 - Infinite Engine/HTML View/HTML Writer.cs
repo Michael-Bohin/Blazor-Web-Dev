@@ -12,13 +12,13 @@ namespace CLI_View_of_Infinite_Engine_library
 		static void Main() {
 			WriteLine("Hello World!");
 
-			EGenerator_Fractions_S02_C egen = new();
-			Process(egen, "C", 50, 200, "version-0-1");
+			EGenerator_Fractions_S02_D egen = new();
+			Process(egen, "D", 50, 200, "version-0-1");
 
 			WriteLine("Job done. :)");
 		}
 
-		static void Process(ExcerciseGenerator<Zadani_Fractions_S02_C> egen, string episode, int illegalCount, int legitCount, string version) {
+		static void Process(ExcerciseGenerator<Zadani_Fractions_S02_D> egen, string episode, int illegalCount, int legitCount, string version) {
 			
 			WriteLine($"Initiating Writing Fractions S02 {episode}:");
 			using StreamWriter sw = new($"stats-log-Fractions-S02-{episode}.txt");
@@ -32,7 +32,7 @@ namespace CLI_View_of_Infinite_Engine_library
 			}
 
 			eList = egen.GetLegit(legitCount);
-			HTMLWriter.CreateFileBriefExcercise($"InfiniteEngine-Fractions-S02-C-version-0-1-legit.html", eList.ToArray());
+			HTMLWriter.CreateFileBriefExcercise($"InfiniteEngine-Fractions-S02-{episode}-{version}-legit.html", eList.ToArray());
 		}
 	}
 
