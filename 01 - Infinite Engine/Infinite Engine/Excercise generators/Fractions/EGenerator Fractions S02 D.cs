@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using static System.Console;
+﻿using System.Collections.Generic;
 
 namespace InfiniteEngine
 {
 	using Q = RationalNumber;
-	using M = MathAlgorithms;
 
 	public record Zadani_Fractions_S02_D : Zadani
 	{
