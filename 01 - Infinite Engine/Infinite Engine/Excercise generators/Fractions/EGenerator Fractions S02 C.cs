@@ -9,11 +9,13 @@ namespace InfiniteEngine
 	{
 		public readonly int A;
 		public readonly Q B, C, D, E;
-		public readonly Op opA, opB;
+		public readonly Op o1, o2;
 
-		public Zadani_Fractions_S02_C(int A, Q B, Q C, Q D, Q E, Op opA, Op opB) {
-			this.A = A; this.B = B; this.C = C; this.D = D; this.E = E; this.opA = opA; this.opB = opB;
+		public Zadani_Fractions_S02_C(int A, Q B, Q C, Q D, Q E, Op o1, Op o2) {
+			this.A = A; this.B = B; this.C = C; this.D = D; this.E = E; this.o1 = o1; this.o2 = o2;
 		}
+
+		public (int, Q, Q, Q, Q, Op, Op) Unpack() => (A, B, C, D, E, o1, o2);
 	}
 
 	public class EGenerator_Fractions_S02_C : ExcerciseGenerator <Zadani_Fractions_S02_C>
@@ -22,95 +24,75 @@ namespace InfiniteEngine
 		/// Jaká je množina pedagogicky legit zadání?
 		/// 
 		public EGenerator_Fractions_S02_C() : base(4) {
-			List<int> moznaA = new();
-			for(int i = 2; i < 11; i++)
-				moznaA.Add(i);
+			List<int> moznaA = GetRange(2, 10);
 			List<Q> moznaB = SetOfRationals.GetAll(1, 9, true);
 			List<Q> moznaC = SetOfRationals.GetAll(1, 9, true);
 			List<Q> moznaD = SetOfRationals.GetAll(1, 9, true);
 			List<Q> moznaE = SetOfRationals.GetAll(1, 9, true);
-
-			(Op, Op)[] operatorCombinations = new (Op, Op)[] { (Op.Add, Op.Add), (Op.Sub , Op.Add), (Op.Add , Op.Sub), (Op.Sub , Op.Sub) };
-
-			aritmetickaKontrola = $"\nPro kontrolu aritmeticky by melo existovat celkem {moznaA.Count} * {moznaB.Count} * {moznaC.Count} * {moznaD.Count} * {moznaE.Count} * {operatorCombinations.Length} = {moznaA.Count * moznaB.Count * moznaC.Count * moznaD.Count * moznaE.Count * operatorCombinations.Length} moznosti.\n";
 			
 			foreach (int A in moznaA)
 				foreach (Q B in moznaB)
 					foreach (Q C in moznaC)
 						foreach (Q D in moznaD)
 							foreach(Q E in moznaE)
-								foreach((Op x, Op y) in operatorCombinations)
-									Consider(A, B, C, D, E, x, y);
-			CreateStatsLog();
+								foreach((Op o1, Op o2) in addSubCombinations)
+									Consider(A, B, C, D, E, o1, o2);
+
+			CreateStatsLog(moznaA.Count , moznaB.Count , moznaC.Count , moznaD.Count , moznaE.Count , addSubCombinations.Length);
 		}
 
-		void Consider(int A, Q B, Q C, Q D, Q E, Op x, Op y) {
+		void Consider(int A, Q B, Q C, Q D, Q E, Op o1, Op o2) {
 			// masivni constraint: (A-B) * C == 1
 			// D y E je ruzne od nuly
 			// D.Den != E.Den
 			// Vysledek nalezi do EasyZT
 
+			int decision = -1;
 			if( !(  ((Q)A-B) * C == (Q)1 )  ) // massive constraint
-				ProcessZadani(A, B, C, D, E, x, y , 0);
-			else if( !( (D.Operate(E, y)).Num != 0 )  ) // keep this despite the next constraint also filtering out this option -> in order to test construct doesnt fall on exception
-				ProcessZadani(A, B, C, D, E, x, y , 1);
+				decision = 0;
+			else if( !( (D.Operate(E, o2)).Num != 0 )  ) // keep this despite the next constraint also filtering out this option -> in order to test construct doesnt fall on exception
+				decision = 1;
 			else if( !( D.Den != E.Den ) ) 
-				ProcessZadani(A, B, C, D, E, x, y , 2);
-			else if( ! VysledekNaleziDoMnozinyEasyZlomky(D, E, y) )
-				ProcessZadani(A, B, C, D, E, x, y , 3);
-			else
-				legit.Add( GetZadani(A, B, C, D, E, x, y) );
+				decision = 2;
+			else if( ! VysledekNaleziDoMnozinyEasyZlomky(D, E, o2) )
+				decision = 3;
+			
+			if(decision != -1) {
+				illegalCounter[decision]++;
+				if(illegalCounter[decision] < 1000)
+					illegal[decision].Add( new Zadani_Fractions_S02_C( A, B.Copy(), C.Copy(), D.Copy(), E.Copy(), o1, o2) );
+			} else {
+				legit.Add( new Zadani_Fractions_S02_C( A, B.Copy(), C.Copy(), D.Copy(), E.Copy(), o1, o2) );
+			}
 		}
 
-		void ProcessZadani(int A, Q B, Q C, Q D, Q E, Op x, Op y, int i) {
-			illegalCounter[i]++;
-			if(illegalCounter[i] < 1000)
-				illegal[i].Add( GetZadani(A, B, C, D, E, x, y) );
-		}
-
-		static Zadani_Fractions_S02_C GetZadani(int A, Q B, Q C, Q D, Q E, Op x, Op y) => new (A, B.Copy(), C.Copy(), D.Copy(), E.Copy(), x, y);
-
-		static bool VysledekNaleziDoMnozinyEasyZlomky(Q D, Q E, Op y) {
-			Q right = y == Op.Add ? D + E : D - E;
-			right.Inverse();
-			right.Reduce(); // in case of negative Qs, this is nessecary
-			return IsEasyZt(right);
+		static bool VysledekNaleziDoMnozinyEasyZlomky(Q D, Q E, Op o) {
+			Q result = D.Operate(E, o).GetInverse();
+			return IsEasyZt(result.GetSimplestForm());
 		}
 
 		/// 
 		/// Kuchařka řešení: Jak se zadání řeší?
-		/// 
-
+		///
 		protected override Excercise Construct(Zadani_Fractions_S02_C z) { 
-			int A = z.A;
-			Q B = z.B.Copy();
-			Q C = z.C.Copy();
-			Q D = z.D.Copy();
-			Q E = z.E.Copy();
-			Op opX = z.opA;
-			Op opY = z.opB;
-
+			(int A, Q B, Q C, Q D, Q E, Op o1, Op o2) = z.Unpack();
 			string[] steps = new string[7];
 			string[] comments = new string[7];
 			int rightLCD = M.EuclidsLCM(D.Den, E.Den);
 
-			string x = Repr(opX);
-			string y = Repr(opY);
-
 			// Step 1:
-			steps[0] = $"( {A} {x} {B} ) ∙ {C} : ( {D} {y} {E} )";
+			steps[0] = $"( {A} {Repr(o1)} {B} ) ∙ {C} : ( {D} {Repr(o2)} {E} )";
 			comments[0] = $"V levé závorce rozšiř číslo {A} na {XtinyCesky(B.Den)}.<br>V pravé závorce rozšiř {XtinyCesky(D.Den)} a {XtinyCesky(E.Den)} na {XtinyCesky(rightLCD)}.";
 
 			// Step 2:
 			Q F = new (A * B.Den, B.Den);
-			D.ExpandToLCD( E );
-
-			steps[1] = $"( {F} {x} {B} ) ∙ {C} : ( {D} {y} {E} )";
+			(D, E) = D.ExpandToLCD( E );
+			steps[1] = $"( {F} {Repr(o1)} {B} ) ∙ {C} : ( {D} {Repr(o2)} {E} )";
 			comments[1] = "Sečti/odečti zlomky v závorkách.";
 
 			// Step 3:
-			F = F.Operate(B, opX);
-			D = D.Operate(E, opY);
+			F = F.AtomicOperate(B, o1);
+			D = D.AtomicOperate(E, o2);
 			steps[2] = $"{F} ∙ {C} : {D}";
 			comments[2] = $"Vykrať {F.Num} a {F.Den}.";
 
@@ -126,7 +108,6 @@ namespace InfiniteEngine
 				return new EFractions_S02(steps, comments, D);	
 			}
 			D.Inverse();
-			
 			steps[4] = $"{F} ∙ {D}";
 			comments[4] = $"Vynásob jedničku.";
 
