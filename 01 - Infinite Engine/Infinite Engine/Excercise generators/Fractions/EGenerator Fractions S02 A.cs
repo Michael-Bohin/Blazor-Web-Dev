@@ -45,7 +45,7 @@ namespace InfiniteEngine
 			// 3. Vysledky aritmetiky z kroku B se rovnaji (tady spadne +- 90% kombinaci)
 			// 4. Vysledek nalezi do dostatecne jednoduchych vysledku 
 			
-			int decision = -1; // for legit zadani's
+			int decision = -1; // for legit zadani
 			if (! (A.Den != B.Den))
 				decision = 0;
 			else if ( ! (M.EuclidsLCM(A.Den, B.Den) != D.Den))

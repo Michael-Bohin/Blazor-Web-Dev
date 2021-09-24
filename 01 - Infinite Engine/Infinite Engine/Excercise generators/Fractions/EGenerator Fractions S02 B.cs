@@ -46,7 +46,7 @@ namespace InfiniteEngine
 			Q E = A.AtomicOperate(B, o1);
 			Q F = C.AtomicOperate(D, o2);
 
-			int decision = -1; // for legit zadani's
+			int decision = -1; // for legit zadani
 			if( ! (A.Den != B.Den && C.Den != D.Den) ) {
 				decision = 0;
 			} else if( ! (E.Num < F.Den ) ) {
