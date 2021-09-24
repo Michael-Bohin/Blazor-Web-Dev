@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Text;
 
 namespace InfiniteEngine {
@@ -21,17 +20,28 @@ namespace InfiniteEngine {
 	
 	Each exercise generator should: 
 
-	1. Define child of class Zadani: what input variables for every excercise are there? 
-	2. In constructor:
-		a) How many illegal sets of Zadani from pedagogic point of view are there? 
-			-> call base constructor with int equal to this answer 
-		b) Instantiate all combinatoric sets of possible variables 
-		c) For each possible zadani consider its pedagogic legitimacy.
-			That means assign it ither to some illegal list or legit list. 
-		d) create the kontrolaAritmetiky string, that does the 'podvojne ucetnictvi' of possible combinations
-		e) call CreateStatsLog of ExcerciseGenerator parent.
-	3. Give implementation to abstract method Consider -> rule out all not legit Zadani's
-	4. Give implementation to abstract method Construct -> Define Kuchařka řešení: the heart of the entire idea.
+	1. Answer following questions: 
+		a. What is the set of legit excercises from pedagogic point of view? 
+		b. How do you solve each individual excercis? "Solution cookbook" 
+		(perhaps Recipe fits bettter?)
+
+	2. Offer IExcerciseGenerator API for all users, so that they can easily 
+		call finnished solution recipes and use them. 
+
+	- Methods Get Illegal , Get Pedagogic set are primarily meant for developint 
+		phase, when creating the excericse. To see the entire state space. 
+	- Methods GetLegit(int count), GetOne and GetTen are meant for finall in production use. 
+		- GetOne selects any of legit excercises and returns it along with the solution cookbook. 
+		- GetTen does the same, but is meant to use if it is reasonable to not give users uniform 
+			distribution of legit excercises.
+		- GetLegit method is mainly meant to get large number of excercises or all at the same time. 
+
+
+	- The primarily goal of the class ExcerciseGenerator is to implement as much 
+		shared code for all EGens as possible so that it minimizes each next excercise requires 
+		of dev time to be added to the library. 
+
+		Any code that may be shared acros all generators should be here. 
 	 */
 
 	public interface IExcerciseGenerator<T>  {
@@ -43,7 +53,6 @@ namespace InfiniteEngine {
 	}
 
     public abstract class ExcerciseGenerator<T> : IExcerciseGenerator<T> where T : Zadani  {
-		//protected abstract void Consider(T z);
 		protected abstract Excercise Construct(T z);
 
         protected Random rand;
@@ -55,14 +64,7 @@ namespace InfiniteEngine {
 		protected readonly List<T> legit = new();
 		protected readonly string[] xtiny = new string[] { "nula", "jedniny", "poloviny", "třetiny", "čtvrtiny", "pětiny", "šestiny", "sedminy", "osminy", "devítiny", "desetiny", "jedenáctiny", "dvanáctiny", "třináctiny", "čtrnáctiny", "patnáctiny", "šestnáctiny", "sedmnáctiny", "osmnáctiny", "devatenáctiny", "dvacetiny" };
 		protected (Op, Op)[] addSubCombinations = new (Op, Op)[] { (Op.Add, Op.Add), (Op.Sub , Op.Add), (Op.Add , Op.Sub), (Op.Sub , Op.Sub) };
-		/*protected Func<Op, char> OpRepr = (Op o) => { 
-			if(o == Op.Add) return '+';
-			if(o == Op.Sub) return '-';
-			if(o == Op.Mul) return '*';
-			return ':';
-		};*/
-		// Lambda doesnt do hashing and so should be more lightweight solution.
-		//protected readonly Dictionary<Op, char> OpRepr = new() { { Op.Add ,'+' } , { Op.Sub, '-' } , { Op.Mul, '*' } , {Op.Div, ':' } };
+
 		protected string Repr(Op o) { 
 			if(o == Op.Add) return "+";
 			if(o == Op.Sub) return "-";
