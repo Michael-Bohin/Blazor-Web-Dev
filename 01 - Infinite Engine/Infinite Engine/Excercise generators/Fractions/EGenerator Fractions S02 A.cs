@@ -9,89 +9,95 @@ namespace InfiniteEngine
 	{
 		public readonly Q A, B, D;
 		public readonly int C;
-		public readonly Op opA, opB;
+		public readonly Op o1, o2;
 
-		public Zadani_Fractions_S02_A(Q A, Q B, int C, Q D, Op opA, Op opB) {
-			this.A = A; this.B = B; this.C = C; this.D = D; this.opA = opA; this.opB = opB;
+		public Zadani_Fractions_S02_A(Q A, Q B, int C, Q D, Op o1, Op o2) {
+			this.A = A; this.B = B; this.C = C; this.D = D; this.o1 = o1; this.o2 = o2;
 		}
+
+		public (Q , Q, int, Q, Op, Op ) Unpack() => (A, B, C, D, o1, o2);
 	}
 
 	public class EGenerator_Fractions_S02_A : ExcerciseGenerator <Zadani_Fractions_S02_A>
-	{
+	{		
+		/// 
+		/// Jaká je množina pedagogicky legit zadání?
+		///
 		public EGenerator_Fractions_S02_A() : base(4) {
 			List<Q> moznaA = SetOfRationals.GetAll(1, 9, true);
 			List<Q> moznaB = SetOfRationals.GetAll(1, 9, true);
 			List<int> moznaC = GetRange(2, 10);
 			List<Q> moznaD = SetOfRationals.GetAll(10, 19, true);
-			
-			(Op, Op)[] operatorCombinations = new (Op, Op)[] { (Op.Add, Op.Add), (Op.Sub , Op.Add), (Op.Add , Op.Sub), (Op.Sub , Op.Sub) };
 
 			foreach (Q A in moznaA)
 				foreach (Q B in moznaB)
 					foreach (int C in moznaC)
 						foreach (Q D in moznaD)
-							foreach((Op opA, Op opB) in operatorCombinations)
-								Consider(A, B, C, D, opA, opB);
+							foreach((Op o1, Op o2) in addSubCombinations)
+								Consider( A, B, C, D, o1, o2 );
 
-			CreateStatsLog(moznaA.Count, moznaB.Count, moznaC.Count, moznaD.Count, operatorCombinations.Length);
+			CreateStatsLog(moznaA.Count, moznaB.Count, moznaC.Count, moznaD.Count, addSubCombinations.Length);
 		}
 
-		protected void Consider(Q A, Q B, int C, Q D, Op x, Op y) {
-			// from pedagogic point of view: 
+		void Consider( Q A, Q B, int C, Q D, Op o1, Op o2 ) {
 			// 1. A.q != B.q
 			// 2. LCM(A.q, B.q) != D.q
-			// 3. Vysledky aritmetiky kroku B se rovnaji (tady spadne +- 90% kombinaci)
+			// 3. Vysledky aritmetiky z kroku B se rovnaji (tady spadne +- 90% kombinaci)
 			// 4. Vysledek nalezi do dostatecne jednoduchych vysledku 
-			// 5. Kombinace je pedagogicky legitimni
 			
+			int decision = -1; // for legit zadani's
 			if (! (A.Den != B.Den))
-				ProcessZadani(A, B, C, D , x, y, 0);
+				decision = 0;
 			else if ( ! (M.EuclidsLCM(A.Den, B.Den) != D.Den))
-				ProcessZadani(A, B, C, D , x, y, 1);
-			else if ( ! M.VysledekAritmetikySeRovna( A, B, C, D , x, y ))
-				ProcessZadani(A, B, C, D , x, y, 2);
-			else if ( ! VysledekNaleziDoMnozinyEasyZlomky( A, B, C, D, x, y))
-				ProcessZadani(A, B, C, D , x, y, 3);
-			else
-				legit.Add(new (A, B, C, D, x, y));
+				decision = 1;
+			else if ( ! CiniteleMajiStejnouHodnotu( A, B, C, D , o1, o2 ))
+				decision = 2;
+			else if ( ! VysledekNaleziDoMnozinyEasyZlomky( A, B, C, D, o1, o2))
+				decision = 3;
+			
+			if(decision != -1) {
+				illegalCounter[decision]++;
+				if(illegalCounter[decision] < 1000)
+					illegal[decision].Add( new Zadani_Fractions_S02_A( A.Copy(), B.Copy(), C, D.Copy(), o1, o2) );
+			} else {
+				legit.Add( new Zadani_Fractions_S02_A( A.Copy(), B.Copy(), C, D.Copy(), o1, o2) );
+			}
 		}
 
-		void ProcessZadani(Q A, Q B, int C, Q D, Op x, Op y, int i) {
-			illegalCounter[i]++;
-			if(illegalCounter[i] < 1000)
-				illegal[i].Add( new (A, B, C, D, x, y) );
+		static bool CiniteleMajiStejnouHodnotu(Q A, Q B, int C, Q D, Op o1, Op o2) {
+			Q nahore = A.AtomicOperate(B, o1);
+			Q dole = ((Q)C).AtomicOperate(D, o2);
+			return nahore.Num == dole.Num;
 		}
 
-		static bool VysledekNaleziDoMnozinyEasyZlomky(Q A, Q B, int C, Q D, Op opA, Op opB) {
-			// spocitej vysledek, podivej jestli vysledek.Num je v [-10, 10] a vysledek.Den v [2, 10]
-			Q top = opA == Op.Add ? A + B : A - B;
-			Q bottom = opB == Op.Add ?  (Q)C + D : (Q)C - D;
+		static bool VysledekNaleziDoMnozinyEasyZlomky(Q A, Q B, int C, Q D, Op o1, Op o2) {
+			Q top = o1 == Op.Add ? A + B : A - B;
+			Q bottom = o2 == Op.Add ?  (Q)C + D : (Q)C - D;
 			return IsEasyZt(top / bottom);
 		}
 
-		protected override Excercise Construct(Zadani_Fractions_S02_A z) {
-			int C = z.C; Op opA = z.opA; Op opB = z.opB;
-			Q A = z.A.Copy(); Q B = z.B.Copy(); Q D = z.D.Copy(); // @ defensive programming
+		///
+		/// Kuchařka řešení: Jak se zadání řeší?
+		/// 
+		protected override Excercise Construct(Zadani_Fractions_S02_A z) { 
+			(Q A, Q B, int C, Q D, Op o1, Op o2) = z.Unpack();
 			string[] steps = new string[6];
 			string[] comments = new string[6];
 			int lcm = M.EuclidsLCM(A.Den, B.Den);
 
 			// step 1:
-			steps[0] = Fraction.ToHTML($"{A} {Repr(opA)} {B}", $"{C} {Repr(opB)} {D}");
+			steps[0] = Fraction.ToHTML($"{A} {Repr(o1)} {B}", $"{C} {Repr(o2)} {D}");
 			comments[0] = $"V čitateli rozšiř {XtinyCesky(A.Den)} a {XtinyCesky(B.Den)} na {XtinyCesky(lcm)}.<br>Ve jmenovateli převeď číslo {C} na zlomek se jmenovatelem {D.Den}.";
 
 			// step 2:
-			A.Expand(lcm / A.Den);
-			B.Expand(lcm / B.Den);
+			(Q expA, Q expB) = A.ExpandToLCD(B);
 			Q cRational = new(C * D.Den, D.Den);
-			steps[1] = Fraction.ToHTML($"{A} {Repr(opA)} {B}", $"{cRational} {Repr(opB)} {D}");
+			steps[1] = Fraction.ToHTML($"{expA} {Repr(o1)} {expB}", $"{cRational} {Repr(o2)} {D}");
 			comments[1] = $"Sečti/odečti zlomky se stejným jmenovatelem.";
 
 			// step 3: 
-			// !! aritmeticke operace automaticky prevadi na zakladni zlomek, zde nepouzivat, protoze 
-			// ty operatory jsou chytrejsi nez deti na ZS a z pohledu deti udelaji vic kroku najednou 
-			Q X = opA == Op.Add ? new(A.Num + B.Num, A.Den) : new(A.Num - B.Num, A.Den);
-			Q Y = opB == Op.Add ? new(cRational.Num + D.Num, D.Den) : new(cRational.Num - D.Num, D.Den);
+			Q X = expA.AtomicOperate(expB, o1);
+			Q Y = cRational.AtomicOperate(D, o2);
 			steps[2] = Fraction.ToHTML(X.ToString(), Y.ToString());
 			comments[2] = "Převeď dělení zlomků na jejich násobení.";
 
@@ -111,7 +117,6 @@ namespace InfiniteEngine
 			comments[5] = "Hotovo! 😎😎";
 
 			return new EFractions_S02(steps, comments, result);
-			// ! dodelat: detekovani ruznych koncu prevod na ZT nebo neprevod
 		}
 	} // end egen fractions 
 } // end namespace IE

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using static System.Console;
+﻿using System.Collections.Generic;
 
 namespace InfiniteEngine
 {
@@ -10,126 +8,99 @@ namespace InfiniteEngine
 	public record Zadani_Fractions_S02_B : Zadani
 	{
 		public readonly Q A, B, C, D;
-		public readonly Op opA, opB;
+		public readonly Op o1, o2;
 
-		public Zadani_Fractions_S02_B(Q A, Q B, Q C, Q D, Op opA, Op opB) {
-			this.A = A; this.B = B; this.C = C; this.D = D; this.opA = opA; this.opB = opB;
+		public Zadani_Fractions_S02_B(Q A, Q B, Q C, Q D, Op o1, Op o2) {
+			this.A = A; this.B = B; this.C = C; this.D = D; this.o1 = o1; this.o2 = o2;
 		}
+
+		public (Q, Q, Q, Q, Op, Op) Unpack() => (A, B, C, D, o1, o2);
 	}
 
 	public class EGenerator_Fractions_S02_B : ExcerciseGenerator <Zadani_Fractions_S02_B>
 	{
+		/// 
+		/// Jaká je množina pedagogicky legit zadání?
+		///
 		public EGenerator_Fractions_S02_B():base(4) {
-			List<Q> moznaA, moznaB, moznaC, moznaD;
-			moznaA = SetOfRationals.GetAll(1, 9, true);
-			moznaB = SetOfRationals.GetAll(1, 9, true);
-			moznaC = SetOfRationals.GetEasyMediumZTSet();
-			moznaD = SetOfRationals.GetAll(1, 9, true);
-			(Op, Op)[] operatorCombinations = new (Op, Op)[] { (Op.Add, Op.Add) ,(Op.Sub , Op.Add), (Op.Add , Op.Sub), (Op.Sub , Op.Sub) };
-
-			AssertCardinality(moznaA.Count, moznaB.Count, moznaC.Count, moznaD.Count, operatorCombinations.Length);
+			List<Q> moznaA = SetOfRationals.GetAll(1, 9, true);
+			List<Q> moznaB = SetOfRationals.GetAll(1, 9, true);
+			List<Q> moznaC = SetOfRationals.GetEasyMediumZTSet();
+			List<Q> moznaD = SetOfRationals.GetAll(1, 9, true);
 
 			foreach (Q A in moznaA)
 				foreach (Q B in moznaB)
 					foreach (Q C in moznaC)
 						foreach (Q D in moznaD)
-							foreach((Op opA, Op opB) in operatorCombinations)
-								Consider(new Zadani_Fractions_S02_B(A.Copy(), B.Copy(), C.Copy(), D.Copy(), opA, opB));
-			CreateStatsLog();
+							foreach((Op o1, Op o2) in addSubCombinations)
+								Consider( A, B, C, D, o1, o2);
+
+			CreateStatsLog(moznaA.Count, moznaB.Count, moznaC.Count, moznaD.Count, addSubCombinations.Length);
 		}
 
-		protected void Consider(Zadani_Fractions_S02_B z) {
-			// from pedagogic point of view: 
-			// 1. "Jmenovatele dvojic A a B, C a D jsou různé"
-			//			A.Den != B.Den && C.Den != D.Den
-			// 2. "Aritmetika A op B vede zlomek, ktery nereprezentuje cele cislo"
-			//			( A +- B ).Den != 1    // -> A + B should not represent integer 
-			// 3. "Jako bod 2, s C op D"
-			//			( C +- D ).Den != 1
-			// 4. "LCM(C.Den, D.Den) je k nasobek LCM(A.Den, B.Den)"
-			//			LCM(C.Den, D.Den) % LCM(A.Den, B.Den) == 0 && LCM(C.Den, D.Den) > LCM(A.Den, B.Den)
-			// 5. Zadani je legit. :) 
+		protected void Consider(Q A, Q B, Q C, Q D, Op o1, Op o2) {
+			// 1. A.Den != B.Den && C.Den != D.Den : "Jmenovatele A a B, C a D jsou různé"
+			// 2. E.Num < F.Den (slabsi, ale rychlejsi podminka na K nasobek)
+			// 3. F.Den je k nasobek E.Num
+			// 4. VysledekNaleziDoEasyZT
+			Q E = A.AtomicOperate(B, o1);
+			Q F = C.AtomicOperate(D, o2);
 
-			Q A = z.A;
-			Q B = z.B;
-			Q C = z.C;
-			Q D = z.D;
-			Op opA = z.opA;
-			Op opB = z.opB;
-
-			int lcmTop = M.EuclidsLCM(A.Den, B.Den);
-			int lcmBottom = M.EuclidsLCM(C.Den, D.Den);
-			int expA = A.Num * (lcmTop / A.Den);
-			int expB = B.Num * (lcmTop / B.Den);
-			int expC = C.Num * (lcmBottom / C.Den);
-			int expD = D.Num * (lcmBottom / D.Den);
-			Q E = opA == Op.Add ? new(  expA + expB , lcmTop) : new( expA - expB , lcmTop);
-			Q F = opB == Op.Add ? new(  expC + expD , lcmBottom) : new( expC - expD , lcmBottom);
-			
-
-			// !! illegal 0 a 1 vedou na varianty ktere pri sestrojeni na kucharku spadnou na deleni nulou
+			int decision = -1; // for legit zadani's
 			if( ! (A.Den != B.Den && C.Den != D.Den) ) {
-				ProcessZadani(z, 0);
+				decision = 0;
 			} else if( ! (E.Num < F.Den ) ) {
-				ProcessZadani(z, 1);
+				decision = 1;
 			} else if( ! ( F.Den % E.Num == 0 ) ) {
-				ProcessZadani(z, 2);
-			} else if( ! VysledekNaleziDoMnozinyEasyZlomky(A, B, C, D, opA, opB) ) {
-				ProcessZadani(z, 3);
+				decision = 2;
+			} else if( ! VysledekNaleziDoMnozinyEasyZlomky(A, B, C, D, o1, o2) ) {
+				decision = 3;
+			}
+
+			if(decision != -1) {
+				illegalCounter[decision]++;
+				if(illegalCounter[decision] < 1000)
+					illegal[decision].Add( new Zadani_Fractions_S02_B( A.Copy(), B.Copy(), C.Copy(), D.Copy(), o1, o2) );
 			} else {
-				legit.Add(z);
+				legit.Add( new Zadani_Fractions_S02_B( A.Copy(), B.Copy(), C.Copy(), D.Copy(), o1, o2) );
 			}
 		}
 
-		
-
-		static bool VysledekNaleziDoMnozinyEasyZlomky(Q A, Q B, Q C, Q D, Op opA, Op opB) {
-			// spocitej vysledek, podivej jestli vysledek.Num je v [-10, 10] a vysledek.Den v [2, 10]
-			Q left = opA == Op.Add ? A + B : A - B;
-			Q right = opB == Op.Add ? C + D : C - D;
-			return IsEasyZt(left * right);
+		static bool VysledekNaleziDoMnozinyEasyZlomky(Q A, Q B, Q C, Q D, Op o1, Op o2) {
+			return IsEasyZt(A.Operate(B, o1) * C.Operate(D, o2) );
 		}
 
+		///
+		/// Kuchařka řešení: Jak se zadání řeší?
+		/// 
 		protected override Excercise Construct(Zadani_Fractions_S02_B z) { 
-			Q A = z.A; Q B = z.B; Q C = z.C; Q D = z.D; // @ defensive programming
-			Op opA = z.opA; Op opB = z.opB;
-			string opReprA = opA == Op.Add ? "+" : "-";
-			string opReprB = opB == Op.Add ? "+" : "-";
+			(Q A, Q B, Q C, Q D, Op o1, Op o2) = z.Unpack();
 			string[] steps = new string[7];
 			string[] comments = new string[7];
 			int lcmTop = M.EuclidsLCM(A.Den, B.Den);	
 			int lcmBottom = M.EuclidsLCM(C.Den, D.Den);
 
 			// step 1:
-			steps[0] = $"( {A} {opReprA} {B} )∙( {C} {opReprB} {D} )";
-
-			string aJm = XtinyCesky(A.Den);
-			string bJm = XtinyCesky(B.Den);
-			string cJm = XtinyCesky(C.Den);
-			string dJm = XtinyCesky(D.Den);
-			comments[0] = $"V levé závorce rozšiř {aJm} a {bJm} na {XtinyCesky(lcmTop)}.<br>V pravé závorce rozšiř {cJm} a {dJm} na {XtinyCesky(lcmBottom)}.";
+			steps[0] = $"( {A} {Repr(o1)} {B} )∙( {C} {Repr(o2)} {D} )";
+			comments[0] = $"V levé závorce rozšiř {XtinyCesky(A.Den)} a {XtinyCesky(B.Den)} na {XtinyCesky(lcmTop)}.<br>";
+			comments[0] += $"V pravé závorce rozšiř {XtinyCesky(C.Den)} a {XtinyCesky(D.Den)} na {XtinyCesky(lcmBottom)}.";
 
 			// step 2:
-			Q expA = A.GetExpandedForm(lcmTop / A.Den);
-			Q expB = B.GetExpandedForm(lcmTop / B.Den);
-			Q expC = C.GetExpandedForm(lcmBottom / C.Den);
-			Q expD = D.GetExpandedForm(lcmBottom / D.Den);
-			steps[1] = $"( {expA} {opReprA} {expB} )∙( {expC} {opReprB} {expD} )";
+			(Q expA, Q expB) = A.ExpandToLCD(B);
+			(Q expC, Q expD) = C.ExpandToLCD(D);
+			steps[1] = $"( {expA} {Repr(o1)} {expB} )∙( {expC} {Repr(o2)} {expD} )";
 			comments[1] = $"Sečti/odečti zlomky v závorkách.";
 
 			// step 3:
-			// do not use inbuild RationalNumber arithemtic! performs also transformation into Simplest form 
-			int topNum = opA == Op.Add ? expA.Num + expB.Num : expA.Num - expB.Num;
-			int bottomNum = opB == Op.Add ? expC.Num + expD.Num : expC.Num - expD.Num;
-			Q E = new(topNum, lcmTop);
-			Q F = new(bottomNum, lcmBottom);
-
+			Q E = A.AtomicOperate(B, o1);
+			Q F = C.AtomicOperate(D, o2);
 			steps[2] = $"{E} ∙ {F}";
 			comments[2] = $"Všimni si, že {F.Den} je násobek {E.Num}. Rozlož {F.Den} na násobek {E.Num}.";
 
 			// step 4:
 			steps[3] = $"{E} ∙ {Fraction.ToHTML($"{F.Num}", $"{E.Num} ∙ {F.Den / E.Num}")}";
 			comments[3] = $"{E.Num} vykrať.";
+
 			// step 5:
 			int fDen = F.Den / E.Num;
 			if(fDen == 0)

@@ -54,7 +54,7 @@ namespace InfiniteEngine {
 		public int[] illegalCounter;
 		protected readonly List<T> legit = new();
 		protected readonly string[] xtiny = new string[] { "nula", "jedniny", "poloviny", "třetiny", "čtvrtiny", "pětiny", "šestiny", "sedminy", "osminy", "devítiny", "desetiny", "jedenáctiny", "dvanáctiny", "třináctiny", "čtrnáctiny", "patnáctiny", "šestnáctiny", "sedmnáctiny", "osmnáctiny", "devatenáctiny", "dvacetiny" };
-		
+		protected (Op, Op)[] addSubCombinations = new (Op, Op)[] { (Op.Add, Op.Add), (Op.Sub , Op.Add), (Op.Add , Op.Sub), (Op.Sub , Op.Sub) };
 		/*protected Func<Op, char> OpRepr = (Op o) => { 
 			if(o == Op.Add) return '+';
 			if(o == Op.Sub) return '-';

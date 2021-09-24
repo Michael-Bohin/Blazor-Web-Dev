@@ -89,6 +89,7 @@ namespace InfiniteEngine {
         Q Subtract(Q subtrahend);
         Q Multiply(Q multiplier);
         Q Divide(Q divisor);
+		Q Operate(Q other, Op o);
 	}
 
 	interface ITeacher { }
@@ -97,11 +98,11 @@ namespace InfiniteEngine {
 	{
 		// 'Least common denominator'
 		// does modify the contents of A and B
-		void ExpandToLCD(Q other);
+		(Q, Q) ExpandToLCD(Q other);
 		
 		// does all the arithemtic operations without conversion 
 		// of the result into simplest form (or the input)
-		Q Operate(Q other, Op o);
+		Q AtomicOperate(Q other, Op o);
 	}
 
 	public class RationalNumber : Value, IRationalNumber, IRationalArithmetic, 
@@ -304,6 +305,18 @@ namespace InfiniteEngine {
             return a.Divide(b);
         }
 
+		public Q Operate(Q other, Op o) {
+			if(o == Op.Add) {
+				return this + other;
+			} else if(o == Op.Sub) {
+				return this - other;
+			} else if(o == Op.Mul) {
+				return this * other;
+			} else {
+				return this / other;
+			}
+		}
+
 		///
         /// interface IEquatable<RationalNumber> ///
 		///
@@ -371,20 +384,12 @@ namespace InfiniteEngine {
         /// interface IRationalAtomicOperations ///
 		///
 
-		public void ExpandToLCD(Q other) { 
-			// 'Least common denominator'
-			// does modify the contents of A and B
-			int lcd = M.EuclidsLCM(Den, other.Den);
-			Expand(lcd / Den);
-			other.Expand(lcd / other.Den);
-		}
-
 		// does all the arithemtic operations without conversion 
 		// of the result into simplest form (or the input)
-		public Q Operate(Q other, Op o) {
+		public Q AtomicOperate(Q other, Op o) {
 			if(o == Op.Add) {
 				if(Den != other.Den) {
-					(Q a, Q b) = ImmutableExpandToLCD(other);
+					(Q a, Q b) = ExpandToLCD(other);
 					return new(a.Num + b.Num, a.Den);
 				}
 				return new(Num + other.Num, Den);
@@ -392,7 +397,7 @@ namespace InfiniteEngine {
 
 			if(o == Op.Sub) {
 				if(Den != other.Den) {
-					(Q a, Q b) = ImmutableExpandToLCD(other);
+					(Q a, Q b) = ExpandToLCD(other);
 					return new(a.Num - b.Num, a.Den);
 				}
 				return new(Num - other.Num, Den);
@@ -400,7 +405,7 @@ namespace InfiniteEngine {
 			return o == Op.Mul ? new Q(Num * other.Num, Den * other.Den) : new Q(Num * other.Den, Den * other.Num);
 		}
 
-		public (Q, Q) ImmutableExpandToLCD(Q other) {
+		public (Q, Q) ExpandToLCD(Q other) {
 			int lcd = M.EuclidsLCM(Den, other.Den);
 			Q a = Copy();
 			Q b = other.Copy();

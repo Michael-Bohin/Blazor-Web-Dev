@@ -30,17 +30,6 @@ namespace InfiniteEngine {
 		// least common multiple -> multiply the two numbers and divide the result by GCD
         public static int EuclidsLCM(int a, int b) => a * b / EuclidsGCD(a, b);
 
-		public static bool VysledekAritmetikySeRovna(Q A, Q B, int C, Q D, Op opA, Op opB) {
-			int lcm = EuclidsLCM(A.Den, B.Den);
-			int expandedA = A.Num * (lcm / A.Den);
-			int expandedB = B.Num * (lcm / B.Den);
-			int nahore = opA == Op.Add ? expandedA + expandedB : expandedA - expandedB;
-			int dole = opB == Op.Add ? D.Den * C + D.Num : D.Den * C - D.Num;
-			return nahore == dole;
-		}
-
-		
-
 		// je reduced vysledek operace cele cislo? 
 		public static bool AritmetikaVedeNaNeceleCislo(Q A, Q B, Op op) => op == Op.Add ? !(A + B).IsInteger() : !(A - B).IsInteger();
 		
