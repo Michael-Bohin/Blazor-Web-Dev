@@ -7,11 +7,12 @@ namespace InfiniteEngine
 	public record Zadani_Fractions_S02_D : Zadani
 	{
 		public readonly int A, B, D, E, F; // C is 'missing' beacuse it is A * B
-		public readonly Op opA, opB;
+		public readonly Op o1, o2;
 
-		public Zadani_Fractions_S02_D(int A, int B, int D, int E, int F, Op opA, Op opB) {
-			this.A = A; this.B = B; this.D = D; this.E = E; this.F = F; this.opA = opA; this.opB = opB;
+		public Zadani_Fractions_S02_D(int A, int B, int D, int E, int F, Op o1, Op o2) {
+			this.A = A; this.B = B; this.D = D; this.E = E; this.F = F; this.o1 = o1; this.o2 = o2;
 		}
+		public (int , int, int, int, int, Op, Op ) Unpack() => (A, B, D, E, F, o1, o2);
 	}
 
 	public class EGenerator_Fractions_S02_D : ExcerciseGenerator<Zadani_Fractions_S02_D>
@@ -25,49 +26,48 @@ namespace InfiniteEngine
 			List<int> moznaD = GetRange(1, 9);
 			List<int> moznaE = GetRange(1, 9);
 			List<int> moznaF = GetRange(1, 9);
-			(Op, Op)[] operatorCombinations = new (Op, Op)[] { (Op.Add, Op.Add), (Op.Sub , Op.Add), (Op.Add , Op.Sub), (Op.Sub , Op.Sub) };
 
 			foreach(int A in moznaA)
 				foreach(int B in moznaB)
 					foreach(int D in moznaD)
 						foreach(int E in moznaE)
 							foreach(int F in moznaF)
-								foreach((Op x, Op y) in operatorCombinations)
+								foreach((Op x, Op y) in addSubCombinations)
 									Consider(A, B, D, E, F, x, y);
 
-			CreateStatsLog(moznaA.Count, moznaB.Count, moznaD.Count, moznaE.Count, moznaF.Count, operatorCombinations.Length);
+			CreateStatsLog(moznaA.Count, moznaB.Count, moznaD.Count, moznaE.Count, moznaF.Count, addSubCombinations.Length);
 		}
 
-		void Consider(int A, int B, int D, int E, int F, Op x, Op y) {
+		void Consider(int A, int B, int D, int E, int F, Op o1, Op o2) {
 			// E y F neni 0 && E y F neni C
 			// A * B neni D
 			// A neni D && B neni D
 			// Vysledek nalezi do EasyZT
-			int EyF = y == Op.Add ? E + F : E - F;
+			int EyF = o2 == Op.Add ? E + F : E - F;
 			int C = A * B;
 
+			int decision = -1;
 			if( !(  EyF != 0 && EyF != C ) ) 
-				ProcessZadani(A, B, D, E, F, x, y , 0);
+				decision = 0;
 			else if( !( C != D )  ) 
-				ProcessZadani(A, B, D, E, F, x, y , 1);
+				decision = 1;
 			else if( !( A != D && B != D )  ) 
-				ProcessZadani(A, B, D, E, F, x, y , 2);
-			else if( ! VysledekNaleziDoMnozinyEasyZlomky(C, D, E, F, x, y) )
-				ProcessZadani(A, B, D, E, F, x, y , 3);
-			else
-				legit.Add( new (A, B, D, E, F, x, y) );
+				decision = 2;
+			else if( ! VysledekNaleziDoMnozinyEasyZlomky(C, D, E, F, o1, o2) )
+				decision = 3;
+			
+			if(decision != -1) {
+				illegalCounter[decision]++;
+				if(illegalCounter[decision] < 1000)
+					illegal[decision].Add( new Zadani_Fractions_S02_D( A, B, D, E, F, o1, o2) );
+			} else {
+				legit.Add( new Zadani_Fractions_S02_D( A, B, D, E, F, o1, o2 ) );
+			}
 		}
 
-		void ProcessZadani(int A, int B, int D, int E, int F, Op x, Op y, int i) {
-			illegalCounter[i]++;
-			if(illegalCounter[i] < 1000)
-				illegal[i].Add( new (A, B, D, E, F, x, y) );
-		}
-
-		static bool VysledekNaleziDoMnozinyEasyZlomky(int C, int D, int E, int F, Op x, Op y) {
-			Q right = new(D, C);
-			Q top = x == Op.Add ? (Q)1 + right : (Q)1 - right;
-			Q bottom = y == Op.Add ? new(E+F, C) : new(E-F, C);
+		static bool VysledekNaleziDoMnozinyEasyZlomky(int C, int D, int E, int F, Op o1, Op o2) {
+			Q top = ((Q)1).Operate( new Q(D, C), o1);
+			Q bottom = o2 == Op.Add ? new(E+F, C) : new(E-F, C);
 			return IsEasyZt(top / bottom);
 		}
 		
@@ -75,37 +75,28 @@ namespace InfiniteEngine
 		/// Kuchařka řešení: Jak se zadání řeší?
 		/// 
 		protected override Excercise Construct(Zadani_Fractions_S02_D z) { 
-			int A = z.A;
-			int B = z.B;
+			(int A, int B, int D, int E, int F, Op o1, Op o2) = z.Unpack();
 			int C = A * B;
-			int D = z.D;
-			int E = z.E;
-			int F = z.F;
-			Op opX = z.opA;
-			Op opY = z.opB;
-			string x = Repr(opX);
-			string y = Repr(opY);
-
 			string[] steps = new string[6];
 			string[] comments = new string[6];
 			
 			// Step 1:
 			string topLeft = Fraction.ToHTML($"{A} ∙ {B}", $"{C}");
 			string topRight = Fraction.ToHTML($"{D}", $"{A} ∙ {B}");
-			string bottom = Fraction.ToHTML($"{E} {y} {F}", $"{C}");
-			steps[0] = Fraction.ToHTML($"{topLeft} {x} {topRight}", $"{bottom}");
+			string bottom = Fraction.ToHTML($"{E} {Repr(o2)} {F}", $"{C}");
+			steps[0] = Fraction.ToHTML($"{topLeft} {Repr(o1)} {topRight}", $"{bottom}");
 			comments[0] = $"Spočítej všechny vnitřní operace zlomků.";
 
 			// Step 2:
 			topLeft = Fraction.ToHTML($"{C}", $"{C}");
 			topRight = Fraction.ToHTML($"{D}", $"{C}");
-			Q EyFC = opY == Op.Add ? new(E+F, C) : new(E-F, C);
+			Q EyFC = o2 == Op.Add ? new(E+F, C) : new(E-F, C);
 
-			steps[1] = Fraction.ToHTML($"{topLeft} {x} {topRight}", $"{EyFC}");
+			steps[1] = Fraction.ToHTML($"{topLeft} {Repr(o1)} {topRight}", $"{EyFC}");
 			comments[1] = $"Sečti/odečti všechny {XtinyCesky(C)}.";
 
 			// Step 3:
-			Q top = opX == Op.Add ? new(C+D, C) : new(C-D, C);
+			Q top = o1 == Op.Add ? new(C+D, C) : new(C-D, C);
 			steps[2] = Fraction.ToHTML($"{top}", $"{EyFC}");
 			comments[2] = $"Převeď dělení zlomků na jejich násobení.";
 
