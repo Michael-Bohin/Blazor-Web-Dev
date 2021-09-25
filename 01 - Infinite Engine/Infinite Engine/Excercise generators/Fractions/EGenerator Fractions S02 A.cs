@@ -5,7 +5,7 @@ namespace InfiniteEngine
 	using Q = RationalNumber;
 	using M = MathAlgorithms;
 
-	public record Zadani_Fractions_S02_A : Zadani
+	public record Zadani_Fractions_S02_A
 	{
 		public readonly Q A, B, D;
 		public readonly int C;

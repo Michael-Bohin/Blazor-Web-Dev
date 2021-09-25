@@ -4,7 +4,7 @@ namespace InfiniteEngine
 {
 	using Q = RationalNumber;
 
-	public record Zadani_Fractions_S02_D : Zadani
+	public record Zadani_Fractions_S02_D
 	{
 		public readonly int A, B, D, E, F; // C is 'missing' beacuse it is A * B
 		public readonly Op o1, o2;

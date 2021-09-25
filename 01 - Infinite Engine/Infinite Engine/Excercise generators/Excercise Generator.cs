@@ -13,7 +13,7 @@ namespace InfiniteEngine {
 		Add, Sub, Mul, Div
 	}
 
-	public record Zadani { }
+	//public record Zadani { }
 
 	/*
 	Excercise Generator abstraction thought process:
@@ -44,24 +44,24 @@ namespace InfiniteEngine {
 		Any code that may be shared acros all generators should be here. 
 	 */
 
-	public interface IExcerciseGenerator<T>  {
+	public interface IExcerciseGenerator  {
 		List<Excercise> GetIllegal(int type, int count);
 		List<Excercise> GetLegit(int count);
-		List<Excercise> GetPedagogicSet(List<T> zList, int count); // enables easier exploring of options 
+		// List<Excercise> GetPedagogicSet(List<Zadani> zList, int count); // enables easier exploring of options 
 		Excercise GetOne();
 		Excercise[] GetTen(); // enables defining not uniform distribution of excercises
 	}
 
-    public abstract class ExcerciseGenerator<T> : IExcerciseGenerator<T> where T : Zadani  {
-		protected abstract Excercise Construct(T z);
+    public abstract class ExcerciseGenerator<Zadani> : IExcerciseGenerator  {
+		protected abstract Excercise Construct(Zadani z);
 
         protected Random rand;
         public readonly Dificulty level;
 
-		protected readonly List<T>[] illegal;
+		protected readonly List<Zadani>[] illegal;
 		public readonly int illegalSetsCount;
 		public int[] illegalCounter;
-		protected readonly List<T> legit = new();
+		protected readonly List<Zadani> legit = new();
 		protected readonly string[] xtiny = new string[] { "nula", "jedniny", "poloviny", "třetiny", "čtvrtiny", "pětiny", "šestiny", "sedminy", "osminy", "devítiny", "desetiny", "jedenáctiny", "dvanáctiny", "třináctiny", "čtrnáctiny", "patnáctiny", "šestnáctiny", "sedmnáctiny", "osmnáctiny", "devatenáctiny", "dvacetiny" };
 		protected (Op, Op)[] addSubCombinations = new (Op, Op)[] { (Op.Add, Op.Add), (Op.Sub , Op.Add), (Op.Add , Op.Sub), (Op.Sub , Op.Sub) };
 
@@ -91,7 +91,7 @@ namespace InfiniteEngine {
         }
 
 		public ExcerciseGenerator(int illegalSetsCount) {
-			illegal = new List<T>[illegalSetsCount];
+			illegal = new List<Zadani>[illegalSetsCount];
 			for(int i = 0; i < illegal.Length; i++)
 				illegal[i] = new();
 
@@ -146,15 +146,15 @@ namespace InfiniteEngine {
 			return GetPedagogicSet(legit, count); 
 		}
 
-		protected List<Excercise> ConstructExcercises(List<T> seznamZadani) {
+		protected List<Excercise> ConstructExcercises(List<Zadani> seznamZadani) {
 			List<Excercise> result = new();
-			foreach (T z in seznamZadani)
+			foreach (Zadani z in seznamZadani)
 				result.Add(Construct(z));
 			return result;
 		}
 		
-		public List<Excercise> GetPedagogicSet(List<T> zList, int count) {
-			List<T> subList = new();
+		public List<Excercise> GetPedagogicSet(List<Zadani> zList, int count) {
+			List<Zadani> subList = new();
 			if (count < zList.Count)
 				for (int i = 0; i < count; i++)
 					subList.Add(zList[rand.Next(zList.Count)]);
@@ -187,7 +187,7 @@ namespace InfiniteEngine {
 
 		public Excercise GetOne() {
 			int pick = rand.Next(legit.Count);
-			T z = legit[pick];
+			Zadani z = legit[pick];
 			return Construct(z);
 		}
 
@@ -198,7 +198,7 @@ namespace InfiniteEngine {
 			Excercise[] result = new Excercise[10];
 			int[] randPerm = GetRandomPermutation(legit.Count);
 			for (int i = 0; i < 10; i++) {
-				T z = legit[randPerm[i]];
+				Zadani z = legit[randPerm[i]];
 				result[i] = Construct(z);
 			}
 			return result;
