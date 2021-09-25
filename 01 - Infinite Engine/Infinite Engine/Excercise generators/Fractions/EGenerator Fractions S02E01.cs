@@ -5,12 +5,12 @@ namespace InfiniteEngine {
     using Q = RationalNumber;
     using M = MathAlgorithms; // required?
 
-	public record Zadani_Fractions_S02E01 : Zadani
+	public record Zadani_Fractions_S02E01 
 	{
 		// docasne uspokojeni compileru, nez to prepisu
 		
 	}
-
+	/*
     public class EGenerator_Fractions_S02E01 : ExcerciseGenerator<Zadani_Fractions_S02E01> {
 		// just to make it compilable before rewriting: 
 		protected override Excercise Construct(Zadani_Fractions_S02E01 zt) {
@@ -230,7 +230,7 @@ namespace InfiniteEngine {
             Q C = ChooseAnyQ(filteredC);
             return GetExactlyThis(A, B, C, CoinFlip());
         }*/
-
+	/*
         Q ChooseAnyQ(List<Q> from) => from[rand.Next(0, from.Count)];
 
         public override Excercise[] GetTen() {
@@ -340,5 +340,5 @@ namespace InfiniteEngine {
                 }
             return result.ToArray();
         }
-    }
+    }*/
 }
