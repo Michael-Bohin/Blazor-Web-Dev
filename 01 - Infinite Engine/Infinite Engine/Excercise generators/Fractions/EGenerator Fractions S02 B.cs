@@ -98,13 +98,17 @@ namespace InfiniteEngine
 			comments[2] = $"Všimni si, že {F.Den} je násobek {E.Num}. Rozlož {F.Den} na násobek {E.Num}.";
 
 			// step 4:
+			if(E.Num == 0)
+				return new EFractions_S02(steps, comments, E); 
+
+			int fDen = F.Den / E.Num;
+			if(fDen == 0)
+				return new EFractions_S02(steps, comments, E); // in place in order for illegal zadani's to not fall on 0 division, must never occur in legit excercises
 			steps[3] = $"{E} ∙ {Fraction.ToHTML($"{F.Num}", $"{E.Num} ∙ {F.Den / E.Num}")}";
 			comments[3] = $"{E.Num} vykrať.";
 
 			// step 5:
-			int fDen = F.Den / E.Num;
-			if(fDen == 0)
-				return new EFractions_S02(steps, comments, E); // in place in order for illegal zadani's to not fall on 0 division, must never occur in legit excercises
+			
 			E.Num = 1;
 			steps[4] = $"{E} ∙ {Fraction.ToHTML($"{F.Num}", $"{fDen}")}";
 			comments[4] = $"Vynásob oba zlomky.";

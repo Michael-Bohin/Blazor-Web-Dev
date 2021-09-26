@@ -12,13 +12,13 @@ namespace CLI_View_of_Infinite_Engine_library
 		static void Main() {
 			WriteLine("Hello World!");
 
-			EGenerator_Fractions_S02_D egen = new();
-			Process(egen, "D", 50, 200, "version-0-1");
+			EGenerator_Fractions_S02_A egen = new();
+			Process(egen, "A", 30, 200, "version-0-1");
 
 			WriteLine("Job done. :)");
 		}
 
-		static void Process(ExcerciseGenerator<Zadani_Fractions_S02_D> egen, string episode, int illegalCount, int legitCount, string version) {
+		static void Process(ExcerciseGenerator<Zadani_Fractions_S02_A> egen, string episode, int illegalCount, int legitCount, string version) {
 			
 			WriteLine($"Initiating Writing Fractions S02 {episode}:");
 			using StreamWriter sw = new($"stats-log-Fractions-S02-{episode}.txt");
