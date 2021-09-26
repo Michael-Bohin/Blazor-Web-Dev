@@ -352,3 +352,4 @@ MigrationBackup/
 
 # Docx files 
 *.docx
+/02 - ExcerciseGenerator Templater/output-templates

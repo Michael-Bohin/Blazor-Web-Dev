@@ -1,0 +1,15 @@
+<Zadani>
+<EndZadani>
+
+<illegalSets>
+
+<Comments>
+<EndComments> 
+
+<LocalVars>
+<EndLocalVars>
+
+<Constraints>
+<EndConstraints>
+
+<StepsCount>

@@ -1,0 +1,33 @@
+<Zadani>
+Fractions_S02_C int Q Q Q Q Op Op
+int <2,10>
+Q <SOR,1,9,true>
+Q <SOR,1,9,true>
+Q <SOR,1,9,true>
+Q <SOR,1,9,true>
+Op + -
+Op + -
+<EndZadani>
+
+<IllegalSets> 4
+
+<LocalVars>
+int EyF = o2 == Op.Add ? E + F : E - F;
+int C = A * B;
+<EndLocalVars>
+
+<Comments>
+E y F neni 0 && E y F neni C
+A * B neni D
+A neni D && B neni D
+Vysledek nalezi do EasyZT
+<EndComments> 
+
+<Constraints>
+EyF != 0 && EyF != C
+C != D
+A != D && B != D
+<m> VysledekNaleziDoMnozinyEasyZlomky(C, D, E, F, o1, o2)
+<EndConstraints>
+
+<StepsCount> 6
