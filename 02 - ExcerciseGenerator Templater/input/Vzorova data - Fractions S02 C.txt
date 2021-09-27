@@ -1,6 +1,6 @@
 <Zadani>
-Fractions_S02_C int Q Q Q Q Op Op
-int <2,10>
+Fractions_S02_DevTime
+int <GetRange,2,10>
 Q <SOR,1,9,true>
 Q <SOR,1,9,true>
 Q <SOR,1,9,true>
@@ -9,7 +9,8 @@ Op + -
 Op + -
 <EndZadani>
 
-<IllegalSets> 4
+<IllegalSets> 
+4
 
 <LocalVars>
 int EyF = o2 == Op.Add ? E + F : E - F;
@@ -30,4 +31,5 @@ A != D && B != D
 <m> VysledekNaleziDoMnozinyEasyZlomky(C, D, E, F, o1, o2)
 <EndConstraints>
 
-<StepsCount> 6
+<StepsCount>
+7

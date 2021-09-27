@@ -5,25 +5,25 @@ namespace InfiniteEngine
 	using Q = RationalNumber;
 	using M = MathAlgorithms;
 
-	public record Zadani_Fractions_S02_E
-   {
+	public record Zadani_Fractions_S02_DevTime
+	{
 		public readonly int A;
 		public readonly Q B, C, D, E;
 		public readonly Op o1, o2;
 
-		public Zadani_Fractions_S02_E(int A, Q B, Q C, Q D, Q E, Op o1, Op o2) {
+		public Zadani_Fractions_S02_DevTime(int A, Q B, Q C, Q D, Q E, Op o1, Op o2) {
 			this.A = A; this.B = B; this.C = C; this.D = D; this.E = E; this.o1 = o1; this.o2 = o2;
 		}
 
 		public (int, Q, Q, Q, Q, Op, Op) Unpack() => (A, B, C, D, E, o1, o2);
 	}
 
-	public class EGenerator_Fractions_S02_E : ExcerciseGenerator <Zadani_Fractions_S02_E>
+	public class EGenerator_Fractions_S02_DevTime : ExcerciseGenerator <Zadani_Fractions_S02_DevTime>
 	{
 		/// 
 		/// Jaká je množina pedagogicky legit zadání?
 		/// 
-		public EGenerator_Fractions_S02_E() : base(4) {
+		public EGenerator_Fractions_S02_DevTime() : base(4) {
 			List<int> moznaA = GetRange(2, 10);
 			List<Q> moznaB = SetOfRationals.GetAll(1, 9, true);
 			List<Q> moznaC = SetOfRationals.GetAll(1, 9, true);
@@ -60,25 +60,25 @@ namespace InfiniteEngine
 			if(decision != -1) {
 				illegalCounter[decision]++;
 				if(illegalCounter[decision] < 1000)
-					illegal[decision].Add( new Zadani_Fractions_S02_E( A, B.Copy(), C.Copy(), D.Copy(), E.Copy(), o1, o2) );
+					illegal[decision].Add( new Zadani_Fractions_S02_DevTime( A, B.Copy(), C.Copy(), D.Copy(), E.Copy(), o1, o2) );
 			} else {
-				legit.Add( new Zadani_Fractions_S02_E( A, B.Copy(), C.Copy(), D.Copy(), E.Copy(), o1, o2) );
+			legit.Add( new Zadani_Fractions_S02_DevTime( A, B.Copy(), C.Copy(), D.Copy(), E.Copy(), o1, o2) );
 			}
 		}
 
-       static bool VysledekNaleziDoMnozinyEasyZlomky(Q D, Q E, Op o) {
+		static bool VysledekNaleziDoMnozinyEasyZlomky(Q D, Q E, Op o) {
 			Q result = D.Operate(E, o).GetInverse();
 			return IsEasyZt(result.GetSimplestForm());
 		}
 
-       /// 
+		/// 
 		/// Kuchařka řešení: Jak se zadání řeší?
 		///
-		protected override Excercise Construct(Zadani_Fractions_S02_E z) {
+		protected override Excercise Construct(Zadani_Fractions_S02_DevTime z) {
 			(int A, Q B, Q C, Q D, Q E, Op o1, Op o2) = z.Unpack();
 			string[] steps = new string[7];
 			string[] comments = new string[7];
-			int rightLCD = M.EuclidsLCM(D.Den, E.Den);
+
 
 			// Step 1:
 			steps[0] = $"";
@@ -92,11 +92,23 @@ namespace InfiniteEngine
 			steps[2] = $"";
 			comments[2] = $"";
 
-           // Step 4:
+			// Step 4:
 			steps[3] = $"";
+			comments[3] = $"";
+
+			// Step 5:
+			steps[4] = $"";
+			comments[4] = $"";
+
+			// Step 6:
+			steps[5] = $"";
+			comments[5] = $"";
+
+			// Step 7:
+			Q result = (Q)1;
+			steps[6] = $"";
 			comments[6] = "Hotovo! 😎😎";
-			return new EFractions_S02(steps, comments, D);
+			return new EFractions_S02(steps, comments, result);
 		}
 	}
 }
-
