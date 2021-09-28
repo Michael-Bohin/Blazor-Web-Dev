@@ -34,7 +34,7 @@ namespace InfiniteEngine
 				foreach (Q B in moznaB)
 					foreach (Q C in moznaC)
 						foreach (Q D in moznaD)
-							foreach(Q E in moznaE)
+							foreach (Q E in moznaE)
 								foreach((Op o1, Op o2) in addSubCombinations)
 									Consider(A, B, C, D, E, o1, o2);
 
@@ -48,11 +48,11 @@ namespace InfiniteEngine
 			// Vysledek nalezi do EasyZT
 
 			int decision = -1;
-			if( !(  ((Q)A-B) * C == (Q)1 )  ) // massive constraint
+			if( !(  ((Q)A-B) * C == (Q)1 ) )
 				decision = 0;
-			else if( !( (D.Operate(E, o2)).Num != 0 )  ) // keep this despite the next constraint also filtering out this option -> in order to test construct doesnt fall on exception
+			else if( !( (D.Operate(E, o2)).Num != 0 ) )
 				decision = 1;
-			else if( !( D.Den != E.Den ) ) 
+			else if( !( D.Den != E.Den ) )
 				decision = 2;
 			else if( ! VysledekNaleziDoMnozinyEasyZlomky(D, E, o2) )
 				decision = 3;

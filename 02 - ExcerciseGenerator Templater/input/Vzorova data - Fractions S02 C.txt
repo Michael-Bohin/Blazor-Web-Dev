@@ -1,5 +1,5 @@
 <Zadani>
-Fractions_S02_DevTime
+Fractions_S02_C
 int <GetRange,2,10>
 Q <SOR,1,9,true>
 Q <SOR,1,9,true>
@@ -18,18 +18,21 @@ int C = A * B;
 <EndLocalVars>
 
 <Comments>
-E y F neni 0 && E y F neni C
-A * B neni D
-A neni D && B neni D
+masivni constraint: (A-B) * C == 1
+D y E je ruzne od nuly
+D.Den != E.Den
 Vysledek nalezi do EasyZT
 <EndComments> 
 
 <Constraints>
-EyF != 0 && EyF != C
-C != D
-A != D && B != D
-<m> VysledekNaleziDoMnozinyEasyZlomky(C, D, E, F, o1, o2)
+((Q)A-B) * C == (Q)1
+(D.Operate(E, o2)).Num != 0
+D.Den != E.Den
+<m> VysledekNaleziDoMnozinyEasyZlomky(D, E, o2)
 <EndConstraints>
 
 <StepsCount>
 7
+
+// massive constraint
+// keep this despite the next constraint also filtering out this option -> in order to test construct doesnt fall on exception

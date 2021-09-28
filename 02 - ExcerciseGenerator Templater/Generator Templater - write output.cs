@@ -89,6 +89,7 @@ namespace Templater {
 	    }
 
         
+        StringBuilder promenne = new();
 
         void RecordZadani() {
             SBA($"	public record Zadani_{pd.className}\n");
@@ -103,7 +104,7 @@ namespace Templater {
                 SBA(";\n");
 			}
             SBA("\n");
-            StringBuilder promenne = new();
+            
 
             List<string> jmenaPromennych = new();
 
@@ -141,12 +142,14 @@ namespace Templater {
             SBA("\n");
 
             StringBuilder tupleRepr = RepresentRadu(poradiPromenych);
-            StringBuilder tuplePromenne = RepresentRadu(jmenaPromennych);
+            tuplePromenne = RepresentRadu(jmenaPromennych);
                 
             SBA($"		public ({tupleRepr}) Unpack() => ({tuplePromenne});\n");
             SBA("	}\n");
             SBA("\n");
         }
+
+        StringBuilder tuplePromenne = new();
 
         void AppendTypesDefs(List<string> list, string type) {
             if(0 < list.Count) {
@@ -192,62 +195,112 @@ namespace Templater {
              
             SBA(inicializaceLists.ToString());
 
+            SBA("			\n");
+            StringBuilder nestedForeach = new();
+            int counterOdsazeni = 0;
+            foreach(SetDefinition def in pd.valueCombinations) 
+                if(def.type != "Op") {
+                    nestedForeach.Append($"{tabs[counterOdsazeni+3]}");
+                    nestedForeach.Append($"foreach ({def.type} {abeceda[counterOdsazeni]} in mozna{abeceda[counterOdsazeni]})\n");
+                    counterOdsazeni++;
+				}
+
+            // tohle rozmyslet jak psat jinak 
+            // az teprve potom napsat kod ktery generuje tenhle kod @ addSubCombinations
+            nestedForeach.Append($"{tabs[counterOdsazeni+3]}foreach((Op o1, Op o2) in addSubCombinations)\n"); 
+            counterOdsazeni++;
+            nestedForeach.Append($"{tabs[counterOdsazeni+3]}Consider({tuplePromenne});\n");
+
+            SBA(nestedForeach.ToString());
             SBA("\n");
-            SBA("			foreach (int A in moznaA)\n");
-            SBA("				foreach (Q B in moznaB)\n");
-            SBA("					foreach (Q C in moznaC)\n");
-            SBA("						foreach (Q D in moznaD)\n");
-            SBA("							foreach(Q E in moznaE)\n");
-            SBA("								foreach((Op o1, Op o2) in addSubCombinations)\n");
-            SBA("									Consider(A, B, C, D, E, o1, o2);\n");
-            SBA("\n");
-            SBA("			CreateStatsLog(moznaA.Count , moznaB.Count , moznaC.Count , moznaD.Count , moznaE.Count , addSubCombinations.Length);\n");
+
+            /// addSubCombinations se pouziva i zde!
+            StringBuilder callStats = new();
+            callStats.Append($"{tabs[3]}CreateStatsLog(moznaA.Count");
+
+            counterOdsazeni = 1;
+            for(int i = 1; i < pd.valueCombinations.Count; ++i) {
+                SetDefinition def = pd.valueCombinations[i];
+                if(def.type != "Op") {
+                    callStats.Append($" , mozna{abeceda[counterOdsazeni]}.Count");
+                    counterOdsazeni++;
+                }
+			}    
+            callStats.Append(" , addSubCombinations.Length);\n");
+
+            SBA(callStats.ToString());
             SBA("		}\n");
             SBA("\n");
 	    }
 
+        StringBuilder valCombsParametrised = new();
+
         void Consider() {
-            SBA("		void Consider(int A, Q B, Q C, Q D, Q E, Op o1, Op o2) {\n");
-            SBA("			// masivni constraint: (A-B) * C == 1\n");
-            SBA("			// D y E je ruzne od nuly\n");
-            SBA("			// D.Den != E.Den\n");
-            SBA("			// Vysledek nalezi do EasyZT\n");
+            StringBuilder comments = new();
+            foreach(string line in contentComments) 
+                comments.Append($"{tabs[3]}// {line}\n");
+
+            SBA($"		void Consider({promenne}) {OB}\n");
+			SBA(comments.ToString());
             SBA("\n");
             SBA("			int decision = -1;\n");
-            SBA("			if( !( ((Q)A-B) * C == (Q)1 ) )\n");
+            SBA($"			if( !(  {contentConstraints[0]} ) )\n");
             SBA("				decision = 0;\n");
-            SBA("			else if( !( (D.Operate(E, o2)).Num != 0 )  )\n");
-            SBA("				decision = 1;\n");
-            SBA("			else if( !( D.Den != E.Den ) )\n");
-            SBA(" 				decision = 2;\n");
-            SBA("			else if( ! VysledekNaleziDoMnozinyEasyZlomky(D, E, o2) )\n");
-            SBA("				decision = 3;\n");
-            SBA("\n");
+            for(int i = 1; i < contentConstraints.Count; ++i) {
+                string removedMethodID = contentConstraints[i].StartsWith("<m>") ? $"{contentConstraints[i].Remove(0, 3)}" : $"( {contentConstraints[i]} )";
+
+                SBA($"			else if( !{removedMethodID} )\n");
+                SBA($"				decision = {i};\n");
+			}
+            SBA("			\n");
             SBA("			if(decision != -1) {\n");
             SBA("				illegalCounter[decision]++;\n");
             SBA("				if(illegalCounter[decision] < 1000)\n");
-            SBA($"					illegal[decision].Add( new Zadani_{pd.className}( A, B.Copy(), C.Copy(), D.Copy(), E.Copy(), o1, o2) );\n");
+
+            StringBuilder varNamesWithQCopy = new();
+            int counter = 0;
+            int OpsCounter = 1;
+            foreach(string promenna in poradiPromenych) {
+                if(promenna == "Op") {
+                    varNamesWithQCopy.Append($"o{OpsCounter}");
+                    OpsCounter++;
+				}
+                if(promenna == "int") 
+                    varNamesWithQCopy.Append($"{abeceda[counter]}");
+                if(promenna == "Q") 
+                    varNamesWithQCopy.Append($"{abeceda[counter]}.Copy()");
+				counter++;
+                if(counter != poradiPromenych.Count )
+                    varNamesWithQCopy.Append(", ");
+            }
+
+            SBA($"					illegal[decision].Add( new Zadani_{pd.className}( {varNamesWithQCopy}) );\n");
             SBA("			} else {\n");
-            SBA($"			legit.Add( new Zadani_{pd.className}( A, B.Copy(), C.Copy(), D.Copy(), E.Copy(), o1, o2) );\n");
+            SBA($"				legit.Add( new Zadani_{pd.className}( {varNamesWithQCopy}) );\n");
             SBA("			}\n");
             SBA("		}\n");
             SBA("\n");
 	    }
 
         void ConsiderHelperMethods() {
-            SBA("		static bool VysledekNaleziDoMnozinyEasyZlomky(Q D, Q E, Op o) {\n");
-            SBA("			Q result = D.Operate(E, o).GetInverse();\n");
-            SBA("			return IsEasyZt(result.GetSimplestForm());\n");
-            SBA("		}\n");
-            SBA("\n");
+            // foreach constraing the is described by method (StartsWith("<m>"))
+            // write method id with body: "throw new NotImplementedException();"
+            foreach(string line in contentConstraints) {
+                if (line.StartsWith("<m>")) {
+                    SBA($"		static bool{line.Remove(0, 3)} {OB}\n");
+                    SBA("		    throw new NotImplementedException();\n");
+                    SBA("		}\n");
+                    SBA("\n");
+				}
+			}
 	    }
 
         void Construct() {
             SBA("		/// \n");
             SBA("		/// Kuchařka řešení: Jak se zadání řeší?\n");
             SBA("		///\n");
-            SBA($"		protected override Excercise Construct(Zadani_{pd.className} z) {OB}\n");
-            SBA("			(int A, Q B, Q C, Q D, Q E, Op o1, Op o2) = z.Unpack();\n");
+            SBA($"		protected override Excercise Construct(Zadani_{pd.className} z) {OB} \n");
+            SBA($"			({promenne}) = z.Unpack();\n");
             SBA($"			string[] steps = new string[{pd.stepsCount}];\n");
             SBA($"			string[] comments = new string[{pd.stepsCount}];\n");
             SBA("\n\n");
@@ -273,3 +326,6 @@ namespace Templater {
 		}
 	}
 }
+
+///            SBA(">>>> Dev Time Control: <<<<\n");
+///            SBA(">>>> Dev Time Control: <<<<\n");
