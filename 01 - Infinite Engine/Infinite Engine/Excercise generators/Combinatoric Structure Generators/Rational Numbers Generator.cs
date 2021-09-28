@@ -7,19 +7,6 @@ namespace InfiniteEngine {
     public class SetOfRationals : ICombinatoricStructureGenerator<Q> {
         readonly Random rand;
 
-        readonly List<Q> easilyFractionable = new() {
-            new Q(1, 10),
-            new Q(1, 5),
-            new Q(1, 4),
-            new Q(3, 10),
-            new Q(2, 5),
-            new Q(1, 2),
-            new Q(3, 5),
-            new Q(3, 4),
-            new Q(4, 5),
-            new Q(9, 10)
-        };
-
         readonly List<Q> easilyFractionableMini = new() {
             new Q(1, 10),
             new Q(1, 5),
@@ -34,7 +21,22 @@ namespace InfiniteEngine {
         public List<Q> GetAll() => GetAll(1, 50, true);
         public Q GetRandomOne() => GetRandomOne(1, 50, true);
 
-        public List<Q> GetEasilyFractionable() => easilyFractionable;
+        public static List<Q> GetEasilyFractionable() {  
+			List<Q> easilyFractionable = new() {
+				new Q(1, 10),
+				new Q(1, 5),
+				new Q(1, 4),
+				new Q(3, 10),
+				new Q(2, 5),
+				new Q(1, 2),
+				new Q(3, 5),
+				new Q(3, 4),
+				new Q(4, 5),
+				new Q(9, 10)
+			};	
+
+			return easilyFractionable;
+		}
         public List<Q> GetEasilyFractionableMini() => easilyFractionableMini;
 
         public static List<Q> GetAll(int low, int high, bool simplestForm) {

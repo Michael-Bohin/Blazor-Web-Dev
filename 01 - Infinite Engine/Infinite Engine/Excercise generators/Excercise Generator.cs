@@ -85,7 +85,7 @@ namespace InfiniteEngine {
 
 		protected string Repr(Op o) { 
 			if(o == Op.Add) return "+";
-			if(o == Op.Sub) return "-";
+			if(o == Op.Sub) return "−";
 			if(o == Op.Mul) return "*";
 			return ":";
 		}

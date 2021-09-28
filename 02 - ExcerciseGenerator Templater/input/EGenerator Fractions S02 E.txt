@@ -1,0 +1,32 @@
+<Zadani>
+Fractions_S02_E
+Q // to be implemented
+Q <SOR,1,30,true>
+Q <SOR,1,9,true>
+Op + -
+<EndZadani>
+
+<IllegalSets>
+7
+
+<Comments>
+Jmenovatel B je k násobek jmenovatele A pro k > 1
+Čitatel B je k násobek jmenovatele C pro k > 1
+Výsledek náleží do EasyZT
+<EndComments> 
+
+<LocalVars>
+<EndLocalVars>
+
+<Constraints>
+B.Den != 1
+B.Den != A.Den
+B.Den % A.Den == 0
+C.Den != 1
+B.Num != C.Den 
+B.Num % C.Den == 0
+<m> VysledekNaleziDoMnozinyEasyZlomky(A, B, C, o1)
+<EndConstraints>
+
+<StepsCount>
+7
