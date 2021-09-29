@@ -46,7 +46,7 @@
 
 
 @code {
-	SfSidebar Sidebar;
+		SfSidebar Sidebar;
 	public Orientation Orientation = Orientation.Horizontal;
 	public Orientation VerOrientation = Orientation.Vertical;
 	public bool SidebarToggle = false;
@@ -72,8 +72,8 @@
 				new MenuItem{ Text = "Samostatné úpravy" },
 				new MenuItem{ Text = "Řešené příklady" }
 			},
-			
-			
+
+
 		},
 		new MenuItem {
 			Text = "02 Výrazy bez x", // proměnných
@@ -88,10 +88,19 @@
 			Text = "03 Počítání se zlomky", IconCss = "icon-user icon",
 			Items = new List<MenuItem> {
 				new MenuItem{ Text = "Definice" , Url = "/03-Pocitani-se-zlomky/Definice"},
-				new MenuItem{ Text = "Samostatné úpravy" },
-				new MenuItem{ Text = "Řešené příklady" }
-			}, 
-			
+				new MenuItem{ Text = "Samostatné úpravy", Url = "/03-Pocitani-se-zlomky/Samostatne-upravy" },
+				new MenuItem{
+					Text = "Řešené příklady" ,
+					Items = new List<MenuItem> {
+						new MenuItem{ Text = "A" , Url = "/03-Pocitani-se-zlomky/Resene-priklady-A" },
+						new MenuItem{ Text = "B" , Url = "/03-Pocitani-se-zlomky/Resene-priklady-B" },
+						new MenuItem{ Text = "C" , Url = "/03-Pocitani-se-zlomky/Resene-priklady-C" },
+						new MenuItem{ Text = "D" , Url = "/03-Pocitani-se-zlomky/Resene-priklady-D" },
+						new MenuItem{ Text = "E" , Url = "/03-Pocitani-se-zlomky/Resene-priklady-E" }
+					}
+				}
+			},
+
 			},
 		new MenuItem {
 			Text = "04 Zjednodušování výrazů",
@@ -241,9 +250,13 @@
 		background-color: #4e555c !important;
 		/*00A19D #3e454c*/
 	}
-
+	/*
+	li {
+		color: #f00 !important;
+	}*/
 	.e-menu-container ul .e-menu-item.e-selected {
 		background-color: #4e555c !important;
+		
 	}
 	/* end of vertical-menu styles */
 	/* end of menu styles */

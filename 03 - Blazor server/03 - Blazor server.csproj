@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\mapa-znalosti-zlomky-definice.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Syncfusion.Blazor" Version="19.2.0.62" />
   </ItemGroup>
 
