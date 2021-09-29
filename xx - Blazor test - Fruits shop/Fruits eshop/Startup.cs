@@ -1,4 +1,4 @@
-using Fruits_eshop.Areas.Identity;
+﻿using Fruits_eshop.Areas.Identity;
 using Fruits_eshop.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
