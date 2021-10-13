@@ -5,6 +5,34 @@ using System.Text;
 using static System.Console;
 
 namespace Templater {
+	/// 
+	/// Definice vstupu
+	/// 
+	// na prvni radku je jmeno recordu
+	// na kazdem dalsim radku je typ a po mezere definice jak mnozina typu vypada
+			
+	// Zatim rozeznavane typy: int, Q, Op
+	// Rozeznavane typy se jiste hodne rozrostou... 
+
+	// V definici mnoziny jsou dva rezimy
+			
+	// a) string zacina a konci ostrou zavorkou. 
+	//		to znamena ze se bude volat metoda z predem znameho listu. 
+	//		Soucasny predem znamy list:
+	//			Q -> SOR (SetOfRationals.GetAll(int, int, bool))
+	//			int -> GetRange (GetRange(int, int))
+
+	// b) ve vsech ostatnich pripadech se obsah stringu kopiruje as is 
+
+	// radek se splituje na prvni mezere, vse co je za ni spada do druhe casti 
+	// prazdne radky se skipuji a jsou povolene 
+
+	// mozne handled exception vedouci na warning a skipnuti celeho filu templaterem: 
+
+	// 1. Kazdy radek prazdny , nebo zadny radek
+	// 2. Pocet neprazdnych radku je 1. (Nelze protoze se musi specifikovat alespon jeden nosny typ)
+	// 3. Libovolny z dalsich radku neobashuje na zacatku rozeznavany typ
+	// 4. Libovolny z dalsich radku neobsahuje popis mnoziny
 
 	partial class GeneratorTemplater {
         readonly string path;

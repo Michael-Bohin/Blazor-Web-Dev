@@ -97,7 +97,6 @@ namespace InfiniteEngine {
 	interface IRationalAtomicOperations : ITeacher
 	{
 		// 'Least common denominator'
-		// does modify the contents of A and B
 		(Q, Q) ExpandToLCD(Q other);
 		
 		// does all the arithemtic operations without conversion 

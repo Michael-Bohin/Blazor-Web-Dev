@@ -49,13 +49,13 @@ namespace Templater {
 
 		void PrepareContent() {
 			// now we have guarantee all elements have been identified and are correct 
-			CopyDedicatedContent(zadani, contentZadani);
-			CopyDedicatedContent(comments, contentComments);
-			CopyDedicatedContent(localVars, contentLocalVars);
-			CopyDedicatedContent(constraints, contentConstraints);
+			CopySection(zadani, contentZadani);
+			CopySection(comments, contentComments);
+			CopySection(localVars, contentLocalVars);
+			CopySection(constraints, contentConstraints);
 		}
 
-		void CopyDedicatedContent(FT ft, List<string> target) {
+		void CopySection(FT ft, List<string> target) {
 			for(int i = ft.From + 1; i < ft.To; ++i) 
 				if(content[i].Trim() != "")
 					target.Add(content[i]);

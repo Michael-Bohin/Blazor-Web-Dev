@@ -96,7 +96,7 @@ namespace Templater {
 
 		private readonly List<string> knownQMethods = new() { "SOR" };
 		private readonly List<string> knownIntMethods = new() { "GetRange" };
-		private readonly List<string> knownOpMethods = new() { }; // yet not empty
+		private readonly List<string> knownOpMethods = new() { }; // yet empty
 
 		public MethodSetDefinition(string type, string methodName, string[] methodParameters) : base(type) {
 			MethodNameIsKnown(methodName);
