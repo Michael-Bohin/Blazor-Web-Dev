@@ -6,67 +6,84 @@
 		<div class="header-section dock-menu" id="header">
 			<ul class="header-list">
 				<li id="hamburger" class="icon-menu icon list" @onclick="@Toggle"></li>
-				<input type="text" placeholder="Search..." class="search-icon list">
+				<input type="text" class="search-icon list">
 				<li class="right-header list">
 					<div class="horizontal-menu">
 						<SfMenu CssClass="dock-menu" Items="@AccountMenuItems" Orientation="@Orientation"></SfMenu>
 					</div>
 				</li>
-				<li class="right-header list support">Support</li>
-				<li class="right-header list tour">Tour</li>
+				<!--<li class="right-header list support">Support</li>
+				<li class="right-header list tour">Tour</li>-->
 			</ul>
 		</div>
-		<!-- sidebar element declaration -->
-		<SfSidebar HtmlAttributes="@HtmlAttribute" Target=".main-content" Width="220px" DockSize="50px" EnableDock="true" @ref="Sidebar" @bind-IsOpen="SidebarToggle">
-			<ChildContent>
-				<div class="main-menu">
-					<p class="main-menu-header">Příprava</p>
-					<div>
-						<SfMenu CssClass="dock-menu" Items="@MainMenuItems" Orientation="@VerOrientation"></SfMenu>
+	<!-- sidebar element declaration -->
+				<SfSidebar HtmlAttributes="@HtmlAttribute" Target=".main-content" Width="220px" DockSize="50px" EnableDock="true" @ref="Sidebar" @bind-IsOpen="SidebarToggle">
+					<ChildContent>
+						<div class="main-menu">
+							<p class="main-menu-header">PŘÍPRAVA</p>
+							<div>
+								<SfMenu TValue="MenuItem" CssClass="dock-menu" Items="@MainMenuItems" Orientation="@VerOrientation">
+									<MenuEvents TValue="MenuItem" ItemSelected="itemSelected"></MenuEvents>
+								</SfMenu>
+							</div>
+						</div>
+						<div class="action">
+							<p class="main-menu-header">CELEK</p>
+
+							<button class="e-btn action-btn" id="action-button">Učící cesta</button>
+							<button class="e-btn action-btn" id="action-button2">Celá zkouška</button>
+							<p>clicked: @eventName </p>
+						</div>
+					</ChildContent>
+				</SfSidebar>
+				<!-- end of sidebar element -->
+				<!-- main content declaration -->
+				<div class="main-content" id="maintext">
+					<div class="content">
+						@Body
+						<!--<div> Responsive Sidebar with Menu</div>-->
 					</div>
 				</div>
-				<div class="action">
-					<p class="main-menu-header">Celek</p>
-					<button class="e-btn action-btn" id="action-button-learning-path">Učící cesta</button>
-					<button style="margin-top:10px;" class="e-btn action-btn" id="action-button-take-exam">Zkus celou zkoušku</button>
-				</div>
-			</ChildContent>
-		</SfSidebar>
-		<!-- end of sidebar element -->
-		<!-- main content declaration -->
-		<div class="main-content" id="maintext">
-			<div class="content">
-				@Body
-			</div>
-		</div>
-		<!--end of main content declaration -->
-	</div>
-	<!--<title>Essential JS 2 (Preview) for Blazor Sidebar-> Sidebar Menu</title>-->
+				<!--end of main content declaration -->
 </div>
-
-
+	<title>Essential JS 2 (Preview) for Blazor Sidebar-> Sidebar Menu</title>
+</div>
 @code {
-		SfSidebar Sidebar;
+	@inject NavigationManager NavManager
+
+	private string eventName = "No";
+	private void itemSelected(MenuEventArgs<MenuItem> obj) {
+		string x = obj.Item.Id;
+		this.eventName = x;
+		NavManager.NavigateTo(x);
+	}
+
+
+	public void Toggle() {
+		SidebarToggle = !SidebarToggle;
+	}
+
+	SfSidebar Sidebar;
 	public Orientation Orientation = Orientation.Horizontal;
 	public Orientation VerOrientation = Orientation.Vertical;
 	public bool SidebarToggle = false;
 	Dictionary<string, object> HtmlAttribute = new Dictionary<string, object>()
 	{
-		{"class", "sidebar-menu" }
-	};
+			{"class", "sidebar-menu" }
+		};
 	public List<MenuItem> AccountMenuItems = new List<MenuItem> {
-		new MenuItem {
-			Text = "Account",
-			Items = new List<MenuItem> {
-				new MenuItem { Text = "Profile" },
-				new MenuItem { Text = "Sign out" }
+			new MenuItem {
+				Text = "Profil",
+				Items = new List<MenuItem> {
+					new MenuItem { Text = "Přihlášní" },
+					new MenuItem { Text = "Nový účet" }
+				}
 			}
-		}
-	};
+		};
 	public List<MenuItem> MainMenuItems = new List<MenuItem>{
 		new MenuItem {
-			Text = "01 Slovní úloha",
-			IconCss = "icon-bell-alt icon",
+			Text = "1. Slovní úloha",
+			//IconCss = "icon-bell-alt icon",
 			Items = new List<MenuItem> {
 				new MenuItem{ Text = "Definice" },
 				new MenuItem{ Text = "Samostatné úpravy" },
@@ -76,8 +93,8 @@
 
 		},
 		new MenuItem {
-			Text = "02 Výrazy bez x", // proměnných
-			IconCss = "icon-tag icon",
+			Text = "2. Výrazy bez proměnné", // proměnných
+			//IconCss = "icon-tag icon",
 			Items = new List<MenuItem> {
 				new MenuItem{ Text = "Definice" },
 				new MenuItem{ Text = "Samostatné úpravy" },
@@ -85,26 +102,27 @@
 			}
 		},
 		new MenuItem {
-			Text = "03 Počítání se zlomky", IconCss = "icon-user icon",
+			Text = "3. Počítání se zlomky", 
+			//IconCss = "icon-user icon",
 			Items = new List<MenuItem> {
-				new MenuItem{ Text = "Definice" , Url = "/03-Pocitani-se-zlomky/Definice"},
-				new MenuItem{ Text = "Samostatné úpravy", Url = "/03-Pocitani-se-zlomky/Samostatne-upravy" },
+				new MenuItem{ Text = "Definice", Id = "/03-Pocitani-se-zlomky/Definice"}, // Url = "/03-Pocitani-se-zlomky/Definice"
+				new MenuItem{ Text = "Samostatné úpravy" , Id = "/03-Pocitani-se-zlomky/Samostatne-upravy"}, // , Url = "/03-Pocitani-se-zlomky/Samostatne-upravy"
 				new MenuItem{
 					Text = "Řešené příklady" ,
 					Items = new List<MenuItem> {
-						new MenuItem{ Text = "A" , Url = "/03-Pocitani-se-zlomky/Resene-priklady-A" },
-						new MenuItem{ Text = "B" , Url = "/03-Pocitani-se-zlomky/Resene-priklady-B" },
-						new MenuItem{ Text = "C" , Url = "/03-Pocitani-se-zlomky/Resene-priklady-C" },
-						new MenuItem{ Text = "D" , Url = "/03-Pocitani-se-zlomky/Resene-priklady-D" },
-						new MenuItem{ Text = "E" , Url = "/03-Pocitani-se-zlomky/Resene-priklady-E" }
+						new MenuItem{ Text = "A" , Id = "/03-Pocitani-se-zlomky/Resene-priklady-A"}, // , Url = "/03-Pocitani-se-zlomky/Resene-priklady-A"
+						new MenuItem{ Text = "B" , Id = "/03-Pocitani-se-zlomky/Resene-priklady-B"}, // , Url = "/03-Pocitani-se-zlomky/Resene-priklady-B"
+						new MenuItem{ Text = "C" , Id = "/03-Pocitani-se-zlomky/Resene-priklady-C"}, // , Url = "/03-Pocitani-se-zlomky/Resene-priklady-C"
+						new MenuItem{ Text = "D" , Id = "/03-Pocitani-se-zlomky/Resene-priklady-D"}, // , Url = "/03-Pocitani-se-zlomky/Resene-priklady-D"
+						new MenuItem{ Text = "E" , Id = "/03-Pocitani-se-zlomky/Resene-priklady-E"}  // , Url = "/03-Pocitani-se-zlomky/Resene-priklady-E"
 					}
 				}
 			},
 
 			},
 		new MenuItem {
-			Text = "04 Zjednodušování výrazů",
-			IconCss = "icon-comment-inv-alt2 icon",
+			Text = "4. Zjednodušování výrazů",
+			//IconCss = "icon-comment-inv-alt2 icon",
 			Items  = new List<MenuItem> {
 				new MenuItem{ Text = "Definice" },
 				new MenuItem{ Text = "Samostatné úpravy" },
@@ -112,8 +130,8 @@
 			}
 		},
 		new MenuItem {
-			Text = "05 Rovnice s 1 x", // jednou proměnnou
-			IconCss = "icon-bookmark icon",
+			Text = "5. Rovnice s 1 proměnnou", // jednou proměnnou
+			//IconCss = "icon-bookmark icon",
 			Items  = new List<MenuItem> {
 				new MenuItem{ Text = "Definice" },
 				new MenuItem{ Text = "Samostatné úpravy" },
@@ -121,8 +139,8 @@
 			}
 		},
 		new MenuItem {
-			Text = "06 Slovní zadání rovnic",
-			IconCss = "icon-picture icon",
+			Text = "6. Slovní zadání rovnic",
+			//IconCss = "icon-picture icon",
 			Items = new List<MenuItem> {
 				new MenuItem{ Text = "Definice" },
 				new MenuItem{ Text = "Samostatné úpravy" },
@@ -130,8 +148,8 @@
 			}
 		},
 		new MenuItem {
-			Text = "07 Slovní úloha na délky",
-			IconCss = "icon-user icon",
+			Text = "7. Slovní úloha na délky",
+			//IconCss = "icon-user icon",
 			Items = new List<MenuItem> {
 				new MenuItem{ Text = "Definice" },
 				new MenuItem{ Text = "Samostatné úpravy" },
@@ -139,34 +157,28 @@
 			}
 		},
 		new MenuItem {
-			Text = "08 Převody jednotek",
-			IconCss = "icon-eye icon",
+			Text = "8. Převody jednotek",
+			//IconCss = "icon-eye icon",
 			Items = new List<MenuItem> {
 				new MenuItem{ Text = "Definice" },
 				new MenuItem{ Text = "Samostatné úpravy" },
 				new MenuItem{ Text = "Řešené příklady" }
 			}
-		}/*,
-		new MenuItem {
-			Text = "Info",
-			IconCss = "icon-tag icon",
-			Items = new List<MenuItem> {
-				new MenuItem{ Text = "Facebook" },
-				new MenuItem{ Text = "Mobile" }
-			}
-		}*/
+		}
 	};
-	public void Toggle() {
-		SidebarToggle = !SidebarToggle;
-	}
 }
-
 <style>
+	#action-button2 {
+		margin-top: 15px;
+		margin-bottom: 15px;
+	}
 	/* header-section styles */
 	#header.header-section,
 	#header .search-icon {
 		height: 50px;
 	}
+
+	
 
 	#header #hamburger.icon-menu {
 		font-size: 24px;
@@ -202,8 +214,8 @@
 	#header .search-icon {
 		float: left;
 		padding-left: 15px;
-		border: 0px solid #33383e !important;
-		background-color: #33383e;
+		border: 0px solid #28a745 !important;
+		background-color: #28a745 !important; /* style search buttonu 33383e*/
 		cursor: text;
 		width: 10em;
 	}
@@ -221,11 +233,11 @@
 	}
 
 	#maintext .content {
-		margin-top: 30px;
-		margin-left: 30px;
+		margin-top: 20px;
+		padding: 20px;
 		text-align: left;
-		/*font-size: 32px;*/
-		color:#000000; /*#178487*/
+		font-size: 20px;
+		color: #000; /* Barva text! 1784c7*/
 	}
 	/* end of content area styles */
 	/* menu styles */
@@ -247,16 +259,13 @@
 	}
 
 	.sidebar-menu .e-menu-container ul .e-menu-item:hover, .e-menu-container ul .e-menu-item.e-focused:hover {
-		background-color: #4e555c !important;
-		/*00A19D #3e454c*/
+		background-color: #128c2e !important; /* 3e454c 22577A */ /* hoverovany item menu  */
+		border-radius: 6px;
 	}
-	/*
-	li {
-		color: #f00 !important;
-	}*/
+
 	.e-menu-container ul .e-menu-item.e-selected {
-		background-color: #4e555c !important;
-		
+		background-color: #128c2e !important; /* zbarveni root menu pri hoverovani na subitems*/
+		border-radius: 6px;
 	}
 	/* end of vertical-menu styles */
 	/* end of menu styles */
@@ -299,12 +308,21 @@
 		padding: 0;
 	}
 
-	.e-menu-container ul .e-menu-item.e-focused { /*33383e,00A19D,00816D, rgb(109 163 5)*/
-		background-color: #33383e !important;
+	.e-menu-container ul .e-menu-item.e-focused {
+		background-color: #128c2e !important; /* nejak to problikava pri hoverovani asi by melo byt conzistentni s hoverem 33383e */
+		border-radius: 6px;
 	}
 
-	.sidebar-menu, #header ul, .e-menu-wrapper, .e-menu-container ul {
-		background-color: #33383e !important;
+	.sidebar-menu, .e-menu-wrapper, .e-menu-container ul {
+		background-color: #343a40 !important; /*  259743 tady je hlavni barva menu! */
+		color: #fff !important;
+		overflow: hidden;
+	}
+
+	#header ul {
+		/*background-color: #000 !important; /*  tuten je top menu?? #28a745 */
+		/*background-image: linear-gradient(to top right, #28a745, #28f765);*/
+		background-color: #28a745 !important;
 		color: #fff !important;
 		overflow: hidden;
 	}
@@ -312,21 +330,23 @@
 		/*end of  Sidebar styles */
 		/*main-menu-header  styles */
 		.sidebar-menu .main-menu-header {
+			margin-top: 5px;
 			padding: 4px 0 0 18px;
-			color: #656a70;
+			color: #999;
 		}
 		/*end of main-menu-header  styles */
 		/*button styles */
 		.sidebar-menu .action-btn {
 			margin-left: 16px;
 			width: 165px;
-			height: 30px;
-			font-size: 13px;
+			height: 35px;
+			font-size: 16px;
 			border-radius: 5px;
+			padding-bottom: 5px;
 		}
 
 		.sidebar-menu .action-btn {
-			background-color: #1784c7;
+			background-color: #128c2e;
 		}
 	/*end of button styles */
 	/* custom code start */
@@ -363,6 +383,7 @@
 		overflow-y: hidden;
 		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 		-webkit-tap-highlight-color: transparent;
+		background-color: #f4f6f8;
 	}
 	/*end of body styles */
 	/* custom code end */
