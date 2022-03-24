@@ -1,8 +1,167 @@
 ﻿using static System.Console;
 using InfiniteEngine;
+using Tree_Grower;
 using Q = InfiniteEngine.RationalNumber;
 
+// first create 2D matrices with atomic tree, so that I can easily call them...
+// then use atomic tree class to chain GEV operation 4 times once with each: add, sub, div, mul
 
+List<Q> easyFractions = SetOfRationals.GetAll(1, 10, true);
+
+List<List<List<Addition>>> addEasyFractions = new();
+List<List<List<Subtraction>>> subEasyFractions = new();
+List<List<List<Multiplication>>> mulEasyFractions = new();
+List<List<List<Division>>> divEasyFractions = new();
+
+// omg..
+
+for(int i  =0 ; i < 11; i++) {
+	addEasyFractions.Add(new List<List<Addition>>());
+	subEasyFractions.Add(new List<List<Subtraction>>());
+	mulEasyFractions.Add(new List<List<Multiplication>>());
+	divEasyFractions.Add(new List<List<Division>>());
+	for (int j = 0; j < 11; j++) {
+		addEasyFractions[i].Add(new List<Addition>());
+		subEasyFractions[i].Add(new List<Subtraction>());
+		mulEasyFractions[i].Add(new List<Multiplication>());
+		divEasyFractions[i].Add(new List<Division>());
+	}
+}
+
+// so now we have empty lists actual 3D matrix of atomic tree additions, subtractions, multiplications, divisons....
+// the reasons for doing this suicide is that I can adress them by their value and choose randomly
+// say I will need an atomic tree with value 3/2 and I want it to be addition. 
+// these are sitting inside a list at adress: addEasyFractions[3][2]
+// now I dont know ahead of time, how many there will be, so I will need to check count of that list and call random to get random atomic tree that is addition and equals 3/2....
+
+// First I will fill the 3d matrix:
+NoTorturer nt = new();
+
+foreach(Q easyQ in easyFractions) {
+	int num = easyQ.Num;
+	int den =  easyQ.Den;
+	Q root = new(num, den);
+	TreeGrower tg = new(root);
+	List<Expression> forest = tg.GrowTree();
+
+	foreach(Expression atomicTree in forest) {
+		if(atomicTree is Addition add && NoTorturer.LittleIntegers(add)) {
+			// add it to appropriate coords...
+			addEasyFractions[num][den].Add(add);
+
+		} else if(atomicTree is Subtraction sub && NoTorturer.LittleIntegers(sub)) {
+			subEasyFractions[num][den].Add(sub);
+		} else if(atomicTree is Multiplication mul && NoTorturer.LittleIntegers(mul)) {
+			mulEasyFractions[num][den].Add(mul);
+		} else if(atomicTree is Division div && NoTorturer.LittleIntegers(div)) {
+			divEasyFractions[num][den].Add(div);
+		} else {
+			if(atomicTree is not Addition && atomicTree is not Subtraction && atomicTree is not Multiplication && atomicTree is not Division) {
+				WriteLine("Critical error, met impossible class");
+				throw new Exception("Critical bug! Your logic is flawed.");
+			}
+		}
+	}
+}
+
+// first job done, atomic trees are sitting inside their 3D matrix of atomic expression trees..
+// Assert correctness:
+
+// counter must be equal to 239662, and sums foreach 2D coordinate must match the numbers from statistics.txt
+int counter = 0;
+using StreamWriter sw = new($"atomic trees - tree grower tableau.txt");
+
+for (int i = 0; i < 11;i++) {
+	for(int j = 0; j < 11;j++) {
+		int addCount = addEasyFractions[i][j].Count;
+		int subCount = subEasyFractions[i][j].Count;
+		int mulCount = mulEasyFractions[i][j].Count;
+		int divCount = divEasyFractions[i][j].Count;
+		if(addCount != 0) {
+			int sum = addCount + subCount + mulCount + divCount;
+			counter +=  sum;
+			WriteLine($"{addCount} + {subCount} + {mulCount} + {divCount} = {sum}");
+			foreach(Addition add in addEasyFractions[i][j]) 
+				sw.WriteLine(add);
+			foreach (Subtraction sub in subEasyFractions[i][j])
+				sw.WriteLine(sub);
+			foreach (Multiplication mul in mulEasyFractions[i][j])
+				sw.WriteLine(mul);
+			foreach (Division div in divEasyFractions[i][j])
+				sw.WriteLine(div);
+		}
+	}
+}
+WriteLine($"Sum check: {counter}");
+sw.Dispose();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 WriteLine("Hello, World!");
 List<Q> fractions = SetOfRationals.GetAll( 1, 10, true);
 int counter = 0;
@@ -66,92 +225,4 @@ foreach(Q q in fractions) {
 statsSW.WriteLine($"Total roots used: {statsTotal}, total little trees grown: {littleTotal}, total NOT little trees grown: {notLitleTotal}, avg little: {littleTotal/ statsTotal}, avg NOT little: {notLitleTotal / statsTotal}");
 
 statsSW.Dispose();
-
-class TreeGrower
-{
-	readonly Q root;
-	public TreeGrower(Q root) {
-		this.root = root;
-	}
-
-	public List<Expression> GrowTree() {
-		List<Expression> grownTrees = new();
-		List<BinaryExpression> addSub = GrowAddSubOperator();
-		foreach(BinaryExpression a in addSub)
-			grownTrees.Add(a);
-
-		List<BinaryExpression> mulDiv = GrowMulDivOperator();
-		foreach(BinaryExpression a in mulDiv)
-			grownTrees.Add(a);
-		return grownTrees;
-	}
-
-	private List<BinaryExpression> GrowAddSubOperator() {
-		List<BinaryExpression> addSub = new();
-		List<Q> allEasyFractions = SetOfRationals.GetAll(1, 50);
-		int adds = 0;
-		int subs = 0;
-		foreach (Q leftChild in allEasyFractions) {
-			if(leftChild < root) {
-				adds++;
-				Q rightChild = root - leftChild;
-				addSub.Add(new Addition(leftChild, rightChild));
-			}
-			if (leftChild > root) {
-				subs++;
-				Q rightChild =  leftChild - root;
-				addSub.Add(new Subtraction(leftChild, rightChild));
-			}
-		}
-		WriteLine($"There are {adds} grown additions.");
-		WriteLine($"There are {subs} grown subtractions.");
-		return addSub;
-	}
-
-	private List<BinaryExpression> GrowMulDivOperator() {
-		List<BinaryExpression> mulDiv = new();
-		List<Q> allEasyFractions = SetOfRationals.GetAll(1, 50);
-		int muls = 0;
-		int divs = 0;
-		foreach (Q leftChild in allEasyFractions) {
-			muls++;
-			Q rightChild = root / leftChild;
-			mulDiv.Add(new Multiplication(leftChild, rightChild));
-
-			divs++;
-			Q divLeft = root * leftChild; 
-			rightChild = root * leftChild;
-			mulDiv.Add(new Division(divLeft, leftChild));
-		}
-		WriteLine($"There are {muls} grown multiplications.");
-		WriteLine($"There are {divs} grown divisions.");
-		return mulDiv;
-	}
-}
-
-
-class NoTorturer
-{
-	static public bool LittleIntegers(BinaryExpression be) {
-		// dangerous code, I have written the parameter to be like this, in general input may be in form that cast as to null
-		Q left = be.leftOperand as Q;
-		Q right = be.rightOperand as Q;
-		int a = left.Num;
-		int b = left.Den;
-		int c = right.Num;
-		int d = right.Den;
-
-		if(a < -100 || a > 100)
-			return false;
-
-		if (b < -100 || b > 100)
-			return false;
-
-		if (c < -100 || c > 100)
-			return false;
-
-		if (d < -100 || d > 100)
-			return false;
-		return true;
-	}
-}
+*/
