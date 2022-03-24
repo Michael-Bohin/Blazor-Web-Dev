@@ -47,14 +47,18 @@ foreach(Q easyQ in easyFractions) {
 	foreach(Expression atomicTree in forest) {
 		if(atomicTree is Addition add && NoTorturer.LittleIntegers(add)) {
 			// add it to appropriate coords...
-			addEasyFractions[num][den].Add(add);
+			if (leftIsSimplestEasyZT(add) || rightIsSimplestEasyZT(add))
+				addEasyFractions[num][den].Add(add);
 
 		} else if(atomicTree is Subtraction sub && NoTorturer.LittleIntegers(sub)) {
-			subEasyFractions[num][den].Add(sub);
+			if (leftIsSimplestEasyZT(sub) || rightIsSimplestEasyZT(sub))
+				subEasyFractions[num][den].Add(sub);
 		} else if(atomicTree is Multiplication mul && NoTorturer.LittleIntegers(mul)) {
-			mulEasyFractions[num][den].Add(mul);
+			if (leftIsSimplestEasyZT(mul) || rightIsSimplestEasyZT(mul))
+				mulEasyFractions[num][den].Add(mul);
 		} else if(atomicTree is Division div && NoTorturer.LittleIntegers(div)) {
-			divEasyFractions[num][den].Add(div);
+			if (leftIsSimplestEasyZT(div) || rightIsSimplestEasyZT(div))
+				divEasyFractions[num][den].Add(div);
 		} else {
 			if(atomicTree is not Addition && atomicTree is not Subtraction && atomicTree is not Multiplication && atomicTree is not Division) {
 				WriteLine("Critical error, met impossible class");
@@ -69,7 +73,7 @@ foreach(Q easyQ in easyFractions) {
 
 // counter must be equal to 239662, and sums foreach 2D coordinate must match the numbers from statistics.txt
 int counter = 0;
-using StreamWriter sw = new($"atomic trees - tree grower tableau.txt");
+using StreamWriter sw = new($"atomic trees - tree grower tableau - code simplification all are growable using EasyZT either to left or right.txt");
 
 for (int i = 0; i < 11;i++) {
 	for(int j = 0; j < 11;j++) {
@@ -81,14 +85,24 @@ for (int i = 0; i < 11;i++) {
 			int sum = addCount + subCount + mulCount + divCount;
 			counter +=  sum;
 			WriteLine($"{addCount} + {subCount} + {mulCount} + {divCount} = {sum}");
-			foreach(Addition add in addEasyFractions[i][j]) 
-				sw.WriteLine(add);
+			foreach(Addition add in addEasyFractions[i][j])
+				
+					sw.WriteLine(add);
 			foreach (Subtraction sub in subEasyFractions[i][j])
-				sw.WriteLine(sub);
+				
+					sw.WriteLine(sub);
 			foreach (Multiplication mul in mulEasyFractions[i][j])
-				sw.WriteLine(mul);
+				
+					sw.WriteLine(mul);
 			foreach (Division div in divEasyFractions[i][j])
-				sw.WriteLine(div);
+				
+					sw.WriteLine(div);
+
+			if(addCount == 0 && subCount == 0 && mulCount == 0 && divCount == 0) {
+				// if the runtime survives this condition, I will not need to consider returns while growing for now.. :) 
+				// if the error gets thrown I need to figure it out... 
+				throw new Exception("Some list of binary ops got 0 count after cutting all non EasyZT leaves...");
+			}
 		}
 	}
 }
