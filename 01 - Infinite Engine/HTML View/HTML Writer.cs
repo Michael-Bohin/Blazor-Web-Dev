@@ -12,13 +12,13 @@ namespace CLI_View_of_Infinite_Engine_library
 		static void Main() {
 			WriteLine("Hello World!");
 
-			EGenerator_Fractions_S02_A egen = new();
-			Process(egen, "A", 5, 10, "version-0-1");
+			EGenerator_Fractions_S02_E egen = new();
+			Process(egen, "E", 5, 2_000, "2000x LargeFile");
 
 			WriteLine("Job done. :)");
 		}
 
-		static void Process(ExcerciseGenerator<Zadani_Fractions_S02_A> egen, string episode, int illegalCount, int legitCount, string version) {
+		static void Process(ExcerciseGenerator<Zadani_Fractions_S02_E> egen, string episode, int illegalCount, int legitCount, string version) {
 			
 			WriteLine($"Initiating Writing Fractions S02 {episode}:");
 			using StreamWriter sw = new($"stats-log-Fractions-S02-{episode}.txt");
@@ -32,16 +32,16 @@ namespace CLI_View_of_Infinite_Engine_library
 			}*/
 
 			eList = egen.GetLegit(legitCount);
-			HTMLWriter.CreateFileBriefExcercise($"Blazor-Fractions-S02-{episode}-{version}-legit.html", eList.ToArray());
+			HTMLWriter.CreateFileBriefExcercise($"Fractions S02 {version}-{episode}.html", eList.ToArray());
 		}
 	}
 
 	class HTMLWriter
 	{	// blazor time not necessary part: <!doctype html><html lang=""cs""><head><title>💙🔭🧬 Kuchařka řešení - zlomky</title><meta charset=""utf-8""><meta name=""viewport"" content=""width=device-width, initial-scale=1, shrink-to-fit=no""><link rel=""shortcut icon"" type=""image/x-icon"" href=""favicon.ico""><link rel=""preconnect"" href=""https://fonts.googleapis.com""><link rel=""preconnect"" href=""https://fonts.gstatic.com"" crossorigin><link href=""https://fonts.googleapis.com/css2?family=Caveat:wght@500&display=swap"" rel=""stylesheet""><link rel=""preconnect"" href=""https://fonts.googleapis.com""><link rel=""preconnect"" href=""https://fonts.gstatic.com"" crossorigin><link href=""https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Indie+Flower&display=swap"" rel=""stylesheet""><link href=""styles.css"" rel=""stylesheet"" type=""text/css""/></head><body>
-		const string headerTableLess = @"<div id=""nadpis""><h1> Kuchařka řešení</h1><h2>Vypočítej a výsledek napiš jako zlomek v základním tvaru</h2></div><div class=""table-container"">";
+		const string headerTableLess = @"<!doctype html><html lang=""cs""><head><title>💙🔭🧬 Kuchařka řešení - zlomky</title><meta charset=""utf-8""><meta name=""viewport"" content=""width=device-width, initial-scale=1, shrink-to-fit=no""><link rel=""shortcut icon"" type=""image/x-icon"" href=""favicon.ico""><link rel=""preconnect"" href=""https://fonts.googleapis.com""><link rel=""preconnect"" href=""https://fonts.gstatic.com"" crossorigin><link href=""https://fonts.googleapis.com/css2?family=Caveat:wght@500&display=swap"" rel=""stylesheet""><link rel=""preconnect"" href=""https://fonts.googleapis.com""><link rel=""preconnect"" href=""https://fonts.gstatic.com"" crossorigin><link href=""https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Indie+Flower&display=swap"" rel=""stylesheet""><link href=""styles.css"" rel=""stylesheet"" type=""text/css""/></head><body><div id=""nadpis""><h1> Kuchařka řešení</h1><h2>Vypočítej a výsledek napiš jako zlomek v základním tvaru</h2></div><div class=""table-container"">";
 		const string TableHeader = @"<table class=""table-fill""><thead><tr><th width=""100px"" height=""80px"">Krok</th><th width=""14%"">Výraz</th><th width=""42%""> Popis následující úpravy</th><th>Izolovaná úprava</th></tr></thead><tbody class=""tableBody""> ";
 		const string TableFooter = "</tbody></table>";
-		const string footerTableLess = "</div>"; // </body></html>
+		const string footerTableLess = "</div></body></html>"; // </body></html>
 
 		public HTMLWriter() { }
 

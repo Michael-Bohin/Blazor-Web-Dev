@@ -39,7 +39,25 @@ namespace InfiniteEngine {
 		}
         public List<Q> GetEasilyFractionableMini() => easilyFractionableMini;
 
-        public static List<Q> GetAll(int low, int high, bool simplestForm) {
+
+		// there are several overloads of get all method.
+		// first get all with arity 2 returns trully all, both in simplest form and not in simplest form 
+		// getall with arity 3 returnes either fractions in simplest form ot the not in simplest form 
+		// getall with arity 4 is the same, plus you have the right to forbid some Qs (by adding the to the List<Q> except, fourth parameter) 
+		public static List<Q> GetAll(int low, int high) {
+			List<Q> result = new();
+			for (int numerator = low; numerator <= high; numerator++)
+				for (int denominator = low; denominator <= high; denominator++) {
+					if (denominator == 1)
+						continue; // ignore whole numbers, despite making it through the simplest form definition
+					Q f = new(numerator, denominator);
+					result.Add(f);
+				}
+			return result;
+		}
+
+
+		public static List<Q> GetAll(int low, int high, bool simplestForm) {
             List<Q> result = new();
             for (int numerator = low; numerator <= high; numerator++)
                 for (int denominator = low; denominator <= high; denominator++) {

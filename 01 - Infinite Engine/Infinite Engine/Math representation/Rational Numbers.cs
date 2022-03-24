@@ -137,8 +137,8 @@ namespace InfiniteEngine {
 		public static explicit operator Q(int integer) => new(integer, 1);
 
         /// inherited abstract methods overrides ///
-        //public override string ToString() => $"{_num} / {_den}";
-        public override string ToString() => ToHTML();
+        public override string ToString() => $"({_num} / {_den})";
+        // public override string ToString() => ToHTML();
         public override Q DeepCopy() => (Q)MemberwiseClone();
         public override string ToHTML() => @"<div class=""frac""><span>" + _num.ToString() + @"</span><span class=""symbol"">/</span><span class=""bottom"">" + _den.ToString() + @"</span></div>";
 
