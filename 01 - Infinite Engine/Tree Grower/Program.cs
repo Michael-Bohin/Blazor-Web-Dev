@@ -96,6 +96,57 @@ WriteLine($"Sum check: {counter}");
 sw.Dispose();
 
 
+/// correct, 
+
+bool leftIsSimplestEasyZT(BinaryExpression be) {
+	Q? left = be.leftOperand as Q;
+	if(left == null) 
+		throw new Exception("Critical error! Your logic is flawed. Rethink.");
+
+	return left.IsSimplestForm() && left.Num < 11 && left.Den < 11;
+}
+
+bool rightIsSimplestEasyZT(BinaryExpression be) {
+	Q? right = be.leftOperand as Q;
+	if (right == null)
+		throw new Exception("Critical error! Your logic is flawed. Rethink.");
+
+	return right.IsSimplestForm() && right.Num < 11 && right.Den < 11;
+}
+
+
+
+
+List<BinaryExpression> sedmDesetin = new();
+
+foreach(Addition add in addEasyFractions[7][10]) {
+	if(leftIsSimplestEasyZT(add) || rightIsSimplestEasyZT(add))
+		sedmDesetin.Add(add);
+}
+
+foreach(Subtraction sub in subEasyFractions[7][10]) {
+	if (leftIsSimplestEasyZT(sub) || rightIsSimplestEasyZT(sub))
+		sedmDesetin.Add(sub);
+}
+
+foreach(Multiplication mul in mulEasyFractions[7][10]) {
+	if (leftIsSimplestEasyZT(mul) || rightIsSimplestEasyZT(mul))
+		sedmDesetin.Add(mul);
+}
+
+foreach(Division div in divEasyFractions[7][10]) {
+	if (leftIsSimplestEasyZT(div) || rightIsSimplestEasyZT(div))
+		sedmDesetin.Add(div);
+}
+
+
+WriteLine(sedmDesetin.Count);
+
+using StreamWriter resultSw = new($"sedm desetin S01E02.txt");
+foreach(BinaryExpression be in sedmDesetin) {
+	resultSw.WriteLine(be);
+}
+resultSw.Dispose();
 
 
 
