@@ -163,6 +163,76 @@ foreach(BinaryExpression be in sedmDesetin) {
 resultSw.Dispose();
 
 
+/// Pseudocode of the 3D generator:
+/// For the simplicity 1st GEV call will always be addition
+/// 2nd call will always be multiplication 
+/// 3rd will always be addition 
+/// this way i can also forget about the subtraction 0 count at 9/2, all lists contain at least one binary op :)
+/// 
+
+/// 0. foreach atomicke tablo rovne sedm desetin:
+/// 1. Figue out 1st leftright, 1st index
+/// 2. 2nd left  right, 2nd index
+/// 3. 3rd left right, 3rd index 
+/// 4. The exercise has been drawn unambiguously -> Create the binary expression and writeline it into resultint file
+
+WriteLine("Initiating final task");
+int finalCounter = 0;
+using StreamWriter stream = new($"sedm desetin S01E03.txt");
+foreach (BinaryExpression be in sedmDesetin) {
+	finalCounter++;
+	LeafeId li = RandomStateSpaceCrawler.FetchRandomLeafe(be, addEasyFractions, subEasyFractions, mulEasyFractions, divEasyFractions);
+	BinaryExpression exercise = ExerciseBuilder.Construct(be, li, addEasyFractions, subEasyFractions, mulEasyFractions, divEasyFractions);
+	stream.WriteLine(exercise);
+}
+
+WriteLine($"final foreach iterated {finalCounter} times.");
+
+stream.Dispose();
+stream.Close();
+
+
+record LeafeId
+{
+	public LeafeId(bool firstL, bool secondL, bool thirdL, int firstIn, int secondIn, int thirdIn) {
+		firstLeft = firstL;
+		secondLeft = secondL;
+		thirdLeft = thirdL;
+
+		firstIndex = firstIn;
+		secondIndex	= secondIn;
+		thirdIndex = thirdIn;
+	}
+	public readonly bool firstLeft;
+	public readonly bool secondLeft;
+	public readonly bool thirdLeft;
+
+	public readonly int firstIndex;
+	public readonly int secondIndex;
+	public readonly int thirdIndex;	
+}
+
+
+class RandomStateSpaceCrawler
+{
+	static public LeafeId FetchRandomLeafe(BinaryExpression root, List<List<List<Addition>>> addFractions, List<List<List<Subtraction>>> subFractions, List<List<List<Multiplication>>> mulFractions, List<List<List<Division>>> divFractions) {
+
+		return new LeafeId(true, true, true, 0, 0, 0);
+	}
+
+}
+
+
+class ExerciseBuilder
+{
+	static public BinaryExpression Construct(BinaryExpression root, LeafeId li, List<List<List<Addition>>> addFractions, List<List<List<Subtraction>>> subFractions, List<List<List<Multiplication>>> mulFractions, List<List<List<Division>>> divFractions) {
+	
+		return root;
+	}
+
+}
+
+
 
 
 
