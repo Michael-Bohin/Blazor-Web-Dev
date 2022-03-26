@@ -32,7 +32,7 @@ namespace InfiniteEngine {
         public override string ToString() {
             if (this is Addition || this is Subtraction) // assert infix notation doesnt change due to priority of operators
                 return $"({leftOperand}{SignRepresentation}{rightOperand})";
-            return $"{leftOperand}{SignRepresentation}{rightOperand}";
+            return $"({leftOperand}{SignRepresentation}{rightOperand})";
         }
 
         public override string ToHTML() => $"{leftOperand.ToHTML()} {SignRepresentation} {rightOperand.ToHTML()}";
@@ -154,7 +154,7 @@ namespace InfiniteEngine {
         public Division(Expression a, Expression b) : base(a, b) { }
         public Division(double a, Expression b) : base(a, b) { }
 
-        protected override string SignRepresentation => ":";
+        protected override string SignRepresentation => "/";
 
         public Expression Dividend { // delenec
             get => leftOperand;

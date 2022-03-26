@@ -77,16 +77,16 @@ class NoTorturer
 		int c = right.Num;
 		int d = right.Den;
 
-		if (a < -100 || a > 100)
+		if (a < -50 || a > 50)
 			return false;
 
-		if (b < -100 || b > 100)
+		if (b < -50 || b > 50)
 			return false;
 
-		if (c < -100 || c > 100)
+		if (c < -50 || c > 50)
 			return false;
 
-		if (d < -100 || d > 100)
+		if (d < -50 || d > 50)
 			return false;
 		return true;
 	}

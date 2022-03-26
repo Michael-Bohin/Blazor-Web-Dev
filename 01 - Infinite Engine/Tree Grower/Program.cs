@@ -2,6 +2,7 @@
 using InfiniteEngine;
 using Tree_Grower;
 using Q = InfiniteEngine.RationalNumber;
+using System;
 
 // first create 2D matrices with atomic tree, so that I can easily call them...
 // then use atomic tree class to chain GEV operation 4 times once with each: add, sub, div, mul
@@ -13,7 +14,6 @@ List<List<List<Subtraction>>> subEasyFractions = new();
 List<List<List<Multiplication>>> mulEasyFractions = new();
 List<List<List<Division>>> divEasyFractions = new();
 
-// omg..
 
 for(int i  =0 ; i < 11; i++) {
 	addEasyFractions.Add(new List<List<Addition>>());
@@ -46,19 +46,13 @@ foreach(Q easyQ in easyFractions) {
 
 	foreach(Expression atomicTree in forest) {
 		if(atomicTree is Addition add && NoTorturer.LittleIntegers(add)) {
-			// add it to appropriate coords...
-			if (leftIsSimplestEasyZT(add) || rightIsSimplestEasyZT(add))
-				addEasyFractions[num][den].Add(add);
-
+			addEasyFractions[num][den].Add(add);
 		} else if(atomicTree is Subtraction sub && NoTorturer.LittleIntegers(sub)) {
-			if (leftIsSimplestEasyZT(sub) || rightIsSimplestEasyZT(sub))
-				subEasyFractions[num][den].Add(sub);
+			subEasyFractions[num][den].Add(sub);
 		} else if(atomicTree is Multiplication mul && NoTorturer.LittleIntegers(mul)) {
-			if (leftIsSimplestEasyZT(mul) || rightIsSimplestEasyZT(mul))
-				mulEasyFractions[num][den].Add(mul);
+			mulEasyFractions[num][den].Add(mul);
 		} else if(atomicTree is Division div && NoTorturer.LittleIntegers(div)) {
-			if (leftIsSimplestEasyZT(div) || rightIsSimplestEasyZT(div))
-				divEasyFractions[num][den].Add(div);
+			divEasyFractions[num][den].Add(div);
 		} else {
 			if(atomicTree is not Addition && atomicTree is not Subtraction && atomicTree is not Multiplication && atomicTree is not Division) {
 				WriteLine("Critical error, met impossible class");
@@ -68,23 +62,260 @@ foreach(Q easyQ in easyFractions) {
 	}
 }
 
+Random rand = new();
+
+bool nestTwice = true;
+
+
+foreach(Q easyZT in easyFractions) {
+	int easyNum = easyZT.Num;
+	int easyDen = easyZT.Den;
+
+	int addCount = addEasyFractions[easyNum][easyDen].Count;
+	int subCount = subEasyFractions[easyNum][easyDen].Count;
+	int mulCount = mulEasyFractions[easyNum][easyDen].Count;
+	int divCount = divEasyFractions[easyNum][easyDen].Count;
+
+	WriteLine($">>>>> {addCount} , {subCount} , {mulCount} , {divCount} <<<<< ");
+	using StreamWriter stream = new($"GEV call ONCE {easyNum} {easyDen} count-10_000x.txt");
+	NestGrowExpressionValue nestGEV = new();
+
+	for (int repeat = 0; repeat < 10000; repeat++) {
+		BinaryExpression be;
+		int pickOp = rand.Next(0, 4);
+		if (pickOp == 0) {
+			be = addEasyFractions[easyNum][easyDen][rand.Next(0, addCount)];
+		} else if (pickOp == 1) {
+			be = subEasyFractions[easyNum][easyDen][rand.Next(0, subCount)];
+		} else if (pickOp == 2) {
+			be = mulEasyFractions[easyNum][easyDen][rand.Next(0, mulCount)];
+		} else {
+			be = divEasyFractions[easyNum][easyDen][rand.Next(0, divCount)];
+		}
+		BinaryExpression grownTree = nestGEV.GetRandomLeaf(be);
+
+		/*if (nestTwice) {
+			BinaryExpression nextAtomicChild;
+			pickOp = rand.Next(0, 4);
+			Q q = new(-1,-1);
+			if (grownTree.leftOperand is Q r) 
+				q = r.DeepCopy();
+			if (grownTree.rightOperand is Q s) 
+				q = s.DeepCopy();
+			
+			if (pickOp == 0) {
+				nextAtomicChild = addEasyFractions[q.Num][q.Den][rand.Next(0, addEasyFractions[q.Num][q.Den].Count)];
+			} else if (pickOp == 1) {
+				nextAtomicChild = subEasyFractions[q.Num][q.Den][rand.Next(0, subEasyFractions[q.Num][q.Den].Count)];
+			} else if (pickOp == 2) {
+				nextAtomicChild = mulEasyFractions[q.Num][q.Den][rand.Next(0, mulEasyFractions[q.Num][q.Den].Count)];
+			} else {
+				nextAtomicChild = divEasyFractions[q.Num][q.Den][rand.Next(0, divEasyFractions[q.Num][q.Den].Count)];
+			}
+
+		}*/
+
+		stream.WriteLine($"{repeat} >> {grownTree}");
+	}
+
+	stream.Dispose();
+	stream.Close();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // first job done, atomic trees are sitting inside their 3D matrix of atomic expression trees..
 // Assert correctness:
 
 // counter must be equal to 239662, and sums foreach 2D coordinate must match the numbers from statistics.txt
-int counter = 0;
+
+
+/*int counter = 0;
 using StreamWriter sw = new($"atomic trees - tree grower tableau - code simplification all are growable using EasyZT either to left or right.txt");
 
 for (int i = 0; i < 11;i++) {
 	for(int j = 0; j < 11;j++) {
-		int addCount = addEasyFractions[i][j].Count;
-		int subCount = subEasyFractions[i][j].Count;
-		int mulCount = mulEasyFractions[i][j].Count;
-		int divCount = divEasyFractions[i][j].Count;
-		if(addCount != 0) {
-			int sum = addCount + subCount + mulCount + divCount;
+		int _addCount = addEasyFractions[i][j].Count;
+		int _subCount = subEasyFractions[i][j].Count;
+		int _mulCount = mulEasyFractions[i][j].Count;
+		int _divCount = divEasyFractions[i][j].Count;
+		if ( _addCount != 0) {
+			int sum = _addCount + _subCount + _mulCount + _divCount;
 			counter +=  sum;
-			WriteLine($"{addCount} + {subCount} + {mulCount} + {divCount} = {sum}");
+			WriteLine($"{_addCount} + {_subCount} + {_mulCount} + {_divCount} = {sum}");
 			foreach(Addition add in addEasyFractions[i][j])
 				
 					sw.WriteLine(add);
@@ -98,7 +329,7 @@ for (int i = 0; i < 11;i++) {
 				
 					sw.WriteLine(div);
 
-			if(addCount == 0 && subCount == 0 && mulCount == 0 && divCount == 0) {
+			if(_addCount == 0 && _subCount == 0 && _mulCount == 0 && _divCount == 0) {
 				// if the runtime survives this condition, I will not need to consider returns while growing for now.. :) 
 				// if the error gets thrown I need to figure it out... 
 				throw new Exception("Some list of binary ops got 0 count after cutting all non EasyZT leaves...");
@@ -107,9 +338,44 @@ for (int i = 0; i < 11;i++) {
 	}
 }
 WriteLine($"Sum check: {counter}");
-sw.Dispose();
+sw.Dispose();*/
 
 
+
+/*
+
+List<BinaryExpression> sedmDesetin = new();
+
+foreach (Addition add in addEasyFractions[7][10]) {
+	// if(leftIsSimplestEasyZT(add) || rightIsSimplestEasyZT(add))
+	sedmDesetin.Add(add);
+}
+
+foreach (Subtraction sub in subEasyFractions[7][10]) {
+	// if (leftIsSimplestEasyZT(sub) || rightIsSimplestEasyZT(sub))
+	sedmDesetin.Add(sub);
+}
+
+foreach (Multiplication mul in mulEasyFractions[7][10]) {
+	// if (leftIsSimplestEasyZT(mul) || rightIsSimplestEasyZT(mul))
+	sedmDesetin.Add(mul);
+}
+
+foreach (Division div in divEasyFractions[7][10]) {
+	// if (leftIsSimplestEasyZT(div) || rightIsSimplestEasyZT(div))
+	sedmDesetin.Add(div);
+}
+
+WriteLine(sedmDesetin.Count);
+
+using StreamWriter resultSw = new($"sedm desetin S01E02.txt");
+foreach (BinaryExpression be in sedmDesetin) {
+	resultSw.WriteLine(be);
+}
+resultSw.Dispose();
+*/
+
+/*
 /// correct, 
 
 bool leftIsSimplestEasyZT(BinaryExpression be) {
@@ -117,7 +383,7 @@ bool leftIsSimplestEasyZT(BinaryExpression be) {
 	if(left == null) 
 		throw new Exception("Critical error! Your logic is flawed. Rethink.");
 
-	return left.IsSimplestForm() && left.Num < 11 && left.Den < 11;
+	return left.IsSimplestForm() && left.Num < 11 && left.Den < 11 && left.Den != 1;
 }
 
 bool rightIsSimplestEasyZT(BinaryExpression be) {
@@ -125,42 +391,18 @@ bool rightIsSimplestEasyZT(BinaryExpression be) {
 	if (right == null)
 		throw new Exception("Critical error! Your logic is flawed. Rethink.");
 
-	return right.IsSimplestForm() && right.Num < 11 && right.Den < 11;
-}
+	return right.IsSimplestForm() && right.Num < 11 && right.Den < 11 && right.Den != 1;
+} 
+ 
+*/
 
 
-
-
-List<BinaryExpression> sedmDesetin = new();
-
-foreach(Addition add in addEasyFractions[7][10]) {
-	if(leftIsSimplestEasyZT(add) || rightIsSimplestEasyZT(add))
-		sedmDesetin.Add(add);
-}
-
-foreach(Subtraction sub in subEasyFractions[7][10]) {
-	if (leftIsSimplestEasyZT(sub) || rightIsSimplestEasyZT(sub))
-		sedmDesetin.Add(sub);
-}
-
-foreach(Multiplication mul in mulEasyFractions[7][10]) {
-	if (leftIsSimplestEasyZT(mul) || rightIsSimplestEasyZT(mul))
-		sedmDesetin.Add(mul);
-}
-
-foreach(Division div in divEasyFractions[7][10]) {
-	if (leftIsSimplestEasyZT(div) || rightIsSimplestEasyZT(div))
-		sedmDesetin.Add(div);
-}
-
-
-WriteLine(sedmDesetin.Count);
-
-using StreamWriter resultSw = new($"sedm desetin S01E02.txt");
-foreach(BinaryExpression be in sedmDesetin) {
-	resultSw.WriteLine(be);
-}
-resultSw.Dispose();
+/*RandomEasyZT easyZT = new();
+WriteLine(">>>> easyZT set:");
+foreach(Q q in easyZT.SetOfEasyZT)
+	WriteLine(q);
+WriteLine(easyZT.SetOfEasyZT.Count);
+WriteLine(">>>> easyZT set:");*/
 
 
 /// Pseudocode of the 3D generator:
@@ -176,13 +418,14 @@ resultSw.Dispose();
 /// 3. 3rd left right, 3rd index 
 /// 4. The exercise has been drawn unambiguously -> Create the binary expression and writeline it into resultint file
 
+/*
 WriteLine("Initiating final task");
 int finalCounter = 0;
 using StreamWriter stream = new($"sedm desetin S01E03.txt");
 foreach (BinaryExpression be in sedmDesetin) {
 	finalCounter++;
-	LeafeId li = RandomStateSpaceCrawler.FetchRandomLeafe(be, addEasyFractions, subEasyFractions, mulEasyFractions, divEasyFractions);
-	BinaryExpression exercise = ExerciseBuilder.Construct(be, li, addEasyFractions, subEasyFractions, mulEasyFractions, divEasyFractions);
+	LeafeId li = RandomStateSpaceCrawler.FetchRandomLeafe(be, addEasyFractions,  mulEasyFractions);
+	BinaryExpression exercise = ExerciseBuilder.Construct(be, li, addEasyFractions,  mulEasyFractions);
 	stream.WriteLine(exercise);
 }
 
@@ -215,87 +458,80 @@ record LeafeId
 
 class RandomStateSpaceCrawler
 {
-	static public LeafeId FetchRandomLeafe(BinaryExpression root, List<List<List<Addition>>> addFractions, List<List<List<Subtraction>>> subFractions, List<List<List<Multiplication>>> mulFractions, List<List<List<Division>>> divFractions) {
+	readonly static Random rand = new();
+	static public LeafeId FetchRandomLeafe(BinaryExpression root, List<List<List<Addition>>> addFractions, List<List<List<Multiplication>>> mulFractions) {
+		bool leftA, leftB, leftC;
+		int idA, idB, idC;
+		
+		Q leftRootChild = root.leftOperand as Q;
+		Q rightRootChild = root.rightOperand as Q;
 
-		return new LeafeId(true, true, true, 0, 0, 0);
+		leftA = leftIsSimplestEasyZT(root);
+		if(leftA) {
+			int numA = leftRootChild.Num;
+			int denA = leftRootChild.Den;
+			int firstCount = addFractions[numA][denA].Count; // dangerous
+			WriteLine("root: " + root + "left " + firstCount + " num/den: " + numA + "  " + denA);
+
+			if(firstCount == 0) {
+				WriteLine("no options! " + root);
+				return new LeafeId(true, true, true, -1, 0, 0);
+			}
+
+			idA = rand.Next(0, firstCount);
+
+		} else {
+			int numA = rightRootChild.Num;
+			int denA = rightRootChild.Den;
+			int firstCount = addFractions[numA][denA].Count;
+			WriteLine("right " +  firstCount);
+
+			if (firstCount == 0) {
+				WriteLine("no options! " + root);
+				return new LeafeId(true, true, true, -1, 0, 0);
+			}
+			idA = rand.Next(0, firstCount);
+		}
+
+		return new LeafeId(leftA, true, true, idA, 0, 0);
 	}
 
+
+	static bool leftIsSimplestEasyZT(BinaryExpression be) {
+		Q? left = be.leftOperand as Q;
+		if (left == null)
+			throw new Exception("Critical error! Your logic is flawed. Rethink.");
+
+		return left.IsSimplestForm() && left.Num < 11 && left.Den < 11 && left.Den != 1;
+	}
 }
 
 
 class ExerciseBuilder
 {
-	static public BinaryExpression Construct(BinaryExpression root, LeafeId li, List<List<List<Addition>>> addFractions, List<List<List<Subtraction>>> subFractions, List<List<List<Multiplication>>> mulFractions, List<List<List<Division>>> divFractions) {
-	
+	static public BinaryExpression Construct(BinaryExpression root, LeafeId li, List<List<List<Addition>>> addFractions,  List<List<List<Multiplication>>> mulFractions) {
+		if(li.firstIndex == -1)
+			return root;
+
+		Q left = root.leftOperand as Q;
+		Q right = root.rightOperand as Q;
+
+		int numA, denA;
+		if (li.firstLeft) {
+			numA = left.Num;
+			denA = left.Den;
+			root.leftOperand = addFractions[numA][denA][li.firstIndex];
+		} else {
+			numA = right.Num;
+			denA = right.Den;
+			root.rightOperand = addFractions[numA][denA][li.firstIndex];
+		}
+		
 		return root;
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*/
 /*
 WriteLine("Hello, World!");
 List<Q> fractions = SetOfRationals.GetAll( 1, 10, true);
